@@ -1095,6 +1095,9 @@ public final class MLookup extends Lookup implements Serializable
 						for(KeyNamePair knp : knpCache) 
 						{
 							m_lookup.put(knp.getKey(), knp);
+							String name = knp.getName();
+							if (name.startsWith(INACTIVE_S) && name.endsWith(INACTIVE_E))
+								m_hasInactive  = true;
 						}
 						if (completeLoad != null)
 							completeLoad.onCallback(m_lookup);
@@ -1116,6 +1119,9 @@ public final class MLookup extends Lookup implements Serializable
 						for(ValueNamePair vnp : vnpCache)
 						{
 							m_lookup.put(vnp.getValue(), vnp);
+							String name = vnp.getName();
+							if (name.startsWith(INACTIVE_S) && name.endsWith(INACTIVE_E))
+								m_hasInactive  = true;
 						}
 						if (completeLoad != null)
 							completeLoad.onCallback(m_lookup);
