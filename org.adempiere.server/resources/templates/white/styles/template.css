@@ -100,7 +100,8 @@ div.body{
 }
 #main-docuBtns ul li > a > img {
 	position: relative;
-  	transform: translate(0%,5%);
+	top: 50%;
+  	transform: translate(0%,-45%);
 }
 .main-txt-btn {
 	padding-top:2px;
@@ -268,7 +269,8 @@ div.body{
  	opacity: 1;
 }
 
-img[src*="/images/img_webui.png"]{
- width: 103px;
- height: 108px;
+#img_webui{
+  object-fit: contain;
+  height: 80%;
+  width: 80%;
 }
