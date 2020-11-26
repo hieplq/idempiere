@@ -66,6 +66,12 @@ jobs:
     #- name: Autobuild
     #  uses: github/codeql-action/autobuild@v1
 
+    - name: Cache local Maven repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven
+    
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl
     - name: Build with Maven
