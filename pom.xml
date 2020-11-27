@@ -15,6 +15,8 @@
 	  <sonar.projectKey>org.idempiere:org.idempiere.main</sonar.projectKey>
 	  <sonar.organization>hieplq</sonar.organization>
 	  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+	  <sonar.java.source>11</sonar.java.source><!--https://community.sonarsource.com/t/java-parse-error-source-level-1-8-or-above-although-project-uses-11/22288/2-->
+	  <sonar.java.target>11</sonar.java.target>
 	</properties>
 	<modules>
 		<module>org.adempiere.base</module>
