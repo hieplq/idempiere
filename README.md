@@ -1,4 +1,6 @@
 # iDempiere. Community Powered Enterprise
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhieplq%2Fidempiere.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhieplq%2Fidempiere?ref=badge_shield)
+
 
 iDempiere Business Suite ERP/CRM/SCM done the community way.  Focus is on the Community that includes Subject Matter Specialists, Implementors and End-Users.
 
@@ -15,3 +17,7 @@ Don't forget to check our [code of conduct](CODE_OF_CONDUCT.md) and our [contrib
 If you find a bug or want to register a feature request please consider discussing it first in our forums, and after you're totally sure, please use the JIRA ticketing system: https://idempiere.atlassian.net
 
 Continuous integration when changing this repository is managed with Jenkins at http://ci.idempiere.org/
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhieplq%2Fidempiere.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhieplq%2Fidempiere?ref=badge_large)
