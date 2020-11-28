@@ -96,7 +96,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        export MAVEN_OPTS="-Xmx2G"
+        export MAVEN_OPTS="-Xmx4G"
         mvn -B -V -e -Dfindbugs.skip -Dcheckstyle.skip -Dpmd.skip=true -Denforcer.skip -Dmaven.javadoc.skip -DskipTests -Dmaven.test.skip.exec -Dlicense.skip=true -Drat.skip=true -Dsonar.java.source=11 -Dsonar.java.target=11 verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
     - name: Perform CodeQL Analysis
