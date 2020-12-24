@@ -45,6 +45,7 @@ import org.compiere.model.PaymentInterface;
 import org.compiere.model.PaymentProcessor;
 import org.compiere.model.StandardTaxProvider;
 import org.compiere.process.ProcessCall;
+import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.PaymentExport;
@@ -199,18 +200,27 @@ public class Core {
 	}
 
 	private static final CCache<String, IServiceReferenceHolder<IProcessFactory>> s_processFactoryCache = new CCache<>(null, "IProcessFactory", 100, false);
+
+	/**
+	 * backward compatible
+	 * @param processId
+	 * @return
+	 */
+	public static ProcessCall getProcess(String processId) {
+		return getProcess (processId, null);
+	}
 	
 	/**
 	 *
 	 * @param processId Java class name or equinox extension id
 	 * @return ProcessCall instance or null if processId not found
 	 */
-	public static ProcessCall getProcess(String processId) {
+	public static ProcessCall getProcess(String processId, ProcessInfo pi) {
 		IServiceReferenceHolder<IProcessFactory> cache = s_processFactoryCache.get(processId);
 		if (cache != null) {
 			IProcessFactory service = cache.getService();
 			if (service != null) {
-				ProcessCall process = service.newProcessInstance(processId);
+				ProcessCall process = service.newProcessInstance(processId, pi);
 				if (process != null)
 					return process;
 			}
@@ -222,7 +232,7 @@ public class Core {
 			for(IServiceReferenceHolder<IProcessFactory> factory : factories) {
 				IProcessFactory service = factory.getService();
 				if (service != null) {
-					ProcessCall process = service.newProcessInstance(processId);
+					ProcessCall process = service.newProcessInstance(processId, pi);
 					if (process != null) {
 						s_processFactoryCache.put(processId, factory);
 						return process;
