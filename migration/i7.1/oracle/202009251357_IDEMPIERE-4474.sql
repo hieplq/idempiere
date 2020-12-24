@@ -155,8 +155,8 @@ UPDATE M_Product SET Weight=1, ShelfWidth=30, ShelfHeight=20, ShelfDepth=100,Upd
 ;
 
 -- Sep 25, 2020, 1:30:34 PM CEST
-UPDATE C_AcctSchema SET C_Period_ID=200104,Updated=TO_DATE('2020-09-25 13:30:34','YYYY-MM-DD HH24:MI:SS'),UpdatedBy=100 WHERE C_AcctSchema_ID=101
-;
+-- UPDATE C_AcctSchema SET C_Period_ID=200104,Updated=TO_DATE('2020-09-25 13:30:34','YYYY-MM-DD HH24:MI:SS'),UpdatedBy=100 WHERE C_AcctSchema_ID=101
+-- ;
 
 -- Sep 25, 2020, 1:47:01 PM CEST
 UPDATE M_Freight SET C_Country_ID=100, To_Country_ID=100, MaxWeight=19.958, MaxDimension=419.1,Updated=TO_DATE('2020-09-25 13:47:01','YYYY-MM-DD HH24:MI:SS'),UpdatedBy=100 WHERE M_Freight_ID=100
