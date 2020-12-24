@@ -913,6 +913,12 @@ UPDATE C_OrderLine SET DateDelivered=TO_TIMESTAMP('2020-10-03','YYYY-MM-DD'), Da
 UPDATE AD_SysConfig SET Value='I',Updated=TO_TIMESTAMP('2020-10-03 18:21:35','YYYY-MM-DD HH24:MI:SS'),UpdatedBy=100 WHERE AD_SysConfig_ID=50034
 ;
 
+DELETE FROM th_fa_assetpostingline WHERE AD_Client_ID=11
+;
+
+DELETE FROM th_fa_openitem WHERE AD_Client_ID=11
+;
+
 DELETE FROM Fact_Reconciliation WHERE AD_Client_ID=11
 ;
 
