@@ -3,7 +3,7 @@ SET DEFINE OFF
 
 -- IDEMPIERE-4297 Improve test data
 -- Oct 3, 2020, 3:53:25 PM CEST
-INSERT INTO C_AcctSchema (C_AcctSchema_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Name,GAAP,IsAccrual,CostingMethod,C_Currency_ID,AutoPeriodControl,C_Period_ID,Period_OpenHistory,Period_OpenFuture,Separator,HasAlias,HasCombination,IsTradeDiscountPosted,IsDiscountCorrectsTax,M_CostType_ID,CostingLevel,IsAdjustCOGS,IsPostServices,IsExplicitCostAdjustment,CommitmentType,Processing,TaxCorrectionType,IsAllowNegativePosting,IsPostIfClearingEqual,C_AcctSchema_UU) VALUES (200000,11,0,'Y',TO_DATE('2020-10-03 15:53:24','YYYY-MM-DD HH24:MI:SS'),100,TO_DATE('2020-10-03 15:53:24','YYYY-MM-DD HH24:MI:SS'),100,'GardenWorld Euro','UN','Y','A',102,'Y',200104,10000,100,'-','Y','N','N','N',100,'C','N','N','N','N','N','N','Y','Y','546a277d-0ad3-4935-bf2a-7eb6d348b978')
+INSERT INTO C_AcctSchema (C_AcctSchema_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Name,GAAP,IsAccrual,CostingMethod,C_Currency_ID,AutoPeriodControl,C_Period_ID,Period_OpenHistory,Period_OpenFuture,Separator,HasAlias,HasCombination,IsTradeDiscountPosted,IsDiscountCorrectsTax,M_CostType_ID,CostingLevel,IsAdjustCOGS,IsPostServices,IsExplicitCostAdjustment,CommitmentType,Processing,TaxCorrectionType,IsAllowNegativePosting,IsPostIfClearingEqual,C_AcctSchema_UU) SELECT 200000,11,0,'Y',TO_DATE('2020-10-03 15:53:24','YYYY-MM-DD HH24:MI:SS'),100,TO_DATE('2020-10-03 15:53:24','YYYY-MM-DD HH24:MI:SS'),100,'GardenWorld Euro','UN','Y','A',102,'Y',c_period_id,10000,100,'-','Y','N','N','N',100,'C','N','N','N','N','N','N','Y','Y','546a277d-0ad3-4935-bf2a-7eb6d348b978' FROM C_AcctSchema WHERE C_AcctSchema_ID=101
 ;
 
 -- Oct 3, 2020, 3:54:19 PM CEST
@@ -773,15 +773,7 @@ UPDATE AD_WF_EventAudit SET WFState='OR', EventType='SC', TextMsg=NULL,Updated=T
 ;
 
 -- Oct 3, 2020, 5:20:23 PM CEST
-INSERT INTO M_StorageReservation (AD_Client_ID,AD_Org_ID,Created,CreatedBy,IsActive,M_AttributeSetInstance_ID,M_Warehouse_ID,M_Product_ID,Qty,Updated,UpdatedBy,IsSOTrx,M_StorageReservation_UU) VALUES (11,11,TO_DATE('2020-10-03 17:20:23','YYYY-MM-DD HH24:MI:SS'),100,'Y',0,103,123,0.0,TO_DATE('2020-10-03 17:20:23','YYYY-MM-DD HH24:MI:SS'),100,'N','202ee7de-9839-41fa-ac05-caf4a740442b')
-;
-
--- Oct 3, 2020, 5:20:23 PM CEST
 UPDATE C_OrderLine SET QtyReserved=10, LineNetAmt=360, Discount=40.00,Updated=TO_DATE('2020-10-03 17:20:23','YYYY-MM-DD HH24:MI:SS'),UpdatedBy=100 WHERE C_OrderLine_ID=200002
-;
-
--- Oct 3, 2020, 5:20:23 PM CEST
-INSERT INTO M_StorageReservation (AD_Client_ID,AD_Org_ID,Created,CreatedBy,IsActive,M_AttributeSetInstance_ID,M_Warehouse_ID,M_Product_ID,Qty,Updated,UpdatedBy,IsSOTrx,M_StorageReservation_UU) VALUES (11,11,TO_DATE('2020-10-03 17:20:23','YYYY-MM-DD HH24:MI:SS'),100,'Y',0,103,130,0.0,TO_DATE('2020-10-03 17:20:23','YYYY-MM-DD HH24:MI:SS'),100,'N','6fc62202-3ef5-4a18-b4c9-bc09f9198689')
 ;
 
 -- Oct 3, 2020, 5:20:23 PM CEST
@@ -922,6 +914,9 @@ UPDATE C_OrderLine SET DateDelivered=TO_DATE('2020-10-03','YYYY-MM-DD'), DateInv
 
 -- Oct 3, 2020, 6:21:35 PM CEST
 UPDATE AD_SysConfig SET Value='I',Updated=TO_DATE('2020-10-03 18:21:35','YYYY-MM-DD HH24:MI:SS'),UpdatedBy=100 WHERE AD_SysConfig_ID=50034
+;
+
+DELETE FROM Fact_Reconciliation WHERE AD_Client_ID=11
 ;
 
 DELETE FROM Fact_Acct WHERE AD_Client_ID=11
