@@ -80,10 +80,6 @@ public class PrintInfo
 	private int m_AD_Table_ID = 0;
 	private int m_Record_ID = 0;
 	private int m_C_BPartner_ID = 0;
-	/**
-	 * To priority process on tab of default window of table 
-	 */
-	private boolean useWindowPrint = false;
 	
 	
 	/**
@@ -284,15 +280,5 @@ public class PrintInfo
 		sb.append("]");
 		return sb.toString();
 	}	//	toString
-
-
-	public boolean isUseWindowPrint() {
-		return useWindowPrint;
-	}
-
-
-	public void setUseWindowPrint(boolean useWindowPrint) {
-		this.useWindowPrint = useWindowPrint;
-	}
 	
 }	//	ArchiveInfo
