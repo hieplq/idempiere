@@ -38,6 +38,20 @@
 	padding-bottom: 25px;
 }
 
+img[src*="/images/login-logo.png"]{
+	width: 142px;
+	height: 133px;
+}
+
+.login-box-header-logo img[src*="/images/login-logo.png"]{
+	margin-left:50px;
+}
+
+img[src*="/images/header-logo.png"]{
+	width: 30px;
+	height: 30px;
+}
+
 .login-box-footer {
 	background-image: url(../images/login-box-footer.png);
 	background-position: top right;
