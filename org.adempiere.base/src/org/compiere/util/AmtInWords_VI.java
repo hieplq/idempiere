@@ -2,8 +2,7 @@ package org.compiere.util;
 
 import java.math.BigInteger;
 import java.util.Arrays;
-
-import org.compiere.util.AmtInWords_VI.FragmentBreak.Separate;
+import org.apache.commons.lang3.StringUtils;
 
 public class AmtInWords_VI implements AmtInWords{
 
@@ -36,7 +35,7 @@ public class AmtInWords_VI implements AmtInWords{
 		Part [] billionPartTwo;// million, thousand, hundred Billion vnd
 		Part [] fractionPart;//
 		Separate fractionSeparate;
-		String [] groupName = new String [ ]{" triệu", " nghìn", "", " triệu", " nghìn", " đồng"};
+		String [] groupName = new String [ ]{" triệu", " nghìn", "", " triệu", " nghìn", ""};
 		
 		public FragmentBreak(String amount) {
 			this(amount, Separate.DOT);
@@ -120,7 +119,10 @@ public class AmtInWords_VI implements AmtInWords{
 				numToTextBuild.append(group.toString());
 			}
 			
-			return numToTextBuild.toString();
+			if (numToTextBuild.length() == 0)
+				return "Không";
+			
+			return StringUtils.capitalize(numToTextBuild.toString());
 		}
 		
 	}
@@ -352,19 +354,20 @@ public class AmtInWords_VI implements AmtInWords{
 		
 	}
 
-	public static void main (String[] args){
+	public static void main (String[] args) throws Exception{
 		//testReadPartSuilt();
 		testFragmentBreak();
 	}
 	
 	
 	
-	public static void testFragmentBreak() {
-		String [] testSuilt = new String [] {"12.345", "10220134578", "1.093.201.034.578", "100.932.010.345.780"};
+	public static void testFragmentBreak() throws Exception {
+		String [] testSuilt = new String [] {"0", "12000", "12.345", "10220134578", "1.093.201.034.578", "100.932.010.345.780"};
 		
+		AmtInWords_VI amtInWords = new AmtInWords_VI();
 		for (String testCase : testSuilt) {
-			FragmentBreak  fragmentBreak = new FragmentBreak(testCase, Separate.COMMA);
-			System.out.printf("%s %s\n", testCase, fragmentBreak);
+			
+			System.out.printf("%s %s\n", testCase, amtInWords.getAmtInWords(testCase));
 		}
 	}
 	
