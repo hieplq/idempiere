@@ -74,6 +74,7 @@ Import-Package: com.google.zxing,
  org.apache.commons.collections;version="3.2.2",
  org.apache.commons.collections.keyvalue;version="3.2.2",
  org.apache.commons.collections4;version="4.4.0",
+ org.apache.commons.lang3;version="3.1.0",
  org.apache.commons.net;version="2.0.0",
  org.apache.commons.net.ftp,
  org.apache.ecs,
@@ -116,6 +117,7 @@ Require-Bundle: org.eclipse.equinox.app;bundle-version="0.0.0",
  org.apache.poi.poi-ooxml-schemas;bundle-version="4.1.0",
  org.apache.xmlbeans;bundle-version="3.1.0",
  org.jfree.chart;bundle-version="1.0.19",
- org.jfree.jcommon;bundle-version="1.0.23"
+ org.jfree.jcommon;bundle-version="1.0.23",
+ org.apache.commons.collections;bundle-version="3.2.2"
 Automatic-Module-Name: org.adempiere.base
 Bundle-Vendor: iDempiere Community
