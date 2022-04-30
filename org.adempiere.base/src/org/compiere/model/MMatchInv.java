@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Properties;
 
+import org.adempiere.exceptions.AdempiereException;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 
@@ -273,7 +274,7 @@ public class MMatchInv extends X_M_MatchInv
 			+ "WHERE C_InvoiceLine_ID=?";
 		Timestamp invoiceDate = DB.getSQLValueTS(get_TrxName(), sql, getC_InvoiceLine_ID());
 		//
-		sql = "SELECT io.DateAcct "
+		/*sql = "SELECT io.DateAcct "
 			+ "FROM M_InOutLine iol"
 			+ " INNER JOIN M_InOut io ON (io.M_InOut_ID=iol.M_InOut_ID) "
 			+ "WHERE iol.M_InOutLine_ID=?";
@@ -285,7 +286,11 @@ public class MMatchInv extends X_M_MatchInv
 			return invoiceDate;
 		if (invoiceDate.after(shipDate))
 			return invoiceDate;
-		return shipDate;
+		return shipDate;*/
+		if (invoiceDate == null)
+			throw new AdempiereException("DateAcct of invoice is null");
+		
+		return invoiceDate;
 	}	//	getNewerDateAcct
 	
 	
