@@ -30,13 +30,16 @@
 package org.adempiere.process;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.adempiere.model.GenericPO;
 import org.compiere.model.MHouseKeeping;
@@ -102,25 +105,40 @@ public class HouseKeeping extends SvrProcess{
 			String pathFile = houseKeeping.getBackupFolder();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 			String dateString = dateFormat.format(date);
-			FileWriter file = new FileWriter(pathFile+File.separator+tableName+dateString+".xml");
+			String fileName = tableName+dateString;
 			StringBuilder sql = new StringBuilder("SELECT * FROM ").append(tableName);
 			if (whereClause != null && whereClause.length() > 0)				
 				sql.append(" WHERE ").append(whereClause);
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			StringBuffer linexml = null;
+			
+	        FileOutputStream fos = new FileOutputStream(pathFile + File.separator + fileName + ".zip");
+	        ZipOutputStream zipOut = new ZipOutputStream(fos);
+	        zipOut.setMethod(ZipOutputStream.DEFLATED);
+	        zipOut.setLevel(Deflater.BEST_COMPRESSION);
+			ZipEntry zipEntry = new ZipEntry(fileName + ".xml");
+			zipOut.putNextEntry(zipEntry);
+			
 			try
 			{
 				pstmt = DB.prepareStatement(sql.toString(), get_TrxName());
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
+					
 					GenericPO po = new GenericPO(tableName, getCtx(), rs, get_TrxName());
 					linexml = po.get_xmlString(linexml);
 					noexp++;
+					// 1048576 is near to 1MB for single character
+					if (linexml != null && linexml.length() > 1048576) {						
+						zipOut.write(linexml.toString().getBytes());
+						linexml = null;
+					}
 				}
-				if(linexml != null)
-					file.write(linexml.toString());
-				file.close();
+				
+				if (linexml != null)
+					zipOut.write(linexml.toString().getBytes());
+				
 			}
 			catch (Exception e)
 			{
@@ -131,6 +149,8 @@ public class HouseKeeping extends SvrProcess{
 				DB.close(rs, pstmt);
 				pstmt = null;
 				rs=null;
+				zipOut.close();
+				fos.close();
 			}
 			addLog("@Exported@ " + noexp);
 		}//XmlExport
