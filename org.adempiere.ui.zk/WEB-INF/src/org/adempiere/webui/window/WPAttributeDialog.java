@@ -1038,6 +1038,23 @@ public class WPAttributeDialog extends Window implements EventListener<Event>
 			m_M_AttributeSetInstanceName = m_masi.getDescription();
 			m_changed = oldAsiId != m_masi.get_ID();
 			return true;
+		}else {
+			// create a new asi in case change attribute that don't find out a asi already exists match to
+			// don't edit current asi
+			MAttributeSetInstance m_masi_old = m_masi;
+			m_masi = MAttributeSetInstance.get(Env.getCtx(), 0, m_M_Product_ID);
+			if (as.isLot() && m_masi_old != null) {
+				m_masi.setLot(m_masi_old.getLot());
+				m_masi.setM_Lot_ID(m_masi_old.getM_Lot_ID());
+			}	
+			
+			if (as.isSerNo() && m_masi_old != null)
+				m_masi.setSerNo(m_masi_old.getSerNo());
+			
+			if (as.isGuaranteeDate() && m_masi_old != null)
+				m_masi.setGuaranteeDate(m_masi_old.getGuaranteeDate());
+			
+			m_masi.set_TrxName(trxName);
 		}
 		
 		//	***	Save Attributes ***
