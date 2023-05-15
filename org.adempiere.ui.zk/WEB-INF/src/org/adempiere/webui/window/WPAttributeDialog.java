@@ -380,10 +380,10 @@ public class WPAttributeDialog extends Window implements EventListener<Event>
 		//	fieldLot = new VLookup ("M_Lot_ID", false,false, true, 
 		//		MLookupFactory.get(Env.getCtx(), m_WindowNo, 0, AD_Column_ID, DisplayType.TableDir));
 			String sql = "SELECT M_Lot_ID, Name "
-				+ "FROM M_Lot l "
-				+ "WHERE EXISTS (SELECT M_Product_ID FROM M_Product p "
+				+ "FROM M_Lot l WHERE l.M_Product_ID = " + m_M_Product_ID;
+				/*+ "WHERE EXISTS (SELECT M_Product_ID FROM M_Product p "
 					+ "WHERE p.M_AttributeSet_ID=" + m_masi.getM_AttributeSet_ID()
-					+ " AND p.M_Product_ID=l.M_Product_ID)";
+					+ " AND p.M_Product_ID=l.M_Product_ID)";*/
 			
 			sql = MRole.getDefault().addAccessSQL(sql, MLot.Table_Name, false, true);
 			
