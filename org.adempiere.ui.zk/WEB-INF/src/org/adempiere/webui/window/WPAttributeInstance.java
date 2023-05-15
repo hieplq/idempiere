@@ -198,7 +198,7 @@ public class WPAttributeInstance extends Window implements EventListener<Event>
 	protected ColumnInfo[] getColumnAsiList (int m_M_Product_ID){
 		List <ColumnInfo> lsColumnInfo = new ArrayList<>();
 		MProduct product = MProduct.get(Env.getCtx(), m_M_Product_ID);
-		MAttributeSet as = product.getAttributeSet();
+		MAttributeSet as = new MAttributeSet (Env.getCtx(), product.getM_AttributeSet_ID(), null);
 		// order by id to match with pivot query
 		MAttribute[] lsAttributeInstance = as.getMAttributes(true, true);
 		
@@ -237,7 +237,8 @@ public class WPAttributeInstance extends Window implements EventListener<Event>
 		StringBuilder sqlCrosstabOrder = new StringBuilder();
 		
 		MProduct product = MProduct.get(Env.getCtx(), m_M_Product_ID);
-		MAttributeSet as = product.getAttributeSet();
+		MAttributeSet as = new MAttributeSet (Env.getCtx(), product.getM_AttributeSet_ID(), null);
+				//product.getAttributeSet();
 		// order by id to match with pivot query
 		MAttribute[] lsAttributeInstance = as.getMAttributes(true, true);
 		if (lsAttributeInstance.length > 0){
