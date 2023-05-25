@@ -383,7 +383,7 @@ public class WPAttributeDialog extends Window implements EventListener<Event>
 					+ "FROM M_Lot l "
 					+ "WHERE EXISTS (SELECT M_Product_ID FROM M_Product p "
 						+ "WHERE p.M_AttributeSet_ID=" + m_masi.getM_AttributeSet_ID()
-						+ " AND p.M_Product_ID=l.M_Product_ID) AND l.active = 'Y'";
+						+ " AND p.M_Product_ID=l.M_Product_ID) AND l.IsActive = 'Y'";
 			
 			sql = MRole.getDefault().addAccessSQL(sql, MLot.Table_Name, false, true);
 			
