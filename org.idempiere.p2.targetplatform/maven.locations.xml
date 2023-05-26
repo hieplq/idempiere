@@ -1362,4 +1362,11 @@ Export-Package:        *;version="${version}";-noimport:=true
 	  <version>3.22.0</version>
 	  <type>jar</type>
 	</location>
+	<!-- commons-validator -->
+	<location includeSource="true" missingManifest="error" type="Maven">
+	  <groupId>commons-validator</groupId>
+	  <artifactId>commons-validator</artifactId>
+	  <version>1.7</version>
+	  <type>jar</type>
+	</location>
 </locations>
