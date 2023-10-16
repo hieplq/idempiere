@@ -119,6 +119,7 @@
         <setEntry value="com.sun.xml.stream.buffer.streambuffer@default:default"/>
         <setEntry value="com.sun.xml.ws.jaxws-rt@default:default"/>
         <setEntry value="com.sun.xml.ws.policy@default:default"/>
+        <setEntry value="com.zaxxer.HikariCP@default:default"/>
         <setEntry value="groovy-console@default:false"/>
         <setEntry value="groovy-datetime@default:false"/>
         <setEntry value="groovy-json@default:false"/>
@@ -358,6 +359,7 @@
         <setEntry value="org.osgi.util.tracker@default:default"/>
         <setEntry value="org.osgi.util.xml@default:default"/>
         <setEntry value="org.passay@default:default"/>
+        <setEntry value="org.postgresql.jdbc@default:default"/>
         <setEntry value="org.sat4j.core@default:default"/>
         <setEntry value="org.sat4j.pb@default:default"/>
         <setEntry value="org.tukaani.xz@default:default"/>

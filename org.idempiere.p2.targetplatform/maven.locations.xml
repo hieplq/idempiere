@@ -1484,4 +1484,16 @@ Export-Package:        *;version="${version}";-noimport:=true
 	    <version>1.9.1</version>
 		<type>jar</type>
 	</location>
+	<!-- for jdbc drive -->
+	<location includeSource="true" missingManifest="error" type="Maven">
+		<groupId>com.zaxxer</groupId>
+	    <artifactId>HikariCP</artifactId>
+	    <version>5.0.1</version>
+	</location>
+	<location includeSource="true" missingManifest="error" type="Maven">
+	    <groupId>org.postgresql</groupId>
+    	<artifactId>postgresql</artifactId>
+    	<version>42.6.0</version>
+    </location>
+    <!--for jdbc drive -->
 </locations>
