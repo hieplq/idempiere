@@ -80,7 +80,9 @@
 	<system-config>
 		<disable-event-thread>true</disable-event-thread>
 	</system-config>
-
+	<system-config>
+		<ui-factory-class>org.adempiere.webui.ThemeInheritUiFactory</ui-factory-class>
+	</system-config>
     <!-- Configure the progress message to show in the center -->
 	<library-property>
 		<name>org.zkoss.zul.progressbox.position</name>
@@ -139,4 +141,8 @@
         <name>org.zkoss.zk.ui.uuidRecycle.disabled</name>
         <value>true</value>
     </library-property>
+    <library-property>
+    	<name>org.zkoss.web.servlet.http.URLEncoder</name>
+    	<value>org.adempiere.webui.ThemeInheritURLEncoder</value> <!-- Where the Implementation Class is -->
+	</library-property>
 </zk>
