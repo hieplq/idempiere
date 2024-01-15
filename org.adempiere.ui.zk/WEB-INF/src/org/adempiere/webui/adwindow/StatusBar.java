@@ -19,6 +19,7 @@ package org.adempiere.webui.adwindow;
 
 import org.adempiere.webui.ClientInfo;
 import org.adempiere.webui.LayoutUtils;
+import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.apps.form.WQuickForm;
 import org.adempiere.webui.component.DocumentLink;
 import org.adempiere.webui.component.Label;
@@ -28,7 +29,9 @@ import org.adempiere.webui.component.Window;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.WTextEditorDialog;
 import org.compiere.model.MSysConfig;
+import org.compiere.model.X_AD_PInstance_Log;
 import org.compiere.process.ProcessInfoLog;
+import org.compiere.process.ProcessInfoUtil;
 import org.compiere.util.Env;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Execution;
@@ -233,23 +236,30 @@ public class StatusBar extends Panel implements EventListener<Event>
     }
 
     /**
-     * add document/record link from ProcessInfoLog to popup
+     * add document/record/file download link from ProcessInfoLog to popup
      * @param m_logs
      * @return
      */
     private Div buildPopupContent(ProcessInfoLog[] m_logs) {
     	Div div = null;
-    	//add document/record link from ProcessInfoLog
+    	//add document/record link/file download from ProcessInfoLog
     	if (m_logs != null) {
+    		m_logs = ProcessInfoUtil.sortLogs(m_logs);
 			div = new Div();
 			for (int i = 0; i < m_logs.length; i++) {
 				if (m_logs[i].getP_Msg() != null) {
-					if (m_logs[i].getAD_Table_ID() > 0
+					Component link = null;
+					if (m_logs[i].getPInstanceLogType() == X_AD_PInstance_Log.PINSTANCELOGTYPE_FilePath) {
+						link = AEnv.getDownloadLinkFromLog(m_logs[i].getP_Msg());
+					}else if (m_logs[i].getAD_Table_ID() > 0
 							&& m_logs[i].getRecord_ID() > 0) {
-						DocumentLink recordLink = new DocumentLink(m_logs[i].getP_Msg(), m_logs[i].getAD_Table_ID(), m_logs[i].getRecord_ID());												
+						link = new DocumentLink(m_logs[i].getP_Msg(), m_logs[i].getAD_Table_ID(), m_logs[i].getRecord_ID());												
+					}
+					
+					if (link != null) {
 						if (!div.getChildren().isEmpty())
 							div.appendChild(new Separator("horizontal"));
-						div.appendChild(recordLink);						
+						div.appendChild(link);
 					}
 				}
 			}
