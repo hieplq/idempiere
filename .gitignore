@@ -20,4 +20,6 @@ generated/
 org.idempiere.maven.to.p2/org.idempiere.webservice.client/.settings/
 **/org.eclipse.jdt.core.prefs
 cnf/local/*
+cnf/release/*
+cnf/templates/*
 
