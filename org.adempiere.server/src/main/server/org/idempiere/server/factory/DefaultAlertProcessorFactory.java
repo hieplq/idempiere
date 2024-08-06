@@ -20,15 +20,17 @@ import java.util.Properties;
 import org.adempiere.server.IServerFactory;
 import org.compiere.model.MAlertProcessor;
 import org.compiere.server.AlertProcessor;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author hengsin
  *
  */
+@Component(immediate = true, service = IServerFactory.class)
 public class DefaultAlertProcessorFactory implements IServerFactory<AlertProcessor, MAlertProcessor> {
 
 	/**
-	 * 
+	 *
 	 */
 	public DefaultAlertProcessorFactory() {
 	}

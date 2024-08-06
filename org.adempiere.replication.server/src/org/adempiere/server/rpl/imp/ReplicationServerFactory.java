@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.adempiere.server.rpl.imp;
 
@@ -10,15 +10,17 @@ import java.util.Properties;
 import org.adempiere.server.IServerFactory;
 import org.compiere.model.MIMPProcessor;
 import org.compiere.server.ReplicationProcessor;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author hengsin
  *
  */
+@Component(immediate = true, service = IServerFactory.class)
 public class ReplicationServerFactory implements IServerFactory<ReplicationProcessor, MIMPProcessor> {
 
 	/**
-	 * default constructor 
+	 * default constructor
 	 */
 	public ReplicationServerFactory() {
 	}

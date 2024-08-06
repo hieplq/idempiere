@@ -42,7 +42,7 @@ import org.compiere.util.Env;
  * 	Application Server independent check of username/password
  * 	
  *  @author Jorg Janke
- *  @version $Id: AdempiereMonitorFilter.java,v 1.2 2006/07/30 00:53:33 jjanke Exp $
+ *  @version $Id$
  *  @author Michael Judd BF [ 2736817 ] - remove deprecated BASE64Encoder classes
  */
 public class AdempiereMonitorFilter implements Filter

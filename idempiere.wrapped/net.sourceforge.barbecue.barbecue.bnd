@@ -1,0 +1,10 @@
+-includeresource: @${repo;net.sourceforge.barbecue:barbecue;latest}
+Bundle-SymbolicName: idempiere.wrapped.net.sourceforge.barbecue.barbecue
+ver: 1.5-beta1
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+Import-Package: *;resolution:=optional
+-buildrepo: Local
+

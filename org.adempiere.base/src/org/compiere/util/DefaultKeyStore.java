@@ -27,14 +27,16 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.adempiere.base.IKeyStore;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link IKeyStore} implementation
  * @author deepak
  * @author hengsin
  */
+@Component(service = IKeyStore.class)
 public class DefaultKeyStore implements IKeyStore {
-	
+
 	private static final String LEGACY_ALGORITHM = "DES";
 
 	private static final String IDEMPIERE_KEYSTORE_PROPERTIES = "idempiere-ks.properties";
@@ -43,7 +45,7 @@ public class DefaultKeyStore implements IKeyStore {
 
 	/**	Logger						*/
 	private static CLogger	log	= CLogger.getCLogger (DefaultKeyStore.class.getName());
-	
+
 	/** Adempiere Key				*/
 	private SecretKey m_key = null;
 
@@ -76,7 +78,7 @@ public class DefaultKeyStore implements IKeyStore {
 						keyStore.load(stream, password );
 					} else {
 						keyStore.load(null, password );
-					}				
+					}
 				} else {
 					createLegacyKey();
 				}
@@ -102,7 +104,7 @@ public class DefaultKeyStore implements IKeyStore {
 		m_key = new javax.crypto.spec.SecretKeySpec
 				(new byte[] {100,25,28,-122,-26,94,-3,-26}, LEGACY_ALGORITHM);
 	}
-	
+
 	@Override
 	public synchronized SecretKey getKey(int AD_Client_ID) {
 		if (password != null) {
@@ -114,7 +116,7 @@ public class DefaultKeyStore implements IKeyStore {
 					KeyGenerator generator = KeyGenerator.getInstance(algorithm);
 					SecretKey key = generator.generateKey();
 					entry = new SecretKeyEntry((SecretKey) key);
-					
+
 					keyStore.setEntry(alias, entry, protParam);
 					File file = new File(IDEMPIERE_KEYSTORE);
 					FileOutputStream stream = null;

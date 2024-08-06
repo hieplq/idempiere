@@ -22,11 +22,13 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.compiere.util.CLogger;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * DB backed implementation of {@link IImageStore}
  * @author hengsin
  */
+@Component(service = IImageStore.class, property = "method=DB")
 public class ImageDBStorageImpl implements IImageStore {
 
 	private final CLogger log = CLogger.getCLogger(getClass());
@@ -115,7 +117,7 @@ public class ImageDBStorageImpl implements IImageStore {
 
 	@Override
 	public boolean delete(MImage image, MStorageProvider prov) {
-		
+
 		return true;
 	}
 

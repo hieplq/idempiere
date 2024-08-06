@@ -22,8 +22,9 @@ import org.compiere.model.MLookup;
 import org.compiere.model.MPAttributeLookup;
 import org.compiere.model.MPaymentLookup;
 import org.compiere.util.DisplayType;
+import org.osgi.service.component.annotations.Component;
 
-import static org.compiere.util.DisplayType.*; 
+import static org.compiere.util.DisplayType.*;
 
 /**
  * Default {@link ILookupFactory} implementation for core.<br/>
@@ -31,6 +32,7 @@ import static org.compiere.util.DisplayType.*;
  * @author Jan Thielemann - jan.thielemann@evenos.de
  * @author hengsin
  */
+@Component(service = ILookupFactory.class)
 public class DefaultLookupFactory implements ILookupFactory{
 
 	@Override
@@ -74,7 +76,7 @@ public class DefaultLookupFactory implements ILookupFactory{
 			|| gridFieldVO.displayType == Payment
 			|| DisplayType.isLookup(gridFieldVO.displayType))
 			return true;
-				
+
 		return false;
 	}
 
@@ -88,7 +90,7 @@ public class DefaultLookupFactory implements ILookupFactory{
 				|| displayType == Payment
 				|| DisplayType.isLookup(displayType))
 				return true;
-					
+
 			return false;
 	}
 

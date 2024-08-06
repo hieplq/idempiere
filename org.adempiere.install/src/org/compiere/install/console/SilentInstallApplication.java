@@ -26,22 +26,20 @@
 package org.compiere.install.console;
 
 import org.compiere.install.SilentSetup;
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
 
 /**
  * Silent setup
  * @author Carlos Ruiz - globalqss - bxservice
  *
  */
-public class SilentInstallApplication implements IApplication {
+public class SilentInstallApplication {
 
-	public Object start(IApplicationContext context) throws Exception {
-		SilentSetup.main((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
-		return EXIT_OK;
+	/**
+	 * Run silent setup
+	 * @param args
+	 * @throws Exception
+	 */
+	public void run(String[] args) throws Exception {
+		SilentSetup.main(args);
 	}
-
-	public void stop() {
-	}
-
 }

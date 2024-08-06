@@ -1,0 +1,2 @@
+-include: share.bndrun
+-runproperties: setup.mode=console, IDEMPIERE_HOME=${workspace}

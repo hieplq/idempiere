@@ -30,7 +30,7 @@ import org.compiere.util.CLogger;
  *	PostgreSQL Configuration
  *
  *  @author Victor Perez e-Evolution
- *  @version $Id: ConfigPostgreSQL.java,v 1.0 2005/01/31 06:08:15 vpj-cd Exp $
+ *  @version $Id$
  */
 public class ConfigPostgreSQL implements IDatabaseConfig
 {
@@ -46,8 +46,6 @@ public class ConfigPostgreSQL implements IDatabaseConfig
 
 	/** Discovered TNS			*/
 	private String[] 			p_discovered = null;
-
-	private AdempiereDatabase p_db = Database.getDatabase(Database.DB_POSTGRESQL);
 
 	/**
 	 * Init
@@ -73,6 +71,9 @@ public class ConfigPostgreSQL implements IDatabaseConfig
 		return p_discovered;
 	}	//	discoveredDatabases
 
+	private AdempiereDatabase getDatabase() {
+		return Database.getDatabase(Database.DB_POSTGRESQL);
+	}
 
 	/**************************************************************************
 	 * 	Test
@@ -125,11 +126,11 @@ public class ConfigPostgreSQL implements IDatabaseConfig
 		String systemPassword = data.getDatabaseSystemPassword();
 
 		//	URL (derived)
-		String urlSystem = p_db.getConnectionURL(databaseServer.getHostName(), databasePort,
-			p_db.getSystemDatabase(databaseName), p_db.getSystemUser());
-		pass = testJDBC(urlSystem, p_db.getSystemUser(), systemPassword);
+		String urlSystem = getDatabase().getConnectionURL(databaseServer.getHostName(), databasePort,
+				getDatabase().getSystemDatabase(databaseName), getDatabase().getSystemUser());
+		pass = testJDBC(urlSystem, getDatabase().getSystemUser(), systemPassword);
 		error = "Error connecting: " + urlSystem
-			+ " - " + p_db.getSystemUser() + "/" + systemPassword;
+			+ " - " + getDatabase().getSystemUser() + "/" + systemPassword;
 		if (monitor != null)
 			monitor.update(new DBConfigStatus(DBConfigStatus.DATABASE_SYSTEM_PASSWORD, "ErrorJDBC",
 				pass, true, error));
@@ -153,7 +154,7 @@ public class ConfigPostgreSQL implements IDatabaseConfig
 		String databaseUser = data.getDatabaseUser();	//	UID
 		String databasePassword = data.getDatabasePassword();	//	PWD
 		//
-		String url= p_db.getConnectionURL(databaseServer.getHostName(), databasePort,
+		String url= getDatabase().getConnectionURL(databaseServer.getHostName(), databasePort,
 			databaseName, databaseUser);
 		//	Ignore result as it might not be imported
 		pass = testJDBC(url, databaseUser, databasePassword);
@@ -181,7 +182,7 @@ public class ConfigPostgreSQL implements IDatabaseConfig
 		data.setProperty(ConfigurationData.ADEMPIERE_DB_NAME, databaseName);
 		data.setProperty(ConfigurationData.ADEMPIERE_DB_USER, databaseUser);
 		data.setProperty(ConfigurationData.ADEMPIERE_DB_PASSWORD, databasePassword);
-		data.setProperty(ConfigurationData.ADEMPIERE_DB_EXISTS, (isDBExists ? "Y" : "N"));		
+		data.setProperty(ConfigurationData.ADEMPIERE_DB_EXISTS, (isDBExists ? "Y" : "N"));
 
 		return null;
 	}	//	test
@@ -198,7 +199,7 @@ public class ConfigPostgreSQL implements IDatabaseConfig
 		try
 		{
 			@SuppressWarnings("unused")
-			Connection conn = p_db.getDriverConnection(url, uid, pwd);
+			Connection conn = getDatabase().getDriverConnection(url, uid, pwd);
 		}
 		catch (Exception e)
 		{

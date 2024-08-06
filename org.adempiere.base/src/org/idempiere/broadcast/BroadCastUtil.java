@@ -19,51 +19,58 @@ import java.util.List;
 import org.idempiere.distributed.IMessageService;
 import org.idempiere.distributed.ITopic;
 import org.idempiere.distributed.ITopicSubscriber;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
- * Static methods to broacast message using {@link IMessageService}.
+ * Static methods to broadcast message using {@link IMessageService}.
  * @author Deepak Pansheriya
  */
+@Component(reference = {@Reference(name="IMessageService", service=IMessageService.class,
+	bind="bindMessageService", unbind="unbindMessageService", cardinality = ReferenceCardinality.OPTIONAL,
+	policy = ReferencePolicy.DYNAMIC)})
 public class BroadCastUtil {
 	public static final String TOPIC_BROADCAST_MESSAGE="BROADCAST_MESSAGE";
 	public static final int EVENT_BROADCAST_MESSAGE =1;
 	public static final int EVENT_TEST_BROADCAST_MESSAGE=2;
 	public static final int EVENT_SESSION_TIMEOUT =3;
 	public static final int EVENT_SESSION_ONNODE_TIMEOUT=4;
-	
+
 	private final static List<ITopicSubscriber<BroadCastMsg>> subscribers = new ArrayList<ITopicSubscriber<BroadCastMsg>>();
 	private static IMessageService service = null;
-	
+
 	/**
 	 * Add message subscriber
 	 * @param subscriber
 	 */
-	public static synchronized void subscribe(ITopicSubscriber<BroadCastMsg> subscriber){		
+	public static synchronized void subscribe(ITopicSubscriber<BroadCastMsg> subscriber){
 		subscribers.add(subscriber);
 		if (service != null) {
 			ITopic<BroadCastMsg> topic= service.getTopic(TOPIC_BROADCAST_MESSAGE);
 			topic.subscribe(subscriber);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Remove message subsriber
 	 * @param subscriber
 	 */
-	public static synchronized void unSubscribe(ITopicSubscriber<BroadCastMsg> subscriber){		
+	public static synchronized void unSubscribe(ITopicSubscriber<BroadCastMsg> subscriber){
 		subscribers.remove(subscriber);
 		if (service != null) {
 			ITopic<BroadCastMsg> topic= service.getTopic(TOPIC_BROADCAST_MESSAGE);
 			topic.unsubscribe(subscriber);
 		}
 	}
-	
+
 	/**
 	 * Publish message to {@link IMessageService} with topic {@link #TOPIC_BROADCAST_MESSAGE}.
 	 * @param msg
 	 * @return true if publish successfully
 	 */
-	public static synchronized boolean publish(BroadCastMsg msg){		
+	public static synchronized boolean publish(BroadCastMsg msg){
 		if (service != null) {
 			ITopic<BroadCastMsg> topic= service.getTopic(TOPIC_BROADCAST_MESSAGE);
 			topic.publish(msg);
@@ -71,7 +78,7 @@ public class BroadCastUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param messageService
 	 */
@@ -84,7 +91,7 @@ public class BroadCastUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param messageService
 	 */

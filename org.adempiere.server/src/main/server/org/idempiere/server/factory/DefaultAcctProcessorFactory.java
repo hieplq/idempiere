@@ -20,15 +20,17 @@ import java.util.Properties;
 import org.adempiere.server.IServerFactory;
 import org.compiere.model.MAcctProcessor;
 import org.compiere.server.AcctProcessor;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author hengsin
  *
  */
+@Component(immediate = true, service = IServerFactory.class)
 public class DefaultAcctProcessorFactory implements IServerFactory<AcctProcessor, MAcctProcessor> {
 
 	/**
-	 * default constructor 
+	 * default constructor
 	 */
 	public DefaultAcctProcessorFactory() {
 	}

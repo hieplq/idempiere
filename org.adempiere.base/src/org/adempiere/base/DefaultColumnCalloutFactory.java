@@ -16,12 +16,14 @@ package org.adempiere.base;
 import java.util.List;
 
 import org.adempiere.base.equinox.EquinoxExtensionLocator;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link IColumnCalloutFactory} implementation for core.<br/>
  * Load {@link IColumnCallout} instance from plugin.xml (org.adempiere.base.IColumnCallout extension point)
  * @author hengsin
  */
+@Component(service = IColumnCalloutFactory.class)
 public class DefaultColumnCalloutFactory implements IColumnCalloutFactory {
 
 	/**
@@ -41,7 +43,7 @@ public class DefaultColumnCalloutFactory implements IColumnCalloutFactory {
 		query.put("columnName", columnName);
 
 		List<IColumnCallout> list = EquinoxExtensionLocator.instance().list(IColumnCallout.class, query).getExtensions();
-		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0]; 
+		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 
 }

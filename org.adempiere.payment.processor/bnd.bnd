@@ -1,0 +1,19 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.osgi.service.event;version='1.4',\
+	org.eclipse.equinox.registry;version='3.11',\
+	org.eclipse.equinox.common;version='3.18',\
+	org.adempiere.base;version=latest,\
+	lib/jpayment.jar;version=file,\
+	lib/payflow.jar;version=file,\
+	lib/Verisign.jar;version=file
+-resolve: auto
+bin: target/classes
+Bundle-Version: 12.0.0
+Bundle-SymbolicName: org.adempiere.payment.processor;singleton:=true
+Import-Package: *
+-includeresource: lib/;lib:=true, plugin.xml

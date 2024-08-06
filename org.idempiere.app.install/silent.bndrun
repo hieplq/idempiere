@@ -1,0 +1,2 @@
+-include: share.bndrun
+-runproperties: setup.mode=silent, IDEMPIERE_HOME=${workspace}

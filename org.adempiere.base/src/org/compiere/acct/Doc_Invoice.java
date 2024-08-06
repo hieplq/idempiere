@@ -57,7 +57,7 @@ import org.compiere.util.Trx;
  *  @author Armen Rizal, Goodwill Consulting
  *  	<li>BF: 2797257	Landed Cost Detail is not using allocation qty
  *
- *  @version  $Id: Doc_Invoice.java,v 1.2 2006/07/30 00:53:33 jjanke Exp $
+ *  @version  $Id$
  */
 public class Doc_Invoice extends Doc
 {

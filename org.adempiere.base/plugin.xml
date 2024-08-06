@@ -39,32 +39,6 @@
       </importer>
    </extension>
    <extension
-         id="org.adempiere.base.ModelGeneratorApplication"
-         name="Model Generator"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-         <run
-               class="org.adempiere.base.ModelGeneratorApplication">
-         </run>
-      </application>
-   </extension>
-   <extension
-         id="org.adempiere.base.PostMigration"
-         name="Post Migration"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-         <run
-               class="org.adempiere.base.PostMigrationApplication">
-         </run>
-      </application>
-   </extension>
-   <extension
          id="org.compiere.model.StandardTaxProvider"
          name="Standard Tax Provider"
          point="org.adempiere.model.ITaxProvider">
@@ -72,43 +46,6 @@
             class="org.compiere.model.StandardTaxProvider"
             priority="0">
       </provider>
-   </extension>
-   <extension
-         id="org.adempiere.base.SignDatabaseBuildApplication"
-         name="Sign Database Build"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-      	 <run
-               class="org.adempiere.base.SignDatabaseBuildApplication">
-         </run>
-      </application>
-   </extension>
-   <extension
-         id="org.adempiere.install.translation"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-      	 <run
-               class="org.compiere.install.Translation">
-         </run>
-      </application>
-   </extension>
-   <extension
-         id="org.adempiere.base.PackInFolderApplication"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-      	 <run
-               class="org.adempiere.base.PackInFolderApplication">
-         </run>
-      </application>
    </extension>
    <extension
          id="org.adempiere.impexp.GridTabXLSXExporter"

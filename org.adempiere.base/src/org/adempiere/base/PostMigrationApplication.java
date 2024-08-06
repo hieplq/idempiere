@@ -21,28 +21,20 @@ import org.compiere.model.SystemIDs;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CLogMgt;
 import org.compiere.util.Env;
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
 
 /**
- * Eclipse application to run processes that must be executed (sequence check, role access update and synchronize terminology)  
- * after the execution of migration scripts 
+ * Eclipse application to run processes that must be executed (sequence check, role access update and synchronize terminology)
+ * after the execution of migration scripts
  * @author hengsin
  */
-public class PostMigrationApplication implements IApplication {
+public class PostMigrationApplication {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
-	@Override
-	public Object start(IApplicationContext context) throws Exception {
+	public void start() throws Exception {
 		Adempiere.startup(false);
 		CLogMgt.setLevel(Level.FINE);
 		addMissingTranslation();
 		roleAccessUpdate();
 		checkSequence();
-		
-		return IApplication.EXIT_OK;
 	}
 
 	private void checkSequence() {
@@ -68,12 +60,4 @@ public class PostMigrationApplication implements IApplication {
 		pi.setClassName("org.compiere.process.SynchronizeTerminology");
 		ProcessUtil.startJavaProcess(Env.getCtx(), pi, null);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
-	@Override
-	public void stop() {
-	}
-
 }

@@ -1,0 +1,22 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	com.hazelcast:hazelcast;version='5.3.7'
+-resolve: auto
+bin: target/classes
+Bundle-Activator: org.idempiere.hazelcast.service.Activator
+Bundle-SymbolicName: org.idempiere.hazelcast.service
+Bundle-Version: 12.0.0
+-includeresource: lib/hazelcast.jar=${repo;com.hazelcast:hazelcast};lib:=true
+-exportcontents: com.hazelcast.*;version=5.3.7
+#DynamicImport-Package: org.*, com.*, javax.*
+
+Export-Package: org.idempiere.hazelcast.service
+Import-Package: !COM.newmonics.PercClassLoader, !android.os,\
+	com.hazelcast.license.util;resolution:=optional,\
+	org.apache.openejb.*;resolution:=optional,\
+	sun.nio.ch;resolution:=optional, *

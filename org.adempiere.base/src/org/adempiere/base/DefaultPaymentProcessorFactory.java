@@ -18,16 +18,18 @@ import java.util.logging.Level;
 import org.adempiere.base.equinox.EquinoxExtensionLocator;
 import org.compiere.model.PaymentProcessor;
 import org.compiere.util.CLogger;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link IPaymentProcessorFactory} implementation for core. <br/>
  * Load {@link PaymentProcessor} instance from plugin.xml (org.compiere.model.PaymentProcessor extension point) or class path.
  * @author hengsin
  */
+@Component(service = IPaymentProcessorFactory.class)
 public class DefaultPaymentProcessorFactory implements IPaymentProcessorFactory {
 
 	private final static CLogger s_log = CLogger.getCLogger(DefaultPaymentProcessorFactory.class);
-			
+
 	/**
 	 * default constructor
 	 */
@@ -55,7 +57,7 @@ public class DefaultPaymentProcessorFactory implements IPaymentProcessorFactory 
 				return null;
 			}
 		}
-		
+
 		return myProcessor;
 	}
 

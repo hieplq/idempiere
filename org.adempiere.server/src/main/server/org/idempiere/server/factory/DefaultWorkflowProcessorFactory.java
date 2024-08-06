@@ -20,15 +20,17 @@ import java.util.Properties;
 import org.adempiere.server.IServerFactory;
 import org.compiere.server.WorkflowProcessor;
 import org.compiere.wf.MWorkflowProcessor;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author hengsin
  *
  */
+@Component(immediate = true, service = IServerFactory.class)
 public class DefaultWorkflowProcessorFactory implements IServerFactory<WorkflowProcessor, MWorkflowProcessor> {
 
 	/**
-	 * 
+	 *
 	 */
 	public DefaultWorkflowProcessorFactory() {
 	}

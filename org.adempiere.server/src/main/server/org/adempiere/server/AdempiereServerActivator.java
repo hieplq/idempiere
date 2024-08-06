@@ -22,7 +22,7 @@ import org.osgi.framework.BundleContext;
 public class AdempiereServerActivator implements BundleActivator {
 
 	private static BundleContext context = null;
-	
+
 	/**
 	 * default constructor
 	 */
@@ -35,6 +35,7 @@ public class AdempiereServerActivator implements BundleActivator {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		AdempiereServerActivator.context = context;
+		new Application().start();
 	}
 
 	/* (non-Javadoc)

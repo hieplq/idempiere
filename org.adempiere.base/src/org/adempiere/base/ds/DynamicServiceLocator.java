@@ -21,12 +21,14 @@ import org.adempiere.base.ServiceQuery;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.component.ComponentConstants;
+import org.osgi.service.component.annotations.Component;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Service locator implementation for OSGi service.
  * @author hengsin
  */
+@Component(service = IServiceLocator.class, property = "service.ranking:Integer=1")
 public class DynamicServiceLocator implements IServiceLocator {
 
 	/**
@@ -52,7 +54,7 @@ public class DynamicServiceLocator implements IServiceLocator {
 	public <T> IServiceHolder<T> locate(Class<T> type, ServiceQuery query) {
 		if (query == null || query.isEmpty())
 			return locate(type);
-		
+
 		Filter filter = filter(type, null, query);
 		ServiceTracker<T, T> tracker = BaseActivator.getServiceTracker(type, filter);
 		return new DynamicServiceHolder<T>(tracker);
@@ -65,10 +67,10 @@ public class DynamicServiceLocator implements IServiceLocator {
 	public <T> IServiceHolder<T> locate(Class<T> type, String serviceId, ServiceQuery query) {
 		if ((query == null || query.isEmpty()) && (serviceId == null || serviceId.trim().length() == 0))
 			return locate(type);
-		
+
 		Filter filter = filter(type, serviceId, query);
 		ServiceTracker<T, T> tracker = BaseActivator.getServiceTracker(type, filter);
-		
+
 		return new DynamicServiceHolder<T>(tracker);
 	}
 
@@ -79,7 +81,7 @@ public class DynamicServiceLocator implements IServiceLocator {
 	public <T> IServicesHolder<T> list(Class<T> type) {
 		Filter filter = filter(type, null, null);
 		ServiceTracker<T, T> tracker = BaseActivator.getServiceTracker(type, filter);
-		
+
 		return new DynamicServiceHolder<T>(tracker);
 	}
 
@@ -90,7 +92,7 @@ public class DynamicServiceLocator implements IServiceLocator {
 	public <T> IServicesHolder<T> list(Class<T> type, ServiceQuery query) {
 		if (query == null || query.isEmpty())
 			return list(type);
-		
+
 		Filter filter = filter(type, null, query);
 		ServiceTracker<T, T> tracker = BaseActivator.getServiceTracker(type, filter);
 		return new DynamicServiceHolder<T>(tracker);
@@ -103,7 +105,7 @@ public class DynamicServiceLocator implements IServiceLocator {
 	public <T> IServicesHolder<T> list(Class<T> type, String serviceId, ServiceQuery query) {
 		if ((query == null || query.isEmpty()) && (serviceId == null || serviceId.trim().length() == 0))
 			return list(type);
-		
+
 		Filter filter = filter(type, serviceId, query);
 		ServiceTracker<T, T> tracker = BaseActivator.getServiceTracker(type, filter);
 		return new DynamicServiceHolder<T>(tracker);

@@ -15,6 +15,7 @@ package org.idempiere.hazelcast.service;
 
 import org.idempiere.distributed.IMessageService;
 import org.idempiere.distributed.ITopic;
+import org.osgi.service.component.annotations.Component;
 
 import com.hazelcast.core.HazelcastInstance;
 
@@ -22,10 +23,11 @@ import com.hazelcast.core.HazelcastInstance;
  * @author hengsin
  *
  */
+@Component(service = IMessageService.class)
 public class MessageServiceImpl implements IMessageService {
 
 	/**
-	 * Default constructor 
+	 * Default constructor
 	 */
 	public MessageServiceImpl() {
 	}

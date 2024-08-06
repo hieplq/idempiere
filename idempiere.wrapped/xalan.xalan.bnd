@@ -1,0 +1,10 @@
+-includeresource: @${repo;xalan:xalan;latest}
+Bundle-SymbolicName: idempiere.wrapped.xalan.xalan
+ver: 2.7.3
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+# Import-Package: *
+-buildrepo: Local
+

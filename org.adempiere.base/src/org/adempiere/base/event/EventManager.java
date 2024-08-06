@@ -38,6 +38,10 @@ import org.compiere.util.Ini;
 import org.compiere.util.Util;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventConstants;
@@ -49,6 +53,9 @@ import org.osgi.service.event.EventHandler;
  * @author hengsin
  *
  */
+@Component(immediate = true, service = IEventManager.class,
+		reference = {@Reference(name="EventAdmin", bind="bindEventAdmin", unbind="unbindEventAdmin", service=EventAdmin.class, policy = ReferencePolicy.STATIC,
+								cardinality = ReferenceCardinality.MANDATORY)})
 public class EventManager implements IEventManager {
 
 	private EventAdmin eventAdmin;
@@ -61,7 +68,7 @@ public class EventManager implements IEventManager {
 
 	private List<String> blackListEventHandlers = null;
 	private Map<String, List<String>> blackListTopicMap = null;
-	
+
 	/**
 	 * @param eventAdmin
 	 */
@@ -131,9 +138,9 @@ public class EventManager implements IEventManager {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * @param eventAdmin
 	 */
@@ -172,7 +179,7 @@ public class EventManager implements IEventManager {
 				properties.put(EVENT_CONTEXT, getCurrentSessionContext());
 				event = newEvent(event.getTopic(), properties, true);
 			}
-			
+
 			eventAdmin.postEvent(event);
 			return true;
 		}
@@ -218,7 +225,7 @@ public class EventManager implements IEventManager {
 
 	/**
 	 * @param topics List of event topic. If only some of the event topic is black listed,
-	 * the method will return false and remove the black listed event topic from topics list.  
+	 * the method will return false and remove the black listed event topic from topics list.
 	 * @param eventHandler
 	 * @return true if eventhandler is black listed (i.e don't register the service) for topics
 	 */
@@ -241,10 +248,10 @@ public class EventManager implements IEventManager {
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.adempiere.base.event.IEventManager#register(java.lang.String[], java.lang.String, org.osgi.service.event.EventHandler)
 	 */
@@ -255,16 +262,16 @@ public class EventManager implements IEventManager {
 			log.severe("No bundle context. Topic="+Arrays.toString(topics));
 			return false;
 		}
-		
+
 		//check black listed event topics
 		List<String> topicList = Arrays.stream(topics).collect(Collectors.toCollection(ArrayList::new));
 		if (isBlackListed(topicList, eventHandler))
 			return false;
 		if (topicList.isEmpty())
-			return false;		
+			return false;
 		if (topicList.size() != topics.length)
 			topics = topicList.toArray(new String[0]);
-		
+
 		Dictionary<String, Object> d = new Hashtable<String, Object>();
 		d.put(EventConstants.EVENT_TOPIC, topics);
 		if (filter != null)
@@ -305,7 +312,7 @@ public class EventManager implements IEventManager {
 	public static Event newEvent(String topic, Object data) {
 		return newEvent(topic, data, false);
 	}
-	
+
 	/**
 	 * Create new event instance. If copySessionContext is true, a copy of current session context is added as EVENT_CONTEXT property to event data.
 	 * @param topic

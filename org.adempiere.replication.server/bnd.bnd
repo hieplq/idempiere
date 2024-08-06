@@ -1,0 +1,17 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	org.apache.geronimo.specs.geronimo-jms_1.1_spec,\
+	org.apache.activemq.activemq-client,\
+	org.adempiere.replication,\
+	org.adempiere.server
+-resolve: auto
+bin: target/classes
+Bundle-Version: 12.0.0
+Bundle-SymbolicName: org.adempiere.replication.server
+Import-Package: *
+

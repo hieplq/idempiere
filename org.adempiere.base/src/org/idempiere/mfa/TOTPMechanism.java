@@ -40,6 +40,7 @@ import org.compiere.model.MUser;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 
 import dev.samstevens.totp.code.CodeGenerator;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
@@ -57,6 +58,7 @@ import dev.samstevens.totp.time.TimeProvider;
 /**
  * Time-based one-time password (TOTP) based multi-factor authentication implementation
  */
+@Component(service = IMFAMechanism.class, property = "method=TOTP")
 public class TOTPMechanism implements IMFAMechanism {
 
 	/**

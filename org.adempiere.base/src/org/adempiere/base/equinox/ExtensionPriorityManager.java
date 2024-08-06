@@ -17,12 +17,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
+import org.compiere.util.Ini;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.service.datalocation.Location;
 
 /**
  * Load extension priority from extensions-priorty.properties
@@ -35,9 +33,7 @@ public class ExtensionPriorityManager {
 	private static final ExtensionPriorityManager instance = new ExtensionPriorityManager();
 
 	private ExtensionPriorityManager() {
-		Location location = Platform.getInstanceLocation();
-		URL url = location.getURL();
-		File file = new File(url.getPath(), "extensions-priorty.properties");
+		File file = new File(Ini.getAdempiereHome(), "extensions-priorty.properties");
 		if (file.exists() && file.canRead()) {
 			FileInputStream fileInput = null;
 			try {
@@ -58,7 +54,7 @@ public class ExtensionPriorityManager {
 					fileInput = null;
 				}
 			}
-			
+
 		}
 	}
 

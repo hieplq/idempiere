@@ -23,6 +23,7 @@ import java.util.concurrent.Future;
 
 import org.idempiere.distributed.IClusterMember;
 import org.idempiere.distributed.IClusterService;
+import org.osgi.service.component.annotations.Component;
 
 import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
@@ -34,6 +35,7 @@ import com.hazelcast.instance.impl.HazelcastInstanceProxy;
  * @author hengsin
  *
  */
+@Component(service = IClusterService.class)
 public class ClusterServiceImpl implements IClusterService {
 
 	/* (non-Javadoc)
@@ -41,7 +43,7 @@ public class ClusterServiceImpl implements IClusterService {
 	 */
 	@Override
 	public Collection<IClusterMember> getMembers() {
-		HazelcastInstance instance = Activator.getHazelcastInstance();		
+		HazelcastInstance instance = Activator.getHazelcastInstance();
 		Set<IClusterMember> clusterMembers = new HashSet<IClusterMember>();
 		if (instance != null) {
 			Set<Member> members = instance.getCluster().getMembers();

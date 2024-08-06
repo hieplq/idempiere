@@ -32,7 +32,7 @@ import org.compiere.db.CConnection;
  *	Status Info Servlet
  *
  * 	@author 	Jorg Janke
- * 	@version 	$Id: StatusInfo.java,v 1.3 2006/07/30 00:53:33 jjanke Exp $
+ * 	@version 	$Id$
  */
 public class StatusInfo extends HttpServlet
 {

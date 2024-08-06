@@ -1,0 +1,9 @@
+-includeresource: @${repo;dev.samstevens.totp:totp;latest}
+Bundle-SymbolicName: idempiere.wrapped.dev.samstevens.totp.totp
+ver: 1.7.1
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+Import-Package: *;resolution:=optional
+-buildrepo: Local
+

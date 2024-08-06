@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.compiere.util.CLogger;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -47,10 +48,11 @@ import org.w3c.dom.Element;
  * File system backed implementation of {@link IArchiveStore}
  * @author juliana
  */
+@Component(name = "org.compiere.model.ArchiveFileSystem", service = IArchiveStore.class, property = "method=FileSystem")
 public class ArchiveFileSystem implements IArchiveStore {
-	
+
 	private  String ARCHIVE_FOLDER_PLACEHOLDER = "%ARCHIVE_FOLDER%";
-	
+
 	private static final CLogger log = CLogger.getCLogger(ArchiveFileSystem.class);
 
 	//temporary buffer when AD_Archive_ID=0;
@@ -139,7 +141,7 @@ public class ArchiveFileSystem implements IArchiveStore {
 			ioe.printStackTrace();
 			log.severe(ioe.getMessage());
 		}
-		
+
 		return null;
 	}
 
@@ -147,7 +149,7 @@ public class ArchiveFileSystem implements IArchiveStore {
 	 * @see org.compiere.model.IArchiveStore#save(org.compiere.model.MArchive, org.compiere.model.MStorageProvider)
 	 */
 	@Override
-	public void  save(MArchive archive, MStorageProvider prov,byte[] inflatedData) {		
+	public void  save(MArchive archive, MStorageProvider prov,byte[] inflatedData) {
 		if (inflatedData == null || inflatedData.length == 0) {
 			throw new IllegalArgumentException("InflatedData is NULL");
 		}
@@ -155,8 +157,8 @@ public class ArchiveFileSystem implements IArchiveStore {
 			//set binary data otherwise save will fail
 			archive.setByteData(new byte[]{'0'});
 			buffer = inflatedData;
-		} else {		
-			write(archive, prov, inflatedData);			
+		} else {
+			write(archive, prov, inflatedData);
 		}
 	}
 
@@ -167,11 +169,11 @@ public class ArchiveFileSystem implements IArchiveStore {
 	 * @param inflatedData archive data
 	 */
 	private void write(MArchive archive, MStorageProvider prov,
-			byte[] inflatedData) {		
+			byte[] inflatedData) {
 		BufferedOutputStream out = null;
 		try {
 			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			
+
 			String archivePathRoot = getArchivePathRoot(prov);
 			if ("".equals(archivePathRoot)) {
 				throw new IllegalArgumentException("no attachmentPath defined");
@@ -252,7 +254,7 @@ public class ArchiveFileSystem implements IArchiveStore {
 		}
 		StringBuilder msgfile = new StringBuilder().append(archivePathRoot)
 				.append(archive.getArchivePathSnippet()).append(archive.getAD_Archive_ID()).append(".pdf");
-		
+
 		File file=new File(msgfile.toString());
 		if (file !=null && file.exists()) {
 			if (!file.delete()) {

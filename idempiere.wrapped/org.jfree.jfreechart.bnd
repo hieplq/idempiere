@@ -1,0 +1,10 @@
+-includeresource: @${repo;org.jfree:jfreechart;latest}
+Bundle-SymbolicName: idempiere.wrapped.org.jfree.jfreechart
+ver: 1.0.19
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+Import-Package: *;resolution:=optional
+-buildrepo: Local
+

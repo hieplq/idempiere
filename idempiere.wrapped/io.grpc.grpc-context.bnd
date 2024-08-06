@@ -1,0 +1,9 @@
+-includeresource: @${repo;io.grpc:grpc-context;latest}
+Bundle-SymbolicName: idempiere.wrapped.io.grpc.grpc-context
+ver: 1.27.2
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+Import-Package: *;resolution:=optional
+-buildrepo: Local
+

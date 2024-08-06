@@ -25,15 +25,17 @@
 package org.adempiere.base;
 
 import org.compiere.model.MProductPricing;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link IProductPricingFactory} implementation for core. <br/>
  * Always return new {@link MProductPricing} instance.
  */
+@Component(service = IProductPricingFactory.class)
 public class DefaultProductPricingFactory implements IProductPricingFactory {
-	
+
 	/**
-	 * default constructor 
+	 * default constructor
 	 */
 	public DefaultProductPricingFactory() {
 	}

@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.compiere.util.CLogger;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -47,12 +48,13 @@ import org.w3c.dom.Element;
  * File system backed implementation of {@link IImageStore}
  * @author hengsin
  */
+@Component(service = IImageStore.class, property = "method=FileSystem")
 public class ImageFileStorageImpl implements IImageStore {
-	
+
 	private  String IMAGE_FOLDER_PLACEHOLDER = "%IMAGE_FOLDER%";
-	
+
 	private final CLogger log = CLogger.getCLogger(getClass());
-	
+
 	//temporary buffer when AD_Image_ID=0
 	private byte[] buffer = null;
 
@@ -136,7 +138,7 @@ public class ImageFileStorageImpl implements IImageStore {
 			ioe.printStackTrace();
 			log.severe(ioe.getMessage());
 		}
-		
+
 		return null;
 	}
 
@@ -147,7 +149,7 @@ public class ImageFileStorageImpl implements IImageStore {
 			delete(image, prov);
 			return;
 		}
-		
+
 		if(image.get_ID()==0){
 			//set binary data otherwise save will fail
 			image.setByteData(new byte[]{'0'});
@@ -167,8 +169,8 @@ public class ImageFileStorageImpl implements IImageStore {
 	private void write(MImage image, MStorageProvider prov, byte[] inflatedData) {
 		BufferedOutputStream out = null;
 		try {
-			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();			
-			
+			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
 			String imagePathRoot = getImagePathRoot(prov);
 			if ("".equals(imagePathRoot)) {
 				throw new IllegalArgumentException("no storage path defined");
@@ -182,7 +184,7 @@ public class ImageFileStorageImpl implements IImageStore {
 					log.warning("unable to create folder: " + destFolder.getPath());
 				}
 			}
-			
+
 			// write to path
 			msgfile = new StringBuilder().append(imagePathRoot).append(File.separator)
 					.append(image.getImageStoragePath()).append(image.get_ID());
@@ -250,7 +252,7 @@ public class ImageFileStorageImpl implements IImageStore {
 		}
 		StringBuilder msgfile = new StringBuilder().append(imagePathRoot)
 				.append(image.getImageStoragePath()).append(image.getAD_Image_ID());
-		
+
 		File file=new File(msgfile.toString());
 		if (file !=null && file.exists()) {
 			if (!file.delete()) {
@@ -271,7 +273,7 @@ public class ImageFileStorageImpl implements IImageStore {
 		if (buffer != null && buffer.length > 0) {
 			write(image, prov, buffer);
 			buffer = null;
-		}		
+		}
 	}
 
 }

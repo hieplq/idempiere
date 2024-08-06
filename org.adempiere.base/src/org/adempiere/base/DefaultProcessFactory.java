@@ -18,16 +18,18 @@ import java.util.logging.Level;
 import org.adempiere.base.equinox.EquinoxExtensionLocator;
 import org.compiere.process.ProcessCall;
 import org.compiere.util.CLogger;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link IProcessFactory} implementation for core.<br/>
  * Load {@link ProcessCall} instance from plugin.xml (org.adempiere.base.Process extension point) or class path.
  * @author hengsin
  */
+@Component(service = IProcessFactory.class, property = "service.ranking:Integer=-2")
 public class DefaultProcessFactory implements IProcessFactory {
 
 	private final static CLogger log = CLogger.getCLogger(DefaultProcessFactory.class);
-	
+
 	/**
 	 * default constructor
 	 */

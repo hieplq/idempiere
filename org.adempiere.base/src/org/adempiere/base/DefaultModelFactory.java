@@ -26,6 +26,7 @@ import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default model factory implementation base on legacy code in {@link MTable}.
@@ -33,6 +34,7 @@ import org.compiere.util.Util;
  * @author hengsin
  * @deprecated
  */
+@Component(service = IModelFactory.class, property = "service.ranking:Integer=-1")
 public class DefaultModelFactory extends AbstractModelFactory {
 
 	private CCache<String,Class<?>> s_classCache = new CCache<String,Class<?>>(null, "PO_Class", 100, 120, false, 2000);

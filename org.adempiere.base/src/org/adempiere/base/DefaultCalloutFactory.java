@@ -19,16 +19,18 @@ import java.util.logging.Level;
 import org.adempiere.base.equinox.EquinoxExtensionLocator;
 import org.compiere.model.Callout;
 import org.compiere.util.CLogger;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link ICalloutFactory} implementation for core.<br/>
  * Load {@link Callout} instance from plugin.xml (org.compiere.model.Callout extension point) or class path.
  * @author a42niem
  */
+@Component(service = ICalloutFactory.class)
 public class DefaultCalloutFactory implements ICalloutFactory {
 
 	private final static CLogger log = CLogger.getCLogger(DefaultCalloutFactory.class);
-	
+
 	/**
 	 * default constructor
 	 */
@@ -41,7 +43,7 @@ public class DefaultCalloutFactory implements ICalloutFactory {
 	@Override
 	public Callout getCallout(String className, String methodName) {
 		Callout callout = null;
-		callout = EquinoxExtensionLocator.instance().locate(Callout.class, Callout.class.getName(), className, (ServiceQuery)null).getExtension();		
+		callout = EquinoxExtensionLocator.instance().locate(Callout.class, Callout.class.getName(), className, (ServiceQuery)null).getExtension();
 		if (callout == null) {
 			//Get Class
 			Class<?> calloutClass = null;

@@ -18,12 +18,14 @@ import java.util.logging.Level;
 import org.adempiere.base.equinox.EquinoxExtensionLocator;
 import org.adempiere.model.ITaxProvider;
 import org.compiere.util.CLogger;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link ITaxProviderFactory} implementation for core.<br/>
  * Load {@link ITaxProvider} instance from plugin.xml (org.adempiere.model.ITaxProvider extension point) or class path.
  * @author Elaine
  */
+@Component(service = ITaxProviderFactory.class)
 public class DefaultTaxProviderFactory implements ITaxProviderFactory {
 
 	private final static CLogger s_log = CLogger.getCLogger(DefaultTaxProviderFactory.class);
@@ -31,32 +33,32 @@ public class DefaultTaxProviderFactory implements ITaxProviderFactory {
 	@Override
 	public ITaxProvider newTaxProviderInstance(String className) {
 		ITaxProvider myCalculator = EquinoxExtensionLocator.instance().locate(ITaxProvider.class, className, null).getExtension();
-		if (myCalculator == null) 
+		if (myCalculator == null)
 		{
 			//fall back to dynamic java class loading
-			try 
+			try
 			{
 				Class<?> ppClass = Class.forName(className);
 				if (ppClass != null)
 					myCalculator = (ITaxProvider) ppClass.getDeclaredConstructor().newInstance();
-			} 
-			catch (Error e1) 
+			}
+			catch (Error e1)
 			{   //  NoClassDefFound
 				s_log.log(Level.SEVERE, className + " - Error=" + e1.getMessage());
 				return null;
-			} 
-			catch (Exception e2) 
+			}
+			catch (Exception e2)
 			{
 				s_log.log(Level.SEVERE, className, e2);
 				return null;
 			}
 		}
-		if (myCalculator == null) 
+		if (myCalculator == null)
 		{
 			s_log.log(Level.SEVERE, "Not found in extension registry and classpath");
 			return null;
 		}
-		
+
 		return myCalculator;
 	}
 }

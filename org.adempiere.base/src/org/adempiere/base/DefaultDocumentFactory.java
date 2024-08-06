@@ -23,6 +23,7 @@ import org.compiere.model.MTable;
 import org.compiere.util.AdempiereUserError;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link IDocFactory} implementation from core.<br/>
@@ -30,6 +31,7 @@ import org.compiere.util.Env;
  * @author hengsin
  *
  */
+@Component(service = IDocFactory.class, property = "gaap=*")
 public class DefaultDocumentFactory implements IDocFactory {
 
 	private final static CLogger s_log = CLogger.getCLogger(DefaultDocumentFactory.class);

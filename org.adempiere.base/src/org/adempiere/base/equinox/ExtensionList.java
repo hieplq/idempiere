@@ -26,7 +26,7 @@ import java.util.TreeMap;
 import org.adempiere.base.ServiceQuery;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.RegistryFactory;
 
 /**
  * This List looks up services as extensions in equinox.<br/>
@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Platform;
 public class ExtensionList<T> implements Iterable<T>{
 
 	/**
-	 * Iterator implementation for Equinox extension 
+	 * Iterator implementation for Equinox extension
 	 * @param <E>
 	 */
 	public class ExtensionIterator<E extends T> implements Iterator<T> {
@@ -129,14 +129,14 @@ public class ExtensionList<T> implements Iterable<T>{
 	public ExtensionList(Class<T> clazz, String extensionPointId) {
 		if (extensionPointId == null)
 			extensionPointId = clazz.getName();
-		
+
 		try {
-			elements = Platform.getExtensionRegistry().getConfigurationElementsFor(extensionPointId);
+			elements = RegistryFactory.getRegistry().getConfigurationElementsFor(extensionPointId);
 			if (elements != null && elements.length > 1) {
 				elements = sort(elements);
 			}
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
+		} catch (Throwable ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -155,7 +155,7 @@ public class ExtensionList<T> implements Iterable<T>{
 			}
 		}
 	}
-	
+
 	/**
 	 * Sort by extension priority (if defined in extensions-priorty.properties).
 	 * @param elementArray
@@ -198,14 +198,14 @@ public class ExtensionList<T> implements Iterable<T>{
 	}
 
 	/**
-	 * @return Iterator 
+	 * @return Iterator
 	 */
 	public Iterator<T> iterator() {
 		return new ExtensionIterator<T>();
 	}
 
 	/**
-	 * add filter for discovery of extensions 
+	 * add filter for discovery of extensions
 	 * @param attribute
 	 * @param value
 	 */

@@ -40,16 +40,18 @@ import org.compiere.util.EMail;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 
 /**
- * Email based Multi-factor authentication implementation. 
+ * Email based Multi-factor authentication implementation.
  */
+@Component(service = IMFAMechanism.class, property = "method=EMail")
 public class EMailMechanism implements IMFAMechanism {
 
 	/**
 	 * Implement the registration mechanism for EMail Generate random code and
 	 * return in the array
-	 * 
+	 *
 	 * @param ctx
 	 * @param method
 	 * @param prm     email
@@ -122,7 +124,7 @@ public class EMailMechanism implements IMFAMechanism {
 
 	/**
 	 * Generates a numeric random string of the specified length
-	 * 
+	 *
 	 * @param len
 	 * @return random String
 	 */
@@ -138,7 +140,7 @@ public class EMailMechanism implements IMFAMechanism {
 
 	/**
 	 * Complete/Validate a previous EMail registration
-	 * 
+	 *
 	 * @param ctx
 	 * @param reg                 The registration object
 	 * @param p_MFAValidationCode The code to be validated

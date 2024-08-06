@@ -1,0 +1,9 @@
+-includeresource: @${repo;com.oracle.database.jdbc:ojdbc10;latest}
+Bundle-SymbolicName: idempiere.wrapped.com.oracle.database.jdbc.ojdbc10
+ver: 19.21.0.0
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version="${ver}";-noimport:=true
+Import-Package: *;resolution:=optional
+-buildrepo: Local
+

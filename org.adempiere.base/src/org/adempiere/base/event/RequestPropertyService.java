@@ -30,18 +30,24 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * Load request property from requesteventhandler.properties and update {@link Configuration}
  * through {@link ConfigurationAdmin} service.
  * @author Elaine
  */
+@Component(reference = {@Reference(name="ConfigurationAdmin", bind="bindConfigurationAdmin", unbind="unbindConfigurationAdmin", service = ConfigurationAdmin.class,
+	cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)})
 public class RequestPropertyService {
 
 	private static final String REQUESTEVENTHANDLER_PROPERTIES = "requesteventhandler.properties";
-	
+
 	private static final CLogger logger = CLogger.getCLogger(RequestPropertyService.class);
-	
+
 	/**
 	 * Default constructor
 	 */
@@ -54,14 +60,14 @@ public class RequestPropertyService {
 	public void bindConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
 		readProperties(configurationAdmin);
 	}
-	
+
 	/**
 	 * @param configurationAdmin
 	 */
 	public void unbindConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
-		
+
 	}
-	
+
 	/**
 	 * Load request property from requesteventhandler.properties
 	 * @param service
@@ -75,7 +81,7 @@ public class RequestPropertyService {
 				is = new FileInputStream(file);
 				p.load(is);
 				String ignoreRequesTypes = p.getProperty(RequestEventHandler.IGNORE_REQUEST_TYPES);
-				
+
 				if (!Util.isEmpty(ignoreRequesTypes)) {
 					Configuration configuration = service.getConfiguration(RequestEventHandler.class.getName());
 					if (configuration.getProperties() == null) {
@@ -103,6 +109,6 @@ public class RequestPropertyService {
 					} catch (Exception ex) {}
 				}
 			}
-		}		
+		}
 	}
 }

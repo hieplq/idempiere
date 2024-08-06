@@ -1,0 +1,10 @@
+-includeresource: @${repo;org.apache.poi:poi-ooxml;latest}
+Bundle-SymbolicName: idempiere.wrapped.org.apache.poi.poi-ooxml
+ver: 5.2.2
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+Import-Package: com.microsoft.schemas.*;resolution:=optional,org.openxmlformats.schemas.*;resolution:=optional,*
+-buildrepo: Local
+

@@ -1,0 +1,10 @@
+-includeresource: @${repo;com.zaxxer:SparseBitSet;latest}
+Bundle-SymbolicName: idempiere.wrapped.com.zaxxer.SparseBitSet
+ver: 1.2
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+# Import-Package: *
+-buildrepo: Local
+

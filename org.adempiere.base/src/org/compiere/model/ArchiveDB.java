@@ -22,11 +22,13 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.compiere.util.CLogger;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * DB backed implementation of {@link IArchiveStore}
  * @author juliana
  */
+@Component(service = IArchiveStore.class, property = "method=DB", name = "org.compiere.model.ArchiveDB")
 public class ArchiveDB implements IArchiveStore {
 
 
@@ -108,7 +110,7 @@ public class ArchiveDB implements IArchiveStore {
 	}
 
 	@Override
-	public boolean deleteArchive(MArchive archive, MStorageProvider prov) {		
+	public boolean deleteArchive(MArchive archive, MStorageProvider prov) {
 		return true;
 	}
 
@@ -118,7 +120,7 @@ public class ArchiveDB implements IArchiveStore {
 	}
 
 	@Override
-	public void flush(MArchive archive, MStorageProvider prov) {		
+	public void flush(MArchive archive, MStorageProvider prov) {
 	}
 
 }

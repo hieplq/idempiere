@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.adempiere.db.postgresql.DB_PostgreSQL;
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.exceptions.DBException;
-import org.compiere.db.DB_PostgreSQL;
 import org.compiere.db.partition.ITablePartitionService;
 import org.compiere.db.partition.RangePartitionColumn;
 import org.compiere.db.partition.RangePartitionInterval;

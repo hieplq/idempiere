@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  *	
  *	
  *  @author Jorg Janke
- *  @version $Id: ServerStatus.java,v 1.2 2006/07/30 00:53:33 jjanke Exp $
+ *  @version $Id$
  */
 public class ServerStatus extends HttpServlet
 {

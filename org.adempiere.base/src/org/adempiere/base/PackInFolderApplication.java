@@ -24,7 +24,6 @@
  **********************************************************************/
 package org.adempiere.base;
 
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -37,20 +36,14 @@ import org.compiere.process.ProcessInfo;
 import org.compiere.process.ProcessInfoUtil;
 import org.compiere.util.CLogMgt;
 import org.compiere.util.Env;
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
 
 /**
- * Eclipse application that would launch the org.adempiere.pipo2.PackInFolder process to import 2pack archives inside a predefine folder. 
+ * Eclipse application that would launch the org.adempiere.pipo2.PackInFolder process to import 2pack archives inside a predefine folder.
  * @author Carlos Ruiz (globalqss)
  */
-public class PackInFolderApplication implements IApplication {
+public class PackInFolderApplication {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
-	@Override
-	public Object start(IApplicationContext context) throws Exception {
+	public int start(String commandlineArgs[]) throws Exception {
 		Adempiere.startup(false);
 		String logLevel = SystemProperties.getLogLevel();
 		if (logLevel == null)
@@ -65,8 +58,6 @@ public class PackInFolderApplication implements IApplication {
 		case "FINEST": 	CLogMgt.setLevel(Level.FINEST); break;
 		default:		CLogMgt.setLevel(Level.INFO); break;
 		}
-		Map<?, ?> args = context.getArguments();
-		String commandlineArgs[] = (String[]) args.get("application.args");
 		if (commandlineArgs.length == 1) {
 			Properties ctx = Env.getCtx();
 			Env.setContext(ctx, "org.adempiere.base.PackInFolderApplication", "Y");
@@ -87,22 +78,13 @@ public class PackInFolderApplication implements IApplication {
 					.append("\n Logs=\n").append(pi.getLogInfo(false).replaceAll("<br>", "\n"));
 			System.out.println(msgout.toString());
 			if (!success)
-				return Integer.valueOf(1);
+				return 1;
 		} else {
 			System.out.println("Apply PackIn from Folder usage:");
 			System.out.println("RUN_ApplyPackInFromFolder.sh folder");
-			return Integer.valueOf(1);
+			return 1;
 		}
-		
-		
-		return IApplication.EXIT_OK;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
-	@Override
-	public void stop() {
+		return 0;
 	}
-
 }

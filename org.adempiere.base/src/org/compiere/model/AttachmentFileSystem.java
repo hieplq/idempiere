@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.util.CLogger;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -47,10 +48,11 @@ import org.xml.sax.SAXException;
  * File system backed implementation of {@link IAttachmentStore}
  * @author juliana
  */
+@Component(service = IAttachmentStore.class, property = "method=FileSystem")
 public class AttachmentFileSystem implements IAttachmentStore {
 
 	private final CLogger log = CLogger.getCLogger(getClass());
-	
+
 	@Override
 	public boolean save(MAttachment attach,MStorageProvider prov) {
 		String attachmentPathRoot = getAttachmentPathRoot(prov);
@@ -132,7 +134,7 @@ public class AttachmentFileSystem implements IAttachmentStore {
 					} catch (IOException e) {
 						e.printStackTrace();
 						log.severe("unable to copy file " + entryFile.getAbsolutePath() + " to "
-								+ attachmentPathRoot + File.separator + 
+								+ attachmentPathRoot + File.separator +
 								getAttachmentPathSnippet(attach) + File.separator + entryFile.getName());
 					} finally {
 						if (fis != null) {
@@ -177,7 +179,7 @@ public class AttachmentFileSystem implements IAttachmentStore {
 		return false;
 
 	}
-	
+
 	@Override
 	public boolean loadLOBData(MAttachment attach,MStorageProvider prov) {
 		String attachmentPathRoot = getAttachmentPathRoot(prov);
@@ -274,7 +276,7 @@ public class AttachmentFileSystem implements IAttachmentStore {
 	 * @return path snippet
 	 */
 	private String getAttachmentPathSnippet(MAttachment attach){
-		
+
 		StringBuilder msgreturn = new StringBuilder().append(attach.getAD_Client_ID()).append(File.separator)
 				.append(attach.getAD_Org_ID()).append(File.separator)
 				.append(attach.getAD_Table_ID()).append(File.separator);

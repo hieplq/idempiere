@@ -1,0 +1,10 @@
+-includeresource: @${repo;io.opencensus:opencensus-contrib-http-util;latest}
+Bundle-SymbolicName: idempiere.wrapped.io.opencensus.opencensus-contrib-http-util
+ver: 0.28.0
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+# Import-Package: *
+-buildrepo: Local
+

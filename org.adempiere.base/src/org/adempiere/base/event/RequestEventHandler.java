@@ -43,6 +43,11 @@ import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.event.Event;
 
 /**
@@ -50,38 +55,42 @@ import org.osgi.service.event.Event;
  * @author Nur Yasmin
  *
  */
+@Component(service = {ManagedService.class, RequestEventHandler.class}, configurationPolicy = ConfigurationPolicy.OPTIONAL,
+		property = "service.pid=org.adempiere.base.event.RequestEventHandler",
+		reference = {@Reference(name="IEventManager", service = IEventManager.class, bind="bindEventManager",
+			unbind = "unbindEventManager", cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)})
 public class RequestEventHandler extends AbstractEventHandler implements ManagedService
 {
 	private static final CLogger s_log = CLogger.getCLogger (RequestEventHandler.class);
-	
+
 	@Override
-	protected void doHandleEvent(Event event) 
+	protected void doHandleEvent(Event event)
 	{
 		String topic = event.getTopic();
-		if (topic.equals(IEventTopics.REQUEST_SEND_EMAIL)) 
+		if (topic.equals(IEventTopics.REQUEST_SEND_EMAIL))
 		{
 			RequestSendEMailEventData eventData = (RequestSendEMailEventData) event.getProperty(EventManager.EVENT_DATA);
 			if (!eventData.getClient().sendEMail(eventData.getFrom(), eventData.getTo(), eventData.getSubject(), eventData.getMessage(), eventData.getAttachment()))
 			{
 				int AD_Message_ID = MESSAGE_REQUESTUPDATE;
 				MNote note = new MNote(Env.getCtx(), AD_Message_ID, eventData.getTo().getAD_User_ID(),
-						X_R_Request.Table_ID, eventData.getRequestID(), 
+						X_R_Request.Table_ID, eventData.getRequestID(),
 						eventData.getSubject(), eventData.getMessage(), null);
 				note.saveEx();
 			}
 		}
 		else if (topic.equals(IEventTopics.PO_BEFORE_NEW) || topic.equals(IEventTopics.PO_BEFORE_CHANGE)
-				|| topic.equals(IEventTopics.PO_AFTER_NEW) || topic.equals(IEventTopics.PO_AFTER_CHANGE)) 
+				|| topic.equals(IEventTopics.PO_AFTER_NEW) || topic.equals(IEventTopics.PO_AFTER_CHANGE))
 		{
 			PO po = getPO(event);
 			if (po.get_TableName().equals(I_R_Request.Table_Name))
 			{
 				MRequest r = (MRequest) po;
-				
+
 				MRequestType rt = r.getRequestType();
 				if (ignoreRequestTypes.contains(rt.getName()))
 					return;
-				
+
 				if (topic.equals(IEventTopics.PO_BEFORE_NEW) || topic.equals(IEventTopics.PO_BEFORE_CHANGE))
 					beforeSaveRequest(r, topic.equals(IEventTopics.PO_BEFORE_NEW));
 				else if (topic.equals(IEventTopics.PO_AFTER_NEW) || topic.equals(IEventTopics.PO_AFTER_CHANGE))
@@ -91,7 +100,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 	}
 
 	@Override
-	protected void initialize() 
+	protected void initialize()
 	{
 		registerEvent(IEventTopics.REQUEST_SEND_EMAIL);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, I_R_Request.Table_Name);
@@ -99,7 +108,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 		registerTableEvent(IEventTopics.PO_AFTER_NEW, I_R_Request.Table_Name);
 		registerTableEvent(IEventTopics.PO_AFTER_CHANGE, I_R_Request.Table_Name);
 	}
-	
+
 	/**
 	 * Handle before update of R_Request record
 	 * @param r
@@ -111,7 +120,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 		//	New
 		if (newRecord)
 			return null;
-		
+
 		//	Change Log
 		r.setIsChanged(false);
 		ArrayList<String> sendInfo = new ArrayList<String>();
@@ -142,8 +151,8 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 			if (oldSalesRep_ID != 0)
 			{
 				//  RequestActionTransfer - Request {0} was transferred by {1} from {2} to {3}
-				Object[] args = new Object[] {r.getDocumentNo(), 
-					MUser.getNameOfUser(AD_User_ID), 
+				Object[] args = new Object[] {r.getDocumentNo(),
+					MUser.getNameOfUser(AD_User_ID),
 					MUser.getNameOfUser(oldSalesRep_ID),
 					MUser.getNameOfUser(r.getSalesRep_ID())
 					};
@@ -187,7 +196,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 		//
 		if (r.is_Changed())
 			ra.saveEx();
-		
+
 		//	Current Info
 		MRequestUpdate update = new MRequestUpdate(r);
 		if (update.isNewInfo())
@@ -202,7 +211,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 			// this is, when changed the sales rep (solved in sendNotices)
 			// or when changed the request category or group or contact (unsolved - the old ones are notified)
 			sendNotices(r, sendInfo);
-			
+
 			//	Update
 			r.setDateLastAction(r.getUpdated());
 			r.setLastResult(r.getResult());
@@ -214,10 +223,10 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 			r.setR_MailText_ID(0);
 			r.setResult(null);
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Handle after save of R_Request record
 	 * @param r
@@ -229,10 +238,10 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 		//	Initial Mail
 		if (newRecord)
 			sendNotices(r, new ArrayList<String>());
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * 	Process changes
 	 *	@param ra request action
@@ -260,7 +269,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 		}
 		return false;
 	}	//	checkChange
-	
+
 	/**
 	 * 	Send Update EMail/Notices
 	 * 	@param list list of changes
@@ -268,7 +277,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 	private void sendNotices(MRequest r, ArrayList<String> list)
 	{
 		//	Subject
-		String subject = Msg.translate(r.getCtx(), "R_Request_ID") 
+		String subject = Msg.translate(r.getCtx(), "R_Request_ID")
 			+ " " + Msg.getMsg(r.getCtx(), "Updated") + ": " + r.getDocumentNo();
 		//	Message
 		StringBuilder message = new StringBuilder();
@@ -278,7 +287,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 		if (from != null)
 			message.append(Msg.translate(r.getCtx(), "UpdatedBy")).append(": ")
 				.append(from.getName());
-		//		LastAction/Created: ...	
+		//		LastAction/Created: ...
 		if (r.getDateLastAction() != null)
 			message.append("\n").append(Msg.translate(r.getCtx(), "DateLastAction"))
 				.append(": ").append(r.getDateLastAction());
@@ -304,7 +313,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 		message.append(getMailTrailer(r, null));
 		File pdf = r.createPDF();
 		if (s_log.isLoggable(Level.FINER)) s_log.finer(message.toString());
-		
+
 		//	Prepare sending Notice/Mail
 		MClient client = MClient.get(r.getCtx());
 		//	Reset from if external
@@ -338,13 +347,13 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 				int AD_Role_ID = rs.getInt(5);
 				if (rs.wasNull())
 					AD_Role_ID = -1;
-				
+
 				//	No confidential to externals
-				if (AD_Role_ID == -1 
+				if (AD_Role_ID == -1
 					&& (r.getConfidentialTypeEntry().equals(MRequest.CONFIDENTIALTYPE_Internal)
 						|| r.getConfidentialTypeEntry().equals(MRequest.CONFIDENTIALTYPE_PrivateInformation)))
 					continue;
-				
+
 				if (X_AD_User.NOTIFICATIONTYPE_None.equals(NotificationType))
 				{
 					if (s_log.isLoggable(Level.CONFIG)) s_log.config("Opt out: " + Name);
@@ -390,7 +399,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 				{
 					int AD_Message_ID = MESSAGE_REQUESTUPDATE;
 					MNote note = new MNote(r.getCtx(), AD_Message_ID, AD_User_ID,
-						X_R_Request.Table_ID, r.getR_Request_ID(), 
+						X_R_Request.Table_ID, r.getR_Request_ID(),
 						subject, message.toString(), r.get_TrxName());
 					note.saveEx();
 				}
@@ -406,7 +415,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 			rs = null; pstmt = null;
 		}
 	}	//	sendNotice
-	
+
 	/**
 	 * 	Get mail trailer text
 	 * 	@param serverAddress server address
@@ -427,7 +436,7 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 
 	public static final String IGNORE_REQUEST_TYPES = "ignoreRequestTypes";
 	private static ArrayList<String> ignoreRequestTypes = new ArrayList<String>();
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void updated(Dictionary properties) throws ConfigurationException {
@@ -435,11 +444,16 @@ public class RequestEventHandler extends AbstractEventHandler implements Managed
 			String p = (String) properties.get(IGNORE_REQUEST_TYPES);
 			if (!Util.isEmpty(p)) {
 				ignoreRequestTypes.clear();
-				
+
 				StringTokenizer st = new StringTokenizer(p, ";");
 				while (st.hasMoreTokens())
 					ignoreRequestTypes.add(st.nextToken().trim());
 			}
 		}
+	}
+
+	@Override
+	public void unbindEventManager(IEventManager eventManager) {
+		super.unbindEventManager(eventManager);
 	}
 }

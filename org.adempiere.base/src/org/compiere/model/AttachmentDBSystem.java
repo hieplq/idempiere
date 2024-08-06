@@ -24,12 +24,14 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.compiere.util.CLogger;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * DB backed implementation of {@link IAttachmentStore}
  */
-public class AttachmentDBSystem implements IAttachmentStore 
-{	
+@Component(service = IAttachmentStore.class, property = "method=DB")
+public class AttachmentDBSystem implements IAttachmentStore
+{
 	/** Indicator for zip data  */
 	public static final String 	ZIP = "zip";
 	private static final CLogger log = CLogger.getCLogger(AttachmentDBSystem.class);
@@ -72,7 +74,7 @@ public class AttachmentDBSystem implements IAttachmentStore
 					}
 					//
 					byte[] dataEntry = out.toByteArray();
-					if (log.isLoggable(Level.FINE)) log.fine(name 
+					if (log.isLoggable(Level.FINE)) log.fine(name
 						+ " - size=" + dataEntry.length + " - zip="
 						+ entry.getCompressedSize() + "(" + entry.getSize() + ") "
 						+ (entry.getCompressedSize()*100/entry.getSize())+ "%");
@@ -97,7 +99,7 @@ public class AttachmentDBSystem implements IAttachmentStore
 			attach.setBinaryData(null);
 			return true;
 		}
-		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ZipOutputStream zip = new ZipOutputStream(out);
 		zip.setMethod(ZipOutputStream.DEFLATED);
 		zip.setLevel(Deflater.BEST_COMPRESSION);
@@ -145,5 +147,5 @@ public class AttachmentDBSystem implements IAttachmentStore
 		attach.m_items.remove(index);
 		return true;
 	}
-	
+
 }

@@ -20,15 +20,17 @@ import java.util.Properties;
 import org.adempiere.server.IServerFactory;
 import org.compiere.model.MScheduler;
 import org.compiere.server.Scheduler;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author hengsin
  *
  */
+@Component(immediate = true, service = IServerFactory.class)
 public class DefaultSchedulerFactory implements IServerFactory<Scheduler, MScheduler> {
 
 	/**
-	 * default constructor 
+	 * default constructor
 	 */
 	public DefaultSchedulerFactory() {
 	}

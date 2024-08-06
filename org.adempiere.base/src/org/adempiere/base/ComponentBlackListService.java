@@ -31,6 +31,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentConstants;
 import org.osgi.service.component.runtime.ServiceComponentRuntime;
 import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 /**
  * Service listener to block the loading of OSGi component. <br/>
@@ -42,24 +44,35 @@ public class ComponentBlackListService implements ServiceListener {
 
 	private ServiceComponentRuntime scrService = null;
 	private List<String> blackListComponentNames = null;
-	
+	private BundleContext bundleContext;
+	private ServiceTracker<ServiceComponentRuntime, ServiceComponentRuntime> serviceTracker;
+
 	protected ComponentBlackListService(BundleContext context) {
+		this.bundleContext = context;
 		ServiceReference<ServiceComponentRuntime> ref = context.getServiceReference(ServiceComponentRuntime.class);
-		scrService = context.getService(ref);
+		scrService = ref != null ? context.getService(ref) : null;
 		blackListComponentNames = new ArrayList<String>();
 		retrieveBlacklistCandidates();
 		if (!blackListComponentNames.isEmpty()) {
 			disableComponents();
 		}
 		context.addServiceListener(this);
+
+		serviceTracker = new ServiceTracker<ServiceComponentRuntime, ServiceComponentRuntime>(bundleContext, ServiceComponentRuntime.class,
+				new Customizer());
+		serviceTracker.open();
 	}
-	
+
 	public void stop(BundleContext context) {
 		scrService = null;
 		blackListComponentNames = null;
-		context.removeServiceListener(this);		
+		context.removeServiceListener(this);
+		if (serviceTracker != null) {
+			serviceTracker.close();
+			serviceTracker = null;
+		}
 	}
-	
+
 	private void retrieveBlacklistCandidates() {
 		String path = Ini.getAdempiereHome();
 		File file = new File(path, "components.blacklist");
@@ -87,19 +100,21 @@ public class ComponentBlackListService implements ServiceListener {
 				}
 			}
 		}
-		
+
 	}
 
 	private void disableComponents()
 	{
-		Collection<ComponentDescriptionDTO> comps = scrService.getComponentDescriptionDTOs();
-		for (ComponentDescriptionDTO comp : comps) {
-			if (blackListComponentNames.contains(comp.name)) {
-				scrService.disableComponent(comp);
+		if (scrService != null) {
+			Collection<ComponentDescriptionDTO> comps = scrService.getComponentDescriptionDTOs();
+			for (ComponentDescriptionDTO comp : comps) {
+				if (blackListComponentNames.contains(comp.name)) {
+					scrService.disableComponent(comp);
+				}
 			}
 		}
 	}
-	
+
 	private void disableComponent(String componentName)
 	{
 		Collection<ComponentDescriptionDTO> comps = scrService.getComponentDescriptionDTOs();
@@ -110,7 +125,7 @@ public class ComponentBlackListService implements ServiceListener {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.ServiceListener#serviceChanged(org.osgi.framework.ServiceEvent)
 	 */
@@ -129,4 +144,27 @@ public class ComponentBlackListService implements ServiceListener {
 		}
 	}
 
+	private class Customizer implements ServiceTrackerCustomizer<ServiceComponentRuntime, ServiceComponentRuntime> {
+		@Override
+		public ServiceComponentRuntime addingService(ServiceReference<ServiceComponentRuntime> reference) {
+			scrService = bundleContext.getService(reference);
+			if (!blackListComponentNames.isEmpty()) {
+				disableComponents();
+			}
+			return scrService;
+		}
+
+		@Override
+		public void modifiedService(ServiceReference<ServiceComponentRuntime> reference, ServiceComponentRuntime service) {
+			if (scrService == null || scrService != service) {
+				scrService = service;
+			}
+		}
+
+		@Override
+		public void removedService(ServiceReference<ServiceComponentRuntime> reference, ServiceComponentRuntime service) {
+			if (scrService != null && scrService == service)
+				scrService = null;
+		}
+	}
 }

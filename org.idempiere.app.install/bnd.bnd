@@ -1,0 +1,8 @@
+-buildpath: \
+	org.adempiere.base;version=latest,\
+	org.adempiere.install;version=latest,\
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component;version='1.5',\
+	org.osgi.service.component.annotations;version='1.5',\
+	org.apache.ant:ant;version='1.10'
+Bundle-Version: 12.0.0

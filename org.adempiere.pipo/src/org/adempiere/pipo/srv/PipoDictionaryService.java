@@ -25,7 +25,9 @@ import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Trx;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Component;
 
+@Component(immediate = true, service = IDictionaryService.class)
 public class PipoDictionaryService implements IDictionaryService {
 
 	private static final CLogger logger = CLogger.getCLogger(PipoDictionaryService.class.getName());
@@ -56,11 +58,11 @@ public class PipoDictionaryService implements IDictionaryService {
 			Trx.get(trxName, true).setDisplayName(getClass().getName()+"_merge");
 			packIn = new PackIn();
 			//external files must not start with "2Pack" prefix in order to work correctly
-			if ("org.adempiere.pipo".equals(symbolicName)  &&  !packageFile.getName().startsWith("2Pack"))  
+			if ("org.adempiere.pipo".equals(symbolicName)  &&  !packageFile.getName().startsWith("2Pack"))
 				packIn.setPackageName(packageFile.getName());
 			else
 				packIn.setPackageName(symbolicName);
-			
+
 			if (Env.getCtx().getProperty(Env.AD_CLIENT_ID) == null) {
 				Env.getCtx().put(Env.AD_CLIENT_ID, 0);
 			}
@@ -74,7 +76,7 @@ public class PipoDictionaryService implements IDictionaryService {
 					int extraInfoIndex = fileName.indexOf("_", versionSeparatorPos + 6);
 					if (extraInfoIndex > 0)
 						dotPos=extraInfoIndex;
-					
+
 					String version = fileName.substring(versionSeparatorPos+"2Pack_".length(), dotPos);
 					if (version.split("[.]").length == 3) {
 						packageVersion = version;
@@ -84,7 +86,7 @@ public class PipoDictionaryService implements IDictionaryService {
 			//no version string from file name suffix, get it from bundle header
 			if (packageVersion == null && context != null)
 				packageVersion = (String) context.getBundle().getHeaders().get("Bundle-Version");
-			
+
 			packIn.setPackageVersion(packageVersion);
 			packIn.setUpdateDictionary(false);
 			packIn.getNotifier().setFileName(packageFile.getName());
@@ -98,19 +100,19 @@ public class PipoDictionaryService implements IDictionaryService {
 
 			String dict_file = targetDir + File.separator + parentDir + File.separator
 					+ "dict" + File.separator + "PackOut.xml";
-			
+
 			packIn.setPackageDirectory(targetDir + File.separator + parentDir);
 
 			if (logger.isLoggable(Level.INFO)) logger.info("dict file->" + dict_file);
 			adPackageImp.setName(packIn.getPackageName());
 			adPackageImp.setAD_Package_Source_Type("File");
-			packIn.setAD_Package_Imp_Proc(adPackageImp); 
+			packIn.setAD_Package_Imp_Proc(adPackageImp);
 
 			// call XML Handler
 			String msg = packIn.importXML(dict_file, Env.getCtx(), trxName);
 			adPackageImp.setDateProcessed(new Timestamp(System.currentTimeMillis()));
 			adPackageImp.setP_Msg(msg);
-			
+
 			Trx.get(trxName, false).commit(true);
 			if (logger.isLoggable(Level.INFO)) logger.info("commit " + trxName);
 		} catch (Exception e) {
@@ -124,7 +126,7 @@ public class PipoDictionaryService implements IDictionaryService {
 			try {
 				Trx.get(trxName, false).close();
 			} catch (Exception e) {}
-			
+
 			if (adPackageImp != null)
 				adPackageImp.save(); // ignoring exceptions
 

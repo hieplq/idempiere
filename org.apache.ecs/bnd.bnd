@@ -1,0 +1,8 @@
+-buildpath: org.eclipse.osgi;version='3.18'
+Export-Package: \
+	org.apache.ecs,\
+	org.apache.ecs.filter,\
+	org.apache.ecs.storage,\
+	org.apache.ecs.xhtml,\
+	org.apache.ecs.xml
+bin: target/classes

@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.idempiere.distributed.ICacheService;
+import org.osgi.service.component.annotations.Component;
 
 import com.hazelcast.map.IMap;
 
@@ -26,6 +27,7 @@ import com.hazelcast.map.IMap;
  * @author hengsin
  *
  */
+@Component(immediate = true, service = ICacheService.class)
 public class CacheServiceImpl implements ICacheService {
 
 	/**

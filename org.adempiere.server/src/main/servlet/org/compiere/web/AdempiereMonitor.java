@@ -108,7 +108,7 @@ import org.idempiere.server.cluster.callable.SetTraceLevelCallable;
  *	Adempiere Server Monitor
  *	
  *  @author Jorg Janke
- *  @version $Id: AdempiereMonitor.java,v 1.3 2006/07/30 00:53:33 jjanke Exp $
+ *  @version $Id$
  */
 public class AdempiereMonitor extends HttpServlet
 {

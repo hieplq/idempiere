@@ -23,8 +23,6 @@ import org.compiere.Adempiere;
 import org.compiere.util.CLogMgt;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
 
 /**
  *	Sign Database Build
@@ -32,32 +30,28 @@ import org.eclipse.equinox.app.IApplicationContext;
  *
  *  @author Carlos Ruiz
  */
-public class SignDatabaseBuildApplication implements IApplication {
+public class SignDatabaseBuildApplication {
 
 	private static final CLogger	s_log	= CLogger.getCLogger (SignDatabaseBuildApplication.class);
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
-	@Override
-	public Object start(IApplicationContext context) throws Exception {
+
+	public void start() throws Exception {
 		Adempiere.startupEnvironment(false);
 		CLogMgt.setLevel(Level.FINE);
 		s_log.info("Sign Database Build");
 		s_log.info("-------------------");
-		
+
 		if (! DB.isConnected()) {
 			s_log.info("No DB Connection");
 			System.exit(1);
 		}
-		
+
 		String version = Adempiere.getVersion();
 		s_log.info("Version = " + version);
 		System.out.println("Version = " + version);
-		
+
 		PreparedStatement updateStmt = null;
 		try {
-			
+
 			String upd = "UPDATE AD_System SET LastBuildInfo = ?";
 			updateStmt = DB.prepareStatement(upd, null);
 			updateStmt.setString(1,version);
@@ -70,14 +64,5 @@ public class SignDatabaseBuildApplication implements IApplication {
 		} finally {
 			DB.close(updateStmt);
 		}
-		return IApplication.EXIT_OK;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
-	@Override
-	public void stop() {
-	}
-
 }

@@ -1,0 +1,10 @@
+-includeresource: @${repo;com.google.http-client:google-http-client-gson;latest}
+Bundle-SymbolicName: idempiere.wrapped.com.google.http-client.google-http-client-gson
+ver: 1.39.2-sp.1
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+# Import-Package: *
+-buildrepo: Local
+

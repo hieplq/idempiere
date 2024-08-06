@@ -15,12 +15,14 @@ package org.adempiere.base;
 
 import org.adempiere.base.equinox.EquinoxExtensionLocator;
 import org.compiere.model.ModelValidator;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link IModelValidatorFactory} implementation for core. <br/>
  * Load {@link ModelValidator} instance from plugin.xml (org.adempiere.base.ModelValidator extension point) or class path.
  * @author hengsin
  */
+@Component(service = IModelValidatorFactory.class)
 public class DefaultModelValidatorFactory implements IModelValidatorFactory {
 
 	/**
@@ -37,7 +39,7 @@ public class DefaultModelValidatorFactory implements IModelValidatorFactory {
 		ModelValidator validator = EquinoxExtensionLocator.instance().locate(ModelValidator.class, "org.adempiere.base.ModelValidator", className, null).getExtension();
 		if (validator == null) {
 			Class<?> clazz = null;
-			
+
 			//use context classloader if available
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			if (classLoader != null) {
@@ -60,12 +62,12 @@ public class DefaultModelValidatorFactory implements IModelValidatorFactory {
 					validator = (ModelValidator)clazz.getDeclaredConstructor().newInstance();
 				} catch (Exception e) {
 					e.printStackTrace();
-				} 
+				}
 			} else {
 				new Exception("Failed to load model validator class " + className).printStackTrace();
 			}
 		}
-		
+
 		return validator;
 	}
 

@@ -18,18 +18,20 @@ import java.util.logging.Level;
 import org.adempiere.base.equinox.EquinoxExtensionLocator;
 import org.adempiere.model.IShipmentProcessor;
 import org.compiere.util.CLogger;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default {@link IShipmentProcessorFactory} implementation for core.<br/>
  * Load {@link IShipmentProcessor} instance from plugin.xml (org.adempiere.model.IShipmentProcessor extension point) or class path.
  * @author hengsin
  */
+@Component(service = IShipmentProcessorFactory.class)
 public class DefaultShipmentProcessorFactory implements IShipmentProcessorFactory {
 
 	private final static CLogger s_log = CLogger.getCLogger(DefaultShipmentProcessorFactory.class);
-			
+
 	/**
-	 * default constructor 
+	 * default constructor
 	 */
 	public DefaultShipmentProcessorFactory() {
 	}
@@ -37,32 +39,32 @@ public class DefaultShipmentProcessorFactory implements IShipmentProcessorFactor
 	@Override
 	public IShipmentProcessor newShipmentProcessorInstance(String className) {
 		IShipmentProcessor myProcessor = EquinoxExtensionLocator.instance().locate(IShipmentProcessor.class, className, null).getExtension();
-		if (myProcessor == null) 
+		if (myProcessor == null)
 		{
 			//fall back to dynamic java class loading
-			try 
+			try
 			{
 				Class<?> ppClass = Class.forName(className);
 				if (ppClass != null)
 					myProcessor = (IShipmentProcessor) ppClass.getDeclaredConstructor().newInstance();
-			} 
-			catch (Error e1) 
+			}
+			catch (Error e1)
 			{   //  NoClassDefFound
 				s_log.log(Level.SEVERE, className + " - Error=" + e1.getMessage());
 				return null;
-			} 
-			catch (Exception e2) 
+			}
+			catch (Exception e2)
 			{
 				s_log.log(Level.SEVERE, className, e2);
 				return null;
 			}
 		}
-		if (myProcessor == null) 
+		if (myProcessor == null)
 		{
 			s_log.log(Level.SEVERE, "Not found in extension registry and classpath");
 			return null;
 		}
-		
+
 		return myProcessor;
 	}
 

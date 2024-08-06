@@ -1,0 +1,10 @@
+-includeresource: @${repo;com.github.virtuald:curvesapi;latest}
+Bundle-SymbolicName: idempiere.wrapped.com.github.virtuald.curvesapi
+ver: 1.06
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+# Import-Package: *
+-buildrepo: Local
+

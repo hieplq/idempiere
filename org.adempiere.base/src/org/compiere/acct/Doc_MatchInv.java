@@ -62,7 +62,7 @@ import org.compiere.util.Trx;
  *  </pre>
  *  Update Costing Records
  *  @author Jorg Janke
- *  @version  $Id: Doc_MatchInv.java,v 1.3 2006/07/30 00:53:33 jjanke Exp $
+ *  @version  $Id$
  *
  *  FR [ 1840016 ] Avoid usage of clearing accounts - subject to C_AcctSchema.IsPostIfClearingEqual
  *  Avoid posting if both accounts Not Invoiced Receipts and Inventory Clearing are equal

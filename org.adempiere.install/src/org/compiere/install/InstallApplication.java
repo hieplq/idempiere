@@ -17,38 +17,46 @@ import java.io.File;
 
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
-import org.eclipse.ant.core.AntRunner;
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
+import org.apache.tools.ant.ProjectHelper;
 
 /**
  *
  * @author hengsin
  *
  */
-public class InstallApplication implements IApplication {
+public class InstallApplication {
 
-	public Object start(IApplicationContext context) throws Exception {
-		Setup.main((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
+	/**
+	 * Run setup dialog
+	 * @param args
+	 * @throws Exception
+	 */
+	public void run(String[] args) throws Exception {
+		Setup.main(args);
 		Thread.sleep(10000);
 		while (Setup.instance.isDisplayable()) {
 			Thread.sleep(2000);
 		}
-		String path = System.getProperty("user.dir") + "/org.adempiere.install/build.xml";
+		String path = System.getProperty("user.dir");
+		if (path.endsWith("org.idempiere.app.install")) {
+			path = path.substring(0, path.length() - "org.idempiere.app.install".length())
+					+ "org.adempiere.install/build.xml";
+		} else {
+			path = path + "/org.adempiere.install/build.xml";
+		}
 		File file = new File(path);
 		//only exists if it is running from development environment
 		if (file.exists()) {
-			AntRunner runner = new AntRunner();
-			runner.setBuildFileLocation(path);
-			runner.setMessageOutputLevel(Project.MSG_VERBOSE);
-			runner.addBuildLogger(DefaultLogger.class.getName());
-			runner.run();
-			runner.stop();
+			Project project = new Project();
+			ProjectHelper helper = ProjectHelper.getProjectHelper();
+			project.addReference("ant.projectHelper", helper);
+			helper.parse(project, file);
+			DefaultLogger logger = new DefaultLogger();
+			logger.setOutputPrintStream(System.out);
+			logger.setErrorPrintStream(System.err);
+			logger.setMessageOutputLevel(Project.MSG_VERBOSE);
+			project.addBuildListener(logger);
+			project.executeTarget(project.getDefaultTarget());
 		}
-		return EXIT_OK;
 	}
-
-	public void stop() {
-	}
-
 }

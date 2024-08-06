@@ -20,15 +20,17 @@ import java.util.Properties;
 import org.adempiere.server.IServerFactory;
 import org.compiere.model.MRequestProcessor;
 import org.compiere.server.RequestProcessor;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author hengsin
  *
  */
+@Component(immediate = true, service = IServerFactory.class)
 public class DefaultRequestProcessorFactory implements IServerFactory<RequestProcessor, MRequestProcessor> {
 
 	/**
-	 * 
+	 *
 	 */
 	public DefaultRequestProcessorFactory() {
 	}

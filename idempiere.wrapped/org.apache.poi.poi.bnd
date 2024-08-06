@@ -1,0 +1,10 @@
+-includeresource: @${repo;org.apache.poi:poi;latest}
+Bundle-SymbolicName: idempiere.wrapped.org.apache.poi.poi
+ver: 5.2.2
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+# Import-Package: *
+-buildrepo: Local
+

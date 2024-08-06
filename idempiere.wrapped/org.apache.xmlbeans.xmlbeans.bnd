@@ -1,0 +1,10 @@
+-includeresource: @${repo;org.apache.xmlbeans:xmlbeans;latest}
+Bundle-SymbolicName: idempiere.wrapped.org.apache.xmlbeans.xmlbeans
+ver: 5.0.3
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+# Uncomment next line to customize imports. The last entry MUST be "*"
+Import-Package: *;resolution:=optional
+-buildrepo: Local
+

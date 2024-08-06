@@ -18,25 +18,23 @@ import java.util.logging.Level;
 
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
 import org.compiere.util.CLogMgt;
 import org.compiere.util.CLogger;
-import org.eclipse.ant.core.AntRunner;
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
 
 /**
  * @author hengsin
  *
  */
-public class ConsoleInstallApplication implements IApplication {
+public class ConsoleInstallApplication {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
+	/**
+	 * Run console setup
+	 * @param args
+	 * @throws Exception
 	 */
-	@Override
-	public Object start(IApplicationContext context) throws Exception {
+	public void run(String[] args) throws Exception {
 		CLogMgt.initialize(false);
-		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 
 		//	Log Level
 		Level logLevel = Level.INFO;
@@ -51,25 +49,27 @@ public class ConsoleInstallApplication implements IApplication {
 
 		ConfigurationConsole console = new ConfigurationConsole();
 		console.doSetup();
-		String path = System.getProperty("user.dir") + "/org.adempiere.install/build.xml";
+		String path = System.getProperty("user.dir");
+		if (path.endsWith("org.idempiere.app.install")) {
+			path = path.substring(0, path.length() - "org.idempiere.app.install".length())
+					+ "org.adempiere.install/build.xml";
+		} else {
+			path = path + "/org.adempiere.install/build.xml";
+		}
 		File file = new File(path);
 		System.out.println("file="+path+" exists="+file.exists());
 		//only exists if it is running from development environment
 		if (file.exists()) {
-			AntRunner runner = new AntRunner();
-			runner.setBuildFileLocation(path);
-			runner.setMessageOutputLevel(Project.MSG_VERBOSE);
-			runner.addBuildLogger(DefaultLogger.class.getName());
-			runner.run();
-			runner.stop();
+			Project project = new Project();
+			ProjectHelper helper = ProjectHelper.getProjectHelper();
+			project.addReference("ant.projectHelper", helper);
+			helper.parse(project, file);
+			DefaultLogger logger = new DefaultLogger();
+			logger.setOutputPrintStream(System.out);
+			logger.setErrorPrintStream(System.err);
+			logger.setMessageOutputLevel(Project.MSG_VERBOSE);
+			project.addBuildListener(logger);
+			project.executeTarget(project.getDefaultTarget());
 		}
-		return ConsoleInstallApplication.EXIT_OK;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
-	@Override
-	public void stop() {
 	}
 }
