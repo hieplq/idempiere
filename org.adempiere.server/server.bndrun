@@ -23,7 +23,9 @@
 	bnd.identity;id='slf4j.jdk14';version:Version='2.0.12',\
 	bnd.identity;id='org.apache.logging.log4j.api';version:Version='2.23.1',\
 	bnd.identity;id='org.apache.logging.log4j.to.slf4j';version:Version='2.23.1',\
-	bnd.identity;id='org.idempiere.hazelcast.service';version:Version='12.0.0'
+	bnd.identity;id='org.idempiere.hazelcast.service';version:Version='12.0.0',\
+	bnd.identity;id='org.idempiere.felix.webconsole';version:Version='12.0.0',\
+	bnd.identity;id='org.adempiere.eclipse.equinox.http.servlet';version:Version='12.0.0'
 -runbundles: \
 	slf4j.api;version='[2.0.12,2.0.13)',\
 	slf4j.jdk14;version='[2.0.12,2.0.13)',\
@@ -99,6 +101,7 @@
 	org.eclipse.equinox.common;version='[3.18.100,3.18.101)',\
 	org.eclipse.equinox.event;version='[1.6.200,1.6.201)',\
 	org.eclipse.jdt.core.compiler.batch;version='[3.35.0,3.35.1)',\
+	org.eclipse.jetty.ee8.apache-jsp;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.deploy;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.osgi.boot;version='[12.0.11,12.0.12)',\
@@ -143,13 +146,17 @@
 	javax.interceptor-api;version='[1.2.2,1.2.3)',\
 	javax.servlet.jsp.jstl-api;version='[1.2.7,1.2.8)',\
 	org.eclipse.jetty.ee8.annotations;version='[12.0.11,12.0.12)',\
-	org.eclipse.jetty.ee8.apache-jsp;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.osgi.boot.jsp;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.plus;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.plus;version='[12.0.11,12.0.12)',\
 	org.glassfish.web.javax.servlet.jsp.jstl;version='[1.2.5,1.2.6)',\
 	org.apache.logging.log4j.to.slf4j;version='[2.23.1,2.23.2)',\
-	com.fasterxml.jackson.core.jackson-annotations;version='[2.15.4,2.15.5)'
+	com.fasterxml.jackson.core.jackson-annotations;version='[2.15.4,2.15.5)',\
+	org.apache.commons.commons-fileupload;version='[1.5.0,1.5.1)',\
+	org.apache.felix.webconsole;version='[4.6.4,4.6.5)',\
+	org.idempiere.felix.webconsole;version=snapshot,\
+	org.adempiere.eclipse.equinox.http.servlet;version=snapshot,\
+	org.eclipse.equinox.http.servlet;version='[1.7.400,1.7.401)'
 -runproperties: IDEMPIERE_HOME=${workspace},\
 	launch.activation.eager=true, \
 	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream", \

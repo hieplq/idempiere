@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.idempiere.felix.webconsole;
 
@@ -9,16 +9,18 @@ import org.apache.felix.webconsole.WebConsoleSecurityProvider;
 import org.compiere.model.MUser;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author hengsin
  *
  */
+@Component(name="org.idempiere.felix.webconsole.security.provider", immediate = true, service = WebConsoleSecurityProvider.class)
 public class SecurityProviderImpl implements WebConsoleSecurityProvider {
 
 	/**	Logger			*/
 	private final static CLogger	log = CLogger.getCLogger(SecurityProviderImpl.class);
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.felix.webconsole.WebConsoleSecurityProvider#authenticate(java.lang.String, java.lang.String)
 	 */

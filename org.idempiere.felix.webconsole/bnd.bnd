@@ -1,0 +1,23 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.osgi.service.component.annotations;version='1.5',\
+	org.adempiere.base;version=latest,\
+	org.osgi.service.component;version='1.5',\
+	org.eclipse.osgi;version='3.18',\
+	org.apache.felix.webconsole,\
+	org.adempiere.eclipse.equinox.http.servlet;version=latest
+Bundle-Version: 12.0.0
+Bundle-SymbolicName: org.idempiere.felix.webconsole
+Bundle-Activator: org.idempiere.felix.webconsole.Activator
+Bundle-Name: iDempiere Felix Web Console
+-resolve: auto
+bin: target/classes
+Web-ContextPath: osgi
+Jetty-Environment: ee8
+
+Export-Package: org.idempiere.felix.webconsole
+-includeresource: WEB-INF/=WEB-INF/
+
+Import-Package: \
+	org.adempiere.eclipse.equinox.http.servlet, *
