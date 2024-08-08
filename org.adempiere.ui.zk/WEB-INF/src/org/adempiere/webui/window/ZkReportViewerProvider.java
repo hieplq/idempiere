@@ -16,15 +16,16 @@
  *****************************************************************************/
 package org.adempiere.webui.window;
 
+import org.adempiere.ui.print.ReportViewerProvider;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.apps.ProcessDialog;
 import org.adempiere.webui.component.Window;
 import org.adempiere.webui.part.WindowContainer;
 import org.adempiere.webui.session.SessionManager;
 import org.compiere.print.ReportEngine;
-import org.compiere.print.ReportViewerProvider;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 import org.zkoss.zk.ui.Executions;
 
 /**
@@ -32,6 +33,7 @@ import org.zkoss.zk.ui.Executions;
  * @author Low Heng Sin
  *
  */
+@Component(service = ReportViewerProvider.class)
 public class ZkReportViewerProvider implements ReportViewerProvider {
 	
 	@Override

@@ -16,10 +16,11 @@ package org.adempiere.report.jasper;
 import org.adempiere.base.IProcessFactory;
 import org.adempiere.util.ProcessUtil;
 import org.compiere.process.ProcessCall;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * ProcessFactory to start the ReportStarter class.
- * 
+ *
  * Before this Factory was initiated the class was started with the
  * DefaultProcessFactory because its package namespace was exported and joined
  * into the org.compiere.report package of the org.adempiere.base plugin via
@@ -27,9 +28,10 @@ import org.compiere.process.ProcessCall;
  * http://wiki.osgi.org/wiki/Split_Packages why this is not the best idea.
  * Especially this prevents us from exchange the JasperReports plugin with
  * another implementation.
- * 
+ *
  * @author tbayen
  */
+@Component(service = IProcessFactory.class, property = {"service.ranking:Integer=1"})
 public class ProcessFactory implements IProcessFactory {
 
 	public static final String JASPER_STARTER_CLASS_DEPRECATED = "org.compiere.report.ReportStarter";

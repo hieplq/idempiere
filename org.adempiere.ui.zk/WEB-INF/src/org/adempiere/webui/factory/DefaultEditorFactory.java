@@ -53,12 +53,14 @@ import org.adempiere.webui.editor.grid.selection.WGridTabSingleSelectionEditor;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.DisplayType;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default implementation of {@link IEditorFactory}
  * @author hengsin
  *
  */
+@Component(service = IEditorFactory.class)
 public class DefaultEditorFactory implements IEditorFactory {
 
 	@Override

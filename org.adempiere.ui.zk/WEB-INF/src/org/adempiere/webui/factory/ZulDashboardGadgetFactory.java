@@ -26,6 +26,7 @@ import org.zkoss.zk.ui.Executions;
  * @author hengsin
  *
  */
+@org.osgi.service.component.annotations.Component(service = IDashboardGadgetFactory.class, property = {"service.ranking:Integer=0"})
 public class ZulDashboardGadgetFactory implements IDashboardGadgetFactory {
 	@Override
 	public Component getGadget(String uri, Component parent) {

@@ -17,11 +17,13 @@ import org.adempiere.webui.adwindow.ADSortTab;
 import org.adempiere.webui.adwindow.ADTabpanel;
 import org.adempiere.webui.adwindow.IADTabpanel;
 import org.compiere.model.MTab;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default implementation of {@link IADTabPanelFactory}
  * @author Logilite Technologies
  */
+@Component(service = IADTabPanelFactory.class, property = {"service.ranking:Integer=1"})
 public class DefaultTabPanelFactory implements IADTabPanelFactory
 {
 

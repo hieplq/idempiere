@@ -1,0 +1,38 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	org.zkoss.zkforge:gmapsz,\
+	org.zkoss.zkforge:timelinez,\
+	org.zkoss.zkforge:timeplotz,\
+	org.zkoss.calendar:calendar,\
+	org.zkoss.theme:breeze,\
+	org.zkoss.theme:iceblue_c,\
+	com.google.javascript:closure-compiler,\
+	zcommon,\
+	zul,\
+	zk
+-resolve: auto
+bin: target/classes
+Bundle-Name: extra zk library
+Bundle-SymbolicName: org.idempiere.zk.extra
+Bundle-Version: 12.0.0
+Bundle-Vendor: iDempiere Community
+Import-Package: *
+-includeresource: lib/gmapsz.jar=${repo;org.zkoss.zkforge:gmapsz};lib:=true, \
+	lib/timelinez.jar=${repo;org.zkoss.zkforge:timelinez};lib:=true, \
+	lib/timeplotz.jar=${repo;org.zkoss.zkforge:timeplotz};lib:=true, \
+	lib/calendar.jar=${repo;org.zkoss.calendar:calendar};lib:=true, \
+	lib/breeze.jar=${repo;org.zkoss.theme:breeze};lib:=true, \
+	lib/iceblue_c.jar=${repo;org.zkoss.theme:iceblue_c};lib:=true, \
+	lib/closure-compiler.jar=${repo;com.google.javascript:closure-compiler};lib:=true
+	
+Export-Package: \
+	org.zkoss.calendar,\
+	org.zkoss.calendar.api,\
+	org.zkoss.calendar.event,\
+	org.zkoss.calendar.impl,\
+	org.idempiere.zk.extra

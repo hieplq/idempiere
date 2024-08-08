@@ -112,7 +112,7 @@
 	</library-property>
 	<library-property>
 	    <name>org.zkoss.zul.grid.DataLoader.class</name>
-	    <value>org.zkoss.zul.impl.CustomGridDataLoader</value>
+	    <value>org.idempiere.zk.extra.CustomGridDataLoader</value>
 	</library-property>
 	<library-property>
 	    <name>org.zkoss.zul.grid.rod</name>

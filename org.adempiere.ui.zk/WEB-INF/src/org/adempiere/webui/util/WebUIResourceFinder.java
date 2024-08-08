@@ -20,11 +20,13 @@ import java.util.regex.Pattern;
 import org.adempiere.base.IResourceFinder;
 import org.adempiere.webui.WebUIActivator;
 import org.adempiere.webui.theme.ThemeManager;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * {@link IResourceFinder} implementation for web client
  * @author hengsin
  */
+@Component(service = IResourceFinder.class)
 public class WebUIResourceFinder implements IResourceFinder {
 
 	/**

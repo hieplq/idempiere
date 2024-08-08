@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import org.adempiere.ui.print.DrillReportCtl;
 import org.adempiere.webui.ClientInfo;
 import org.adempiere.webui.LayoutUtils;
 import org.adempiere.webui.component.Borderlayout;
@@ -46,7 +47,6 @@ import org.compiere.model.MProcessDrillRule;
 import org.compiere.model.MReportView;
 import org.compiere.model.MTable;
 import org.compiere.model.Query;
-import org.compiere.print.DrillReportCtl;
 import org.compiere.print.MPrintFormat;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.Env;

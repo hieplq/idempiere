@@ -49,6 +49,7 @@ import org.zkoss.zul.Imagemap;
  * @deprecated replace by billboard based implementation
  */
 @Deprecated
+@org.osgi.service.component.annotations.Component(service = IChartRendererService.class, property = "service.ranking:Integer=-1")
 public class ChartRendererServiceImpl implements IChartRendererService {
 
 	private final static CLogger log = CLogger.getCLogger(ChartRendererServiceImpl.class);

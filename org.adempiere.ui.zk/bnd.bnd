@@ -1,0 +1,66 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	com.github.librepdf.openpdf;version='1.3',\
+	org.outerj.daisy:daisydiff,\
+	org.zkoss.zkforge:ckez,\
+	com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer,\
+	com.googlecode.owasp-java-html-sanitizer:java8-shim,\
+	com.googlecode.owasp-java-html-sanitizer:java10-shim,\
+	org.osgi.service.event,\
+	zk,\
+	slf4j.api,\
+	org.eclipse.jetty.servlet-api,\
+	org.atmosphere.runtime,\
+	zcommon;version='10.0',\
+	com.sun.activation.jakarta.activation,\
+	org.apache.ecs;version=latest,\
+	idempiere.wrapped.org.jfree.jfreechart,\
+	zul,\
+	io.github.classgraph.classgraph,\
+	org.apache.commons.commons-io,\
+	zhtml,\
+	org.adempiere.ui;version=latest,\
+	org.adempiere.server,\
+	zweb,\
+	org.apache.commons.commons-codec,\
+	org.idempiere.zk.extra;version=latest,\
+	org.adempiere.base.process;version=latest,\
+	jakarta.xml.bind-api,\
+	com.google.guava,\
+	net.sf.jasperreports.engine,\
+	org.adempiere.report.jasper;version=latest,\
+	org.apache.commons.commons-text,\
+	org.eclipse.jetty.websocket-api,\
+	idempiere.wrapped.org.springframework.spring-web,\
+	idempiere.wrapped.org.jfree.jcommon
+-resolve: auto
+bin: target/classes
+src: WEB-INF/src
+Bundle-Name: iDempiere Web Client
+Bundle-SymbolicName: org.adempiere.ui.zk;singleton:=true
+Bundle-Version: 12.0.0
+Bundle-Vendor: iDempiere Community
+Bundle-Activator: org.adempiere.webui.WebUIActivator
+Import-Package: *
+DynamicImport-Package: action.images
+Web-ContextPath: webui
+Jetty-Environment: ee8
+-includeresource: lib/daisydiff.jar=${repo;org.outerj.daisy:daisydiff};lib:=true, \
+	lib/ckez.jar=${repo;org.zkoss.zkforge:ckez};lib:=true, \
+	lib/owasp-java-html-sanitizer.jar=${repo;com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer};lib:=true, \
+	lib/java8-shim.jar=${repo;com.googlecode.owasp-java-html-sanitizer:java8-shim};lib:=true, \
+	lib/java10-shim.jar=${repo;com.googlecode.owasp-java-html-sanitizer:java10-shim};lib:=true, \
+	WEB-INF/tld=WEB-INF/tld, \
+	WEB-INF/jetty-web.xml=WEB-INF/jetty-web.xml, \
+	WEB-INF/web.xml=WEB-INF/web.xml, \
+	WEB-INF/zk.xml=WEB-INF/zk.xml, \
+	admin.zul, error.zul, gif.jsp, index.zul, manifest.json, \
+	plugin.xml, sessiontimeout.zul, theme.zs, timeout.zul, \
+	zul=zul, css=css, images=images, js=js
+
+

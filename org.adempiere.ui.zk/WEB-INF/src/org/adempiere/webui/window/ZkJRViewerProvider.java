@@ -30,6 +30,7 @@ import org.adempiere.webui.component.Window;
 import org.adempiere.webui.part.WindowContainer;
 import org.adempiere.webui.session.SessionManager;
 import org.compiere.model.PrintInfo;
+import org.osgi.service.component.annotations.Component;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -37,6 +38,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 /**
  * Jasper report viewer provider
  */
+@Component(service = {JRViewerProvider.class, JRViewerProviderList.class})
 public class ZkJRViewerProvider implements JRViewerProvider, JRViewerProviderList {
 
 	@Override

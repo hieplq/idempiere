@@ -25,11 +25,13 @@ import org.adempiere.webui.session.SessionManager;
 import org.compiere.model.MAttachment;
 import org.compiere.model.MAttachmentEntry;
 import org.compiere.model.MShipperLabels;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default implementation of {@link IPrintShippingLabel}
  * @author Elaine
  */
+@Component(service = IPrintShippingLabel.class)
 public class DefaultPrintShippingLabel implements IPrintShippingLabel
 {
 	/**

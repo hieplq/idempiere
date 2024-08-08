@@ -47,6 +47,7 @@ import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
+import org.idempiere.zk.extra.CustomGridDataLoader;
 import org.zkoss.lang.Library;
 import org.zkoss.zk.au.out.AuFocus;
 import org.zkoss.zk.au.out.AuScript;
@@ -70,7 +71,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.event.ZulEvents;
-import org.zkoss.zul.impl.CustomGridDataLoader;
 
 /**
  * Grid/List view implemented using the Grid component.

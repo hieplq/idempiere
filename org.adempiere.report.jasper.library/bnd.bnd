@@ -1,0 +1,22 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	net.sf.jasperreports.engine
+-resolve: auto
+bin: target/classes
+Bundle-Name: JasperReport Library
+Bundle-SymbolicName: org.adempiere.report.jasper.library
+Bundle-Version: 12.0.0
+Bundle-Vendor: iDempiere Community
+Import-Package: *
+Fragment-Host: net.sf.jasperreports.engine;bundle-version="6.21.0"
+-includeresource: lib/castor-core.jar=${repo;org.codehaus.castor:castor-core};lib:=true, \
+	lib/castor-xml.jar=${repo;org.codehaus.castor:castor-xml};lib:=true, \
+	lib/jasperreports-chart-themes.jar=${repo;net.sf.jasperreports:jasperreports-chart-themes};lib:=true, \
+	lib/jasperreports-functions.jar=${repo;net.sf.jasperreports:jasperreports-functions};lib:=true, \
+	lib/jasperreports-fonts.jar=${repo;net.sf.jasperreports:jasperreports-fonts};lib:=true, \
+	lib/olap4j.jar=${repo;org.olap4j:olap4j};lib:=true, \
+	lib/xmpcore.jar=${repo;com.adobe.xmp:xmpcore};lib:=true, \
+	META-INF/spring.handlers=META-INF/spring.handlers, \
+	META-INF/spring.schemas=META-INF/spring.schemas
+	

@@ -17,11 +17,13 @@ import org.compiere.grid.IPaymentForm;
 import org.compiere.grid.IPaymentFormFactory;
 import org.compiere.model.GridTab;
 import org.compiere.model.MInvoice;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default implementation of {@link IPaymentFormFactory}
  * @author Elaine
  */
+@Component(service = IPaymentFormFactory.class)
 public class DefaultPaymentFormFactory implements IPaymentFormFactory {
 
 	@Override

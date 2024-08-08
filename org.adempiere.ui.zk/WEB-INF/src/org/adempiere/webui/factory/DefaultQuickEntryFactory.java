@@ -18,11 +18,13 @@ package org.adempiere.webui.factory;
 
 import org.adempiere.webui.grid.AbstractWQuickEntry;
 import org.adempiere.webui.grid.WQuickEntry;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default implementation of {@link IQuickEntryFactory}
  * @author Andreas Sumerauer
  */
+@Component(service = IQuickEntryFactory.class)
 public class DefaultQuickEntryFactory implements IQuickEntryFactory {
 
 	@Override

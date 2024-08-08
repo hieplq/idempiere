@@ -27,6 +27,7 @@ import org.zkoss.zk.ui.Component;
  * @author hengsin
  *
  */
+@org.osgi.service.component.annotations.Component(service = IFormFactory.class, property = {"service.ranking:Integer=-1"})
 public class DefaultFormFactory implements IFormFactory {
 
 	private static final CLogger log = CLogger.getCLogger(DefaultFormFactory.class); 

@@ -30,6 +30,7 @@ import org.compiere.util.EMail;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 import org.zkoss.zk.au.out.AuScript;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -41,6 +42,7 @@ import org.zkoss.zul.Window.Mode;
  * @author hengsin
  *
  */
+@Component(service = IFeedbackService.class)
 public class DefaultFeedbackService implements IFeedbackService {
 
 	/**

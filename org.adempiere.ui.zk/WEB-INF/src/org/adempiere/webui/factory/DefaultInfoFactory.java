@@ -40,6 +40,7 @@ import org.compiere.model.Lookup;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInfoWindow;
 import org.compiere.util.Env;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Default implementation of {@link IInfoFactory}
@@ -47,6 +48,7 @@ import org.compiere.util.Env;
  *
  */
 @SuppressWarnings("deprecation")
+@Component(service = IInfoFactory.class)
 public class DefaultInfoFactory implements IInfoFactory {
 
 	@Override

@@ -77,7 +77,6 @@ Export-Package: \
 	org.idempiere.model,\
 	org.idempiere.print,\
 	org.idempiere.print.renderer,\
-	org.idempiere.process,\
 	org.idempiere.cache,\
 	org.compiere,\
 	org.compiere.acct,\
@@ -107,6 +106,7 @@ Export-Package: \
 	org.compiere.tools,\
 	org.compiere.sla,\
 	org.compiere.impexp,\
+	org.compiere.report.core,\
 	!org.compiere.install
 Import-Package: com.google.javascript.jscomp;resolution:=optional,\
 	!org.compiere.install,\

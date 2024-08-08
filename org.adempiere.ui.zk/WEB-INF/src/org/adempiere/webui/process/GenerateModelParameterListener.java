@@ -31,10 +31,13 @@ import org.adempiere.webui.editor.WEditor;
 import org.compiere.model.MModelGeneratorTemplate;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Parameter listener for generate model process
  */
+@Component(service = IProcessParameterListener.class,
+		property = {"ProcessClass=org.idempiere.process.GenerateModel","ColumnName=AD_ModelGeneratorTemplate_ID"})
 public class GenerateModelParameterListener implements IProcessParameterListener {
 
 	private static final String[] parameters = {"Folder", "PackageName", "TableLike", "TableEntityType", "ColumnEntityType"};

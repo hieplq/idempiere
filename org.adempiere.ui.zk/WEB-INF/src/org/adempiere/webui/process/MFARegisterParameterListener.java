@@ -32,7 +32,10 @@ import org.adempiere.webui.apps.ProcessParameterPanel;
 import org.adempiere.webui.editor.WEditor;
 import org.compiere.model.MMFAMethod;
 import org.compiere.util.Env;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = IProcessParameterListener.class,
+		property = {"ProcessClass=org.compiere.process.MFARegister","ColumnName=MFA_Method_ID"})
 public class MFARegisterParameterListener implements IProcessParameterListener {
 
 	@Override

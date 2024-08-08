@@ -69,7 +69,6 @@ import org.idempiere.model.IMappedModelFactory;
 import org.idempiere.print.IPrintHeaderFooter;
 import org.idempiere.print.renderer.IReportRenderer;
 import org.idempiere.print.renderer.IReportRendererConfiguration;
-import org.idempiere.process.IMappedProcessFactory;
 
 /**
  * This is a facade class for the Service Locator.

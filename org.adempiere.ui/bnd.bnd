@@ -1,0 +1,38 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	com.github.librepdf.openpdf;version='1.3',\
+	org.netbeans.api:org-netbeans-api-visual,\
+	org.netbeans.api:org-openide-util,\
+	org.netbeans.api:org-openide-util-lookup
+-resolve: auto
+bin: target/classes
+Bundle-Name: iDempiere UI base
+Bundle-SymbolicName: org.adempiere.ui
+Bundle-Version: 12.0.0
+Bundle-Vendor: iDempiere Community
+Import-Package: *
+-includeresource: lib/org-netbeans-api-visual.jar=${repo;org.netbeans.api:org-netbeans-api-visual};lib:=true, \
+	lib/org-openide-util.jar=${repo;org.netbeans.api:org-openide-util};lib:=true, \
+	lib/org-openide-util-lookup.jar=${repo;org.netbeans.api:org-openide-util-lookup};lib:=true
+-exportcontents: org.netbeans.api.*, org.openide.util.*
+
+
+Export-Package: \
+	org.netbeans.api.visual.layout,\
+	org.netbeans.api.visual.graph.layout,\
+	org.compiere.apps,\
+	org.compiere.apps.form,\
+	org.idempiere.apps.form,\
+	org.netbeans.api.visual.widget,\
+	org.netbeans.api.visual.model,\
+	org.compiere.minigrid,\
+	org.compiere.grid.ed,\
+	org.compiere.grid,\
+	org.netbeans.api.visual.graph,\
+	org.compiere.apps.wf,\
+	org.adempiere.ui.print

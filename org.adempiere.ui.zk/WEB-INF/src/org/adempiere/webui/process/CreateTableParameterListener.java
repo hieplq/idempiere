@@ -29,10 +29,13 @@ import org.adempiere.webui.apps.IProcessParameterListener;
 import org.adempiere.webui.apps.ProcessParameterPanel;
 import org.adempiere.webui.editor.WEditor;
 import org.idempiere.process.CreateTable;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Parameter listener for create table process
  */
+@Component(service = IProcessParameterListener.class,
+		property = {"ProcessClass=org.idempiere.process.CreateTable","ColumnName=IsCreateWorkflow"})
 public class CreateTableParameterListener implements IProcessParameterListener {
 
 	@Override

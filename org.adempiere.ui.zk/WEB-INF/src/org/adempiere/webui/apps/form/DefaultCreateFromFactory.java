@@ -21,12 +21,14 @@ import org.compiere.model.I_C_Invoice;
 import org.compiere.model.I_M_InOut;
 import org.compiere.model.I_M_PackageMPS;
 import org.compiere.model.I_M_RMA;
+import org.osgi.service.component.annotations.Component;
 import org.compiere.model.I_C_DepositBatch;
 
 /**
  * Default implementation of {@link ICreateFromFactory}
  * @author Elaine
  */
+@Component(service = ICreateFromFactory.class)
 public class DefaultCreateFromFactory implements ICreateFromFactory 
 {
 

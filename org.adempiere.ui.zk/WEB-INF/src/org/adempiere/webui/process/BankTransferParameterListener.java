@@ -30,11 +30,14 @@ import org.adempiere.webui.apps.ProcessParameterPanel;
 import org.adempiere.webui.editor.WEditor;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.osgi.service.component.annotations.Component;
 import org.zkoss.zk.ui.WrongValueException;
 
 /**
  * Parameter listener for bank transfer process
  */
+@Component(service = IProcessParameterListener.class, 
+	property = {"ProcessClass=org.eevolution.process.BankTransfer","ColumnName=StatementDate,From_C_BankAccount_ID,To_C_BankAccount_ID"})
 public class BankTransferParameterListener implements IProcessParameterListener {
 
 	@Override

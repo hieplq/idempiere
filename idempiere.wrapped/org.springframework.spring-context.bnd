@@ -1,0 +1,7 @@
+-includeresource: @${repo;org.springframework:spring-context;latest}
+Bundle-SymbolicName: idempiere.wrapped.org.springframework.spring-context
+ver: 5.3.27
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+-buildrepo: Local

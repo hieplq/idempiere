@@ -52,6 +52,10 @@
  	aQute.bnd.repository.p2.provider.P2Repository; \
  	url = file://${.}/orbit.target; \
  	name = Orbit 4.29
+-plugin.p2.5: \
+ 	aQute.bnd.repository.p2.provider.P2Repository; \
+ 	url = https://idempiere.github.io/binary.file/p2.zk/10.0.1; \
+ 	name = Zk 10.0.1
 -plugin.jetty.ee8: \
 	aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
 		snapshotUrls=https://oss.sonatype.org/content/repositories/osgi/; \
@@ -83,3 +87,5 @@ javac.target: 17
 -resolve.effective: resolve,active, meta;skip:='osgi.ee'
 bin: target/classes
 testbin: target/test
+testsrc: test/src
+

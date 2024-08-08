@@ -1,0 +1,7 @@
+-includeresource: @${repo;org.springframework:spring-web;latest}
+Bundle-SymbolicName: idempiere.wrapped.org.springframework.spring-web
+ver: 5.3.27
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+-buildrepo: Local

@@ -18,12 +18,12 @@ package org.compiere.apps;
 
 import java.util.logging.Level;
 
+import org.adempiere.ui.print.ReportCtl;
 import org.adempiere.util.IProcessUI;
 import org.adempiere.util.ProcessUtil;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MRule;
 import org.compiere.model.MPInstance.PInstanceInfo;
-import org.compiere.print.ReportCtl;
 import org.compiere.process.ProcessInfo;
 import org.compiere.process.ProcessInfoUtil;
 import org.compiere.util.CLogger;
@@ -38,7 +38,7 @@ import org.compiere.wf.MWFProcess;
  *	Process Interface Controller.
  *
  *  @author 	Jorg Janke
- *  @version 	$Id: ProcessCtl.java,v 1.2 2006/07/30 00:51:27 jjanke Exp $
+ *  @version 	$Id$
  *  @author Low Heng Sin
  *  - Added support for having description and parameter in one dialog
  *  - Added support to run db process remotely on server
