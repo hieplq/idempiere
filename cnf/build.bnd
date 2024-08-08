@@ -36,6 +36,12 @@
 		name = Release; \
 		pretty = true; \
 		local = ${build}/release
+-plugin.7.iDempiere.zk: \
+	aQute.bnd.repository.maven.provider.MavenBndRepository; \
+		releaseUrl=https://idempiere.github.io/binary.file/maven.zk/; \
+		index=${.}/idempiere-zk.maven; \
+		readOnly=true; \
+		name="Maven iDempiere.Zk"		
 -plugin.p2.1: \
  	aQute.bnd.repository.p2.provider.P2Repository; \
  	url = https://idempiere.github.io/binary.file/p2.repackaged/jasperstudio/6.17.0; \

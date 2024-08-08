@@ -64,3 +64,33 @@ Jetty-Environment: ee8
 	zul=zul, css=css, images=images, js=js
 
 
+Export-Package: \
+	org.idempiere.ui.zk.media,\
+	org.adempiere.webui,\
+	org.adempiere.webui.component,\
+	org.adempiere.webui.editor,\
+	org.adempiere.webui.util,\
+	org.adempiere.webui.action,\
+	org.adempiere.webui.adwindow,\
+	org.adempiere.webui.adwindow.validator,\
+	org.adempiere.webui.session,\
+	org.adempiere.webui.event,\
+	org.adempiere.webui.dashboard,\
+	org.adempiere.webui.desktop,\
+	org.adempiere.webui.exception,\
+	org.adempiere.webui.grid,\
+	org.adempiere.webui.factory,\
+	org.adempiere.webui.info,\
+	org.adempiere.webui.listbox.renderer,\
+	org.adempiere.webui.panel,\
+	org.adempiere.webui.part,\
+	org.adempiere.webui.process,\
+	org.adempiere.webui.theme,\
+	org.adempiere.webui.window,\
+	org.idempiere.ui.zk.annotation,\
+	org.idempiere.ui.zk.report,\
+	org.adempiere.webui.apps.form,\
+	org.adempiere.webui.apps.graph,\
+	org.adempiere.webui.apps.graph.model,\
+	org.adempiere.webui.acct
+-privatepackage: org.adempiere.webui

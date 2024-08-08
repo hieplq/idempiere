@@ -213,3 +213,8 @@ org.springframework:spring-beans:5.3.27
 org.springframework:spring-core:5.3.27
 org.springframework:spring-expression:5.3.27
 org.springframework:spring-context-support:5.3.27
+
+#keikai
+org.zkoss.poi:zpoi:3.9.16
+org.apache.poi:ooxml-schemas:1.4
+org.apache.xmlbeans:xmlbeans:3.0.2
