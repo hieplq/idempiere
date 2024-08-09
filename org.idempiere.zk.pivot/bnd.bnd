@@ -1,0 +1,22 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	org.adempiere.ui.zk;version=latest,\
+	zcommon,\
+	json,\
+	zk,\
+	com.google.guava
+-resolve: auto
+bin: target/classes
+src: src
+Bundle-Name: Pivot Renderer for Report Viewer
+Bundle-SymbolicName: org.idempiere.zk.pivot
+Bundle-Version: 12.0.0
+Bundle-Vendor: idempiere.org
+Import-Package: *
+Fragment-Host: org.adempiere.ui.zk;bundle-version="12.0.0"
+
