@@ -67,6 +67,7 @@ Jetty-Environment: ee8
 Export-Package: \
 	org.idempiere.ui.zk.media,\
 	org.adempiere.webui,\
+	org.adempiere.webui.apps,\
 	org.adempiere.webui.component,\
 	org.adempiere.webui.editor,\
 	org.adempiere.webui.util,\
