@@ -27,11 +27,13 @@ package org.idempiere.webservices.process;
 
 import org.adempiere.base.IProcessFactory;
 import org.compiere.process.ProcessCall;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author nmicoud - TGI
  *
  */
+@Component(immediate = true, service = IProcessFactory.class, property = {"service.ranking:Integer=1"})
 public class WebServicesProcessFactory implements IProcessFactory {
 
 	public ProcessCall newProcessInstance(String className) {

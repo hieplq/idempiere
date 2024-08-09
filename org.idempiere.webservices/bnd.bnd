@@ -1,0 +1,35 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	lib/idempiere-xmlbeans.jar;version=file,\
+	jakarta.jws-api,\
+	idempiere.wrapped.org.apache.xmlbeans.xmlbeans;version=latest,\
+	org.codehaus.jettison.jettison,\
+	jakarta.annotation-api,\
+	org.apache.commons.commons-codec,\
+	org.eclipse.jetty.servlet-api,\
+	jakarta.xml.ws-api,\
+	net.sf.jasperreports.engine,\
+	org.apache.ecs,\
+	org.apache.cxf.cxf-rt-rs-extension-providers,\
+	jakarta.ws.rs-api,\
+	org.apache.cxf.cxf-rt-frontend-jaxrs,\
+	jakarta.xml.soap-api
+-resolve: auto
+bin: target/classes
+src: WEB-INF/src
+Bundle-Name: iDempiere Webservices
+Bundle-SymbolicName: org.idempiere.webservices;singleton:=true
+Bundle-Activator: org.idempiere.webservices.Activator
+Bundle-Version: 12.0.0
+Import-Package: *
+Web-ContextPath: ADInterface
+Jetty-Environment: ee8
+-includeresource: lib/=lib/;lib:=true, \
+	WEB-INF/web.xml=WEB-INF/web.xml, plugin.xml, \
+	META-INF/=META-INF/
+	
