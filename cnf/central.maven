@@ -244,3 +244,5 @@ org.apache.cxf:cxf-rt-wsdl:3.6.3
 org.apache.cxf:cxf-rt-ws-policy:3.6.3
 com.sun.xml.messaging.saaj:saaj-impl:1.5.3
 jakarta.xml.soap:jakarta.xml.soap-api:1.4.2
+
+org.json:json:20231013
