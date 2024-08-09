@@ -218,3 +218,11 @@ org.springframework:spring-context-support:5.3.27
 org.zkoss.poi:zpoi:3.9.16
 org.apache.poi:ooxml-schemas:1.4
 org.apache.xmlbeans:xmlbeans:3.0.2
+
+#oidc
+com.nimbusds:oauth2-oidc-sdk:10.7.1
+com.nimbusds:nimbus-jose-jwt:9.37.3
+com.nimbusds:lang-tag:1.7
+com.nimbusds:content-type:2.2
+net.minidev:json-smart:2.4.10
+net.minidev:accessors-smart:2.4.9

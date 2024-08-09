@@ -1,0 +1,27 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	com.nimbusds:oauth2-oidc-sdk;version='10.7.1',\
+	com.nimbusds:nimbus-jose-jwt;version='9.37.3',\
+	com.nimbusds:lang-tag;version='1.7',\
+	com.nimbusds:content-type;version='2.2',\
+	net.minidev:json-smart;version='2.4.10',\
+	net.minidev:accessors-smart;version='2.4.9',\
+	org.eclipse.jetty.servlet-api
+-resolve: auto
+bin: target/classes
+Bundle-Name: OIDC Provider
+Bundle-SymbolicName: org.idempiere.ui.sso.oidc
+Bundle-Version: 12.0.0
+Import-Package: *
+-includeresource: lib/oauth2-oidc-sdk.jar=${repo;com.nimbusds:oauth2-oidc-sdk;[10.7.1,10.7.1]};lib:=true, \
+	lib/nimbus-jose-jwt.jar=${repo;com.nimbusds:nimbus-jose-jwt;[9.37.3,9.37.3]};lib:=true, \
+	lib/lang-tag.jar=${repo;com.nimbusds:lang-tag;[1.7,1.7]};lib:=true, \
+	lib/content-type.jar=${repo;com.nimbusds:content-type;[2.2,2.2]};lib:=true, \
+	lib/json-smart.jar=${repo;net.minidev:json-smart;[2.4.10,2.4.10]};lib:=true, \
+	lib/accessors-smart.jar=${repo;net.minidev:accessors-smart;[2.4.9,2.4.9]};lib:=true
+	
