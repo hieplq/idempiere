@@ -31,11 +31,11 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.adempiere.base.Core;
+import org.adempiere.base.IMappedProcessFactory;
 import org.adempiere.base.IProcessFactory;
+import org.adempiere.base.MappedProcessFactory;
 import org.compiere.process.ProcessCall;
 import org.compiere.process.SvrProcess;
-import org.idempiere.process.IMappedProcessFactory;
-import org.idempiere.process.MappedProcessFactory;
 import org.idempiere.test.AbstractTestCase;
 import org.idempiere.test.TestActivator;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;

@@ -1,0 +1,28 @@
+-runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runee: JavaSE-17
+-buildpath: \
+	org.eclipse.osgi;version='3.18',\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.component,\
+	org.adempiere.base;version=latest,\
+	org.osgi.service.event,\
+	org.adempiere.report.jasper,\
+	net.sf.jasperreports.engine,\
+	org.adempiere.ui.zk,\
+	junit-jupiter-api,\
+	org.adempiere.ui,\
+	idempiere.wrapped.org.springframework.spring-beans,\
+	idempiere.wrapped.org.springframework.spring-context,\
+	idempiere.wrapped.org.springframework.spring-core,\
+	assertj-core,\
+	org.adempiere.base.process,\
+	junit-jupiter-params
+-resolve: auto
+bin: target/classes
+Bundle-Name: iDempiere Unit Testing
+Bundle-SymbolicName: org.idempiere.test
+Bundle-Version: 12.0.0.qualifier
+Bundle-Vendor: iDempiere
+Bundle-Activator: org.idempiere.test.TestActivator
+Import-Package: *
+
