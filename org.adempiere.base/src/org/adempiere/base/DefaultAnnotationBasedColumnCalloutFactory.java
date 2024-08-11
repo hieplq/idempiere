@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
  * Default implementation of {@link AnnotationBasedColumnCalloutFactory} that would scan the org.adempiere.model package 
  * @author hengsin
  */
-@Component(immediate = true, service = IColumnCalloutFactory.class)
+@Component(immediate = true, service = IColumnCalloutFactory.class, property = "service.ranking:Integer=0")
 public class DefaultAnnotationBasedColumnCalloutFactory extends AnnotationBasedColumnCalloutFactory {
 
 	public DefaultAnnotationBasedColumnCalloutFactory() {

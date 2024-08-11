@@ -6,7 +6,7 @@
          name="Authorize.net"
          point="org.compiere.model.PaymentProcessor">
       <processor
-            class="org.compiere.model.PP_Authorize"
+            class="org.adempiere.payment.processor.PP_Authorize"
             priority="0">
       </processor>
    </extension>
@@ -15,7 +15,7 @@
          name="Optimal"
          point="org.compiere.model.PaymentProcessor">
       <processor
-            class="org.compiere.model.PP_Optimal"
+            class="org.adempiere.payment.processor.PP_Optimal"
             priority="0">
       </processor>
    </extension>
@@ -24,7 +24,7 @@
          name="PayPal"
          point="org.compiere.model.PaymentProcessor">
       <processor
-            class="org.compiere.model.PP_PayPal"
+            class="org.adempiere.payment.processor.PP_PayPal"
             priority="0">
       </processor>
    </extension>
@@ -33,7 +33,7 @@
          name="Pay Flow Pro"
          point="org.compiere.model.PaymentProcessor">
       <processor
-            class="org.compiere.model.PP_PayFlowPro"
+            class="org.adempiere.payment.processor.PP_PayFlowPro"
             priority="0">
       </processor>
    </extension>
@@ -42,7 +42,7 @@
          name="Pay Flow Pro V4"
          point="org.compiere.model.PaymentProcessor">
       <processor
-            class="org.compiere.model.PP_PayFlowPro4"
+            class="org.adempiere.payment.processor.PP_PayFlowPro4"
             priority="0">
       </processor>
    </extension>
@@ -51,7 +51,7 @@
          name="Dummy Payment Processor"
          point="org.compiere.model.PaymentProcessor">
       <processor
-            class="org.compiere.model.PP_Dummy">
+            class="org.adempiere.payment.processor.PP_Dummy">
       </processor>
    </extension>
 

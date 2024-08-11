@@ -25,4 +25,6 @@ Bundle-Version: 12.0.0.qualifier
 Bundle-Vendor: iDempiere
 Bundle-Activator: org.idempiere.test.TestActivator
 Import-Package: *
-
+-includeresource: AR_Invoice_Bundle.jrxml
+Test-Cases: ${classes;CONCRETE;PUBLIC;NAMED;*Test}
+ 

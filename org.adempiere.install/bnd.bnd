@@ -27,7 +27,7 @@ Export-Package: \
 	org.compiere.install.util
 Import-Package: *
 -includeresource: org/compiere/install/images/=src/org/compiere/install/images/,\
-	plugin.xml
+	plugin.xml, schema/=schema/
 Bundle-SymbolicName: org.adempiere.install;singleton:=true
 
 

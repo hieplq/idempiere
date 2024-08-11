@@ -35,7 +35,6 @@ import org.compiere.process.ProcessInfo;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
-import org.compiere.utils.DigestOfFile;
 
 /**
  * Load report resources from attachment to process

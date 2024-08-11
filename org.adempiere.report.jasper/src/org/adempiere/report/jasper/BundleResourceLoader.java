@@ -40,7 +40,6 @@ import java.util.logging.Level;
 
 import org.compiere.util.CLogger;
 import org.compiere.util.Language;
-import org.compiere.utils.DigestOfFile;
 import org.osgi.framework.Bundle;
 
 /**

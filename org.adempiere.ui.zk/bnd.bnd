@@ -46,7 +46,7 @@ Bundle-SymbolicName: org.adempiere.ui.zk;singleton:=true
 Bundle-Version: 12.0.0
 Bundle-Vendor: iDempiere Community
 Bundle-Activator: org.adempiere.webui.WebUIActivator
-Import-Package: *
+Import-Package: !org.cyberneko.html.parsers, *
 DynamicImport-Package: action.images
 Web-ContextPath: webui
 Jetty-Environment: ee8
@@ -60,17 +60,20 @@ Jetty-Environment: ee8
 	WEB-INF/web.xml=WEB-INF/web.xml, \
 	WEB-INF/zk.xml=WEB-INF/zk.xml, \
 	admin.zul, error.zul, gif.jsp, index.zul, manifest.json, \
-	plugin.xml, sessiontimeout.zul, theme.zs, timeout.zul, \
+	plugin.xml, sessiontimeout.zul, theme.zs, timeout.zul, schema/=schema/,\
 	zul=zul, css=css, images=images, js=js
-
 
 Export-Package: \
 	org.idempiere.ui.zk.media,\
+	fi.jawsy.jawwa.zk.atmosphere,\
+	name.fraser.neil.plaintext,\
 	org.adempiere.webui.report,\
 	org.adempiere.webui,\
 	org.adempiere.webui.apps,\
+	org.adempiere.webui.apps.wf,\
 	org.adempiere.webui.component,\
 	org.adempiere.webui.editor,\
+	org.adempiere.webui.editor.grid.selection,\
 	org.adempiere.webui.util,\
 	org.adempiere.webui.action,\
 	org.adempiere.webui.adwindow,\
@@ -85,6 +88,7 @@ Export-Package: \
 	org.adempiere.webui.info,\
 	org.adempiere.webui.listbox.renderer,\
 	org.adempiere.webui.panel,\
+	org.adempiere.webui.panel.action,\
 	org.adempiere.webui.part,\
 	org.adempiere.webui.process,\
 	org.adempiere.webui.theme,\
@@ -94,5 +98,7 @@ Export-Package: \
 	org.adempiere.webui.apps.form,\
 	org.adempiere.webui.apps.graph,\
 	org.adempiere.webui.apps.graph.model,\
-	org.adempiere.webui.acct
+	org.adempiere.webui.acct,\
+	org.zkforge.keylistener,\
+	org.zkoss.addon.chosenbox
 -privatepackage: org.adempiere.webui

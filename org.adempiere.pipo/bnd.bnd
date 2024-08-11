@@ -17,9 +17,7 @@ Bundle-Version: 12.0.0
 Bundle-SymbolicName: org.adempiere.pipo;singleton:=true
 Bundle-Activator: org.adempiere.pipo2.BundleActivator
 Import-Package: *
--includeresource: plugin.xml
-
-
+-includeresource: plugin.xml, schema/=schema/
 Export-Package: \
 	org.adempiere.pipo2,\
 	org.adempiere.pipo2.exception,\

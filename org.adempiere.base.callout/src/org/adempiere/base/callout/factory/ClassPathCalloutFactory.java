@@ -27,12 +27,17 @@ import org.adempiere.base.ICalloutFactory;
 import org.compiere.model.Callout;
 import org.osgi.service.component.annotations.Component;
 
-@Component(immediate = true, service = ICalloutFactory.class)
+@Component(immediate = true, service = ICalloutFactory.class, property = {"service.ranking:Integer=1"})
 public class ClassPathCalloutFactory implements ICalloutFactory {
 
 	@Override
 	public Callout getCallout(String className, String methodName) {
 		Class<?> calloutClass = null;
+		// legacy package name mapping - move to org.adempiere.base.callout to fix split package  
+		if (className.startsWith("org.compiere.model"))
+			className = "org.adempiere.base.callout" + className.substring("org.compiere.model".length());
+		else if (className.startsWith("org.adempiere.model"))
+			className = "org.adempiere.base.callout" + className.substring("org.adempiere.model".length());
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		try
 		{

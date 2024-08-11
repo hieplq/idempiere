@@ -26,7 +26,7 @@ import org.osgi.service.component.annotations.Component;
  * Load {@link Callout} instance from plugin.xml (org.compiere.model.Callout extension point) or class path.
  * @author a42niem
  */
-@Component(service = ICalloutFactory.class)
+@Component(service = ICalloutFactory.class, property = {"service.ranking:Integer=0"})
 public class DefaultCalloutFactory implements ICalloutFactory {
 
 	private final static CLogger log = CLogger.getCLogger(DefaultCalloutFactory.class);

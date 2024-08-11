@@ -46,14 +46,19 @@
 	groovy-jsr223;version='3.0'
 -resolve: auto
 bin: target/classes
+Bundle-SymbolicName: org.adempiere.base;singleton:=true
 Bundle-Activator: org.adempiere.base.BaseActivator
 Bundle-Version: 12.0.0
 Export-Package: \
 	org.adempiere.base.ds,\
 	org.adempiere.base.equinox,\
 	org.idempiere.mfa,\
+	org.compiere.model,\
 	org.adempiere.base.event,\
 	org.adempiere.base.event.annotations,\
+	org.globalqss.process,\
+	org.idempiere.broadcast.process,\
+	org.eevolution.process,\
 	org.adempiere.base.event.annotations.doc,\
 	org.adempiere.base.event.annotations.imp,\
 	org.adempiere.base.event.annotations.po,\
@@ -83,7 +88,7 @@ Export-Package: \
 	org.compiere.db,\
 	org.compiere.db.partition,\
 	org.compiere.dbPort,\
-	org.compiere.model,\
+	org.adempiere.payment.processor,\
 	org.compiere.model.credit,\
 	org.compiere.print,\
 	org.compiere.print.layout,\
@@ -121,7 +126,7 @@ Import-Package: com.google.javascript.jscomp;resolution:=optional,\
 	lib/cron4j.jar=${repo;it.sauronsoftware.cron4j:cron4j};lib:=true, \
 	lib/htmlcompressor.jar=${repo;com.googlecode.htmlcompressor:htmlcompressor};lib:=true, \
 	lib/yuicompressor.jar=${repo;com.yahoo.platform.yui:yuicompressor};lib:=true, \
-	plugin.xml,\
+	plugin.xml, schema/=schema/,\
 	META-INF/javamail.default.address.map=META-INF/javamail.default.address.map,\
 	OSGI-INF/metatype=OSGI-INF/metatype
 -nouses: true

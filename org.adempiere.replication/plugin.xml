@@ -7,7 +7,7 @@
          name="org.adempiere.model.ExportModelValidator"
          point="org.adempiere.base.ModelValidator">
       <listener
-            class="org.adempiere.model.ExportModelValidator">
+            class="org.adempiere.replication.ExportModelValidator">
       </listener>
    </extension>
 

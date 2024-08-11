@@ -9,8 +9,19 @@
 	bnd.identity;id='org.adempiere.base';version=latest
 -runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
 -runee: JavaSE-17
--runvm: -Dosgi.noShutdown=true -Dosgi.compatibility.bootdelegation=true
+-runvm: \
+	--add-modules=java.se, --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, \
+	--add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.management/sun.management=ALL-UNNAMED, \
+	--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
 -runbundles: \
+	slf4j.api;version='[2.0.12,2.0.13)',\
+	slf4j.jdk14;version='[2.0.12,2.0.13)',\
+	org.apache.logging.log4j.api;version='[2.23.1,2.23.2)',\
+	org.apache.logging.log4j.to.slf4j;version='[2.23.1,2.23.2)',\
+	org.apache.aries.spifly.dynamic.bundle;version='[1.3.7,1.3.8)',\
+	org.apache.felix.scr;version='[2.2.6,2.2.7)',\
+	org.compiere.db.oracle.provider;version=snapshot,\
+	org.compiere.db.postgresql.provider;version=snapshot,\
 	bcpkix;version='[1.78.1,1.78.2)',\
 	bcprov;version='[1.78.1,1.78.2)',\
 	bcutil;version='[1.78.1,1.78.2)',\
@@ -51,7 +62,6 @@
 	org.adempiere.install;version=snapshot,\
 	org.antlr.antlr4-runtime;version='[4.9.2,4.9.3)',\
 	org.apache.ant;version='[1.10.12,1.10.13)',\
-	org.apache.aries.spifly.dynamic.bundle;version='[1.3.7,1.3.8)',\
 	org.apache.commons.collections;version='[3.2.2,3.2.3)',\
 	org.apache.commons.commons-beanutils;version='[1.9.4,1.9.5)',\
 	org.apache.commons.commons-codec;version='[1.16.1,1.16.2)',\
@@ -63,23 +73,18 @@
 	org.apache.commons.logging;version='[1.2.0,1.2.1)',\
 	org.apache.commons.math3;version='[3.6.1,3.6.2)',\
 	org.apache.ecs;version=snapshot,\
-	org.apache.felix.scr;version='[2.2.6,2.2.7)',\
 	org.apache.httpcomponents.httpclient;version='[4.5.13,4.5.14)',\
 	org.apache.httpcomponents.httpcore;version='[4.4.14,4.4.15)',\
-	org.apache.logging.log4j.api;version='[2.23.1,2.23.2)',\
 	org.apache.pdfbox;version='[2.0.32,2.0.33)',\
 	org.apache.pdfbox.fontbox;version='[2.0.32,2.0.33)',\
 	org.apache.santuario.xmlsec;version='[2.2.1,2.2.2)',\
 	org.apache.servicemix.bundles.batik;version='[1.16.0,1.16.1)',\
 	org.apache.servicemix.bundles.xerces;version='[2.12.1,2.12.2)',\
 	org.apache.xml.serializer;version='[2.7.2,2.7.3)',\
-	org.compiere.db.oracle.provider;version=snapshot,\
-	org.compiere.db.postgresql.provider;version=snapshot,\
 	org.eclipse.equinox.common;version='[3.18.100,3.18.101)',\
 	org.eclipse.equinox.registry;version='[3.11.300,3.11.301)',\
 	org.eclipse.jetty.servlet-api;version='[4.0.6,4.0.7)',\
 	org.eclipse.jetty.servlet-api.capability;version='[4.0.6,4.0.7)',\
-	org.eclipse.jetty.util;version='[10.0.15,10.0.16)',\
 	org.idempiere.app.install;version=snapshot,\
 	org.krysalis.barcode4j;version='[2.1.0,2.1.1)',\
 	org.objectweb.asm;version='[9.7.0,9.7.1)',\
@@ -97,8 +102,6 @@
 	org.w3c.dom.events;version='[3.0.0,3.0.1)',\
 	org.w3c.dom.smil;version='[1.0.1,1.0.2)',\
 	org.w3c.dom.svg;version='[1.1.0,1.1.1)',\
-	slf4j.api;version='[2.0.12,2.0.13)',\
-	slf4j.jdk14;version='[2.0.12,2.0.13)',\
 	org.eclipse.osgi.util;version='[3.7.200,3.7.201)',\
 	org.osgi.util.measurement;version='[1.0.2,1.0.3)',\
 	org.osgi.util.position;version='[1.0.1,1.0.2)',\
@@ -107,9 +110,11 @@
 	groovy-jsr223;version='[3.0.22,3.0.23)',\
 	idempiere.wrapped.dev.samstevens.totp.totp;version=snapshot,\
 	org.eclipse.equinox.cm;version='[1.5.200,1.5.201)',\
-	org.eclipse.equinox.event;version='[1.6.200,1.6.201)'
--runbundles+: \
-    org.eclipse.equinox.registry;startlevel=1, \
-    org.compiere.db.postgresql.provider;startlevel=2, \
-    org.compiere.db.oracle.provider;startlevel=2, \
-    *;startlevel=4
+	org.eclipse.equinox.event;version='[1.6.200,1.6.201)',\
+	org.eclipse.jetty.util;version='[12.0.11,12.0.12)'
+runproperties: IDEMPIERE_HOME=${workspace},\
+	launch.activation.eager=true, \
+	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream", \
+	osgi.noShutdown=true, \
+	osgi.compatibility.bootdelegation=true
+	

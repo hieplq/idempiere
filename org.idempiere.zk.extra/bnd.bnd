@@ -21,7 +21,8 @@ Bundle-Name: extra zk library
 Bundle-SymbolicName: org.idempiere.zk.extra
 Bundle-Version: 12.0.0
 Bundle-Vendor: iDempiere Community
-Import-Package: *
+Import-Package: *;resolution:=optional
+-nouses: true
 -includeresource: lib/gmapsz.jar=${repo;org.zkoss.zkforge:gmapsz};lib:=true, \
 	lib/timelinez.jar=${repo;org.zkoss.zkforge:timelinez};lib:=true, \
 	lib/timeplotz.jar=${repo;org.zkoss.zkforge:timeplotz};lib:=true, \

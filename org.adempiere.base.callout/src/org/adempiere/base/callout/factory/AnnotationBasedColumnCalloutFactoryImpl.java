@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Component;
  * @author hengsin
  *
  */
-@Component(immediate = true, service = IColumnCalloutFactory.class)
+@Component(immediate = true, service = IColumnCalloutFactory.class, property = {"service.ranking:Integer=1"})
 public class AnnotationBasedColumnCalloutFactoryImpl extends AnnotationBasedColumnCalloutFactory {
 
 	public AnnotationBasedColumnCalloutFactoryImpl() {

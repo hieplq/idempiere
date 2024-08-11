@@ -132,6 +132,7 @@ org.apache.activemq:activemq-broker:5.16.7
 org.apache.activemq:activemq-client:5.16.7
 org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1
 org.apache.geronimo.specs:geronimo-j2ee-management_1.1_spec:1.0.1
+org.fusesource.hawtbuf:hawtbuf:1.11
 
 #groovy
 org.codehaus.groovy:groovy:3.0.22
@@ -246,3 +247,8 @@ com.sun.xml.messaging.saaj:saaj-impl:1.5.3
 jakarta.xml.soap:jakarta.xml.soap-api:1.4.2
 
 org.json:json:20231013
+
+#bnd tester
+biz.aQute.bnd:biz.aQute.tester.junit-platform:7.0.0
+biz.aQute.bnd:biz.aQute.tester:7.0.0
+

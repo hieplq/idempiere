@@ -15,7 +15,7 @@ Bundle-Name: iDempiere UI base
 Bundle-SymbolicName: org.adempiere.ui
 Bundle-Version: 12.0.0
 Bundle-Vendor: iDempiere Community
-Import-Package: *
+Import-Package: !sun.awt.*, *
 -includeresource: lib/org-netbeans-api-visual.jar=${repo;org.netbeans.api:org-netbeans-api-visual};lib:=true, \
 	lib/org-openide-util.jar=${repo;org.netbeans.api:org-openide-util};lib:=true, \
 	lib/org-openide-util-lookup.jar=${repo;org.netbeans.api:org-openide-util-lookup};lib:=true
@@ -35,4 +35,5 @@ Export-Package: \
 	org.compiere.grid,\
 	org.netbeans.api.visual.graph,\
 	org.compiere.apps.wf,\
-	org.adempiere.ui.print
+	org.adempiere.ui.print,\
+	org.openide

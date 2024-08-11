@@ -31,5 +31,5 @@ Web-ContextPath: ADInterface
 Jetty-Environment: ee8
 -includeresource: lib/=lib/;lib:=true, \
 	WEB-INF/web.xml=WEB-INF/web.xml, plugin.xml, \
-	META-INF/=META-INF/
+	META-INF/=META-INF/, schema/=schema/
 	

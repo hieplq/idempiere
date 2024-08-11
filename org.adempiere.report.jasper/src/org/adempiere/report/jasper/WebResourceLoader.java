@@ -38,7 +38,6 @@ import org.adempiere.exceptions.AdempiereException;
 import org.compiere.util.CLogger;
 import org.compiere.util.Language;
 import org.compiere.util.Util;
-import org.compiere.utils.DigestOfFile;
 
 /**
  * 
