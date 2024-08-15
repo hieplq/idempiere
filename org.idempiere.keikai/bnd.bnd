@@ -21,7 +21,11 @@ bin: target/classes
 Bundle-Name: zk keikai
 Bundle-SymbolicName: org.idempiere.keikai
 Bundle-Version: 12.0.0
-Import-Package: *
+Import-Package: !com.sun.javadoc, !com.sun.tools.javadoc, !junit.*, \
+	!org.jsoup.*, !org.zkoss.poi.generator, \
+	!schemasMicrosoftComOfficeExcel, \
+	!schemasMicrosoftComOfficeOffice, \
+	!schemasMicrosoftComVml, *
 Fragment-Host: org.adempiere.ui.zk;bundle-version="12.0.0"
 -includeresource: lib/keikai-oss.jar=${repo;io.keikai:keikai-oss};lib:=true, \
 	lib/keikai-model-oss.jar=${repo;io.keikai:keikai-model-oss};lib:=true, \
@@ -29,3 +33,14 @@ Fragment-Host: org.adempiere.ui.zk;bundle-version="12.0.0"
 	lib/ooxml-schemas.jar=${repo;org.apache.poi:ooxml-schemas;[1.4,1.4]};lib:=true, \
 	lib/xmlbeans.jar=${repo;org.apache.xmlbeans:xmlbeans;[3.0.2,3.0.2]};lib:=true
 	
+Export-Package: \
+	org.idempiere.keikai.view,\
+	metainfo,\
+	metainfo.tld;'-split-package:'=merge-first,\
+	metainfo.zk;'-split-package:'=merge-first
+-exportcontents: io.keikai.*,\
+	org.zkoss.poi.*
+-fixupmessages: \
+	"Export*has*private references*";\
+	is:=ignore
+		

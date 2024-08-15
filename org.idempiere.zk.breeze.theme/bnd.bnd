@@ -7,8 +7,13 @@ Bundle-Name: iDempiere Breeze Theme
 Bundle-SymbolicName: org.idempiere.zk.breeze.theme
 Bundle-Version: 12.0.0
 Import-Package: *
-Eclipse-BundleShape: dir
 Fragment-Host: org.adempiere.ui.zk;bundle-version="12.0.0"
-Jetty-WarPrependFragmentResourcePath: /
-
 -buildpath: org.adempiere.ui.zk;version=latest
+Export-Package: \
+	metainfo.zk;-split-package:=merge-first,\
+	web.theme;-split-package:=first,\
+	web.theme.default,\
+	web.theme.default.css,\
+	web.theme.default.images,\
+	web.theme.default.zul
+	

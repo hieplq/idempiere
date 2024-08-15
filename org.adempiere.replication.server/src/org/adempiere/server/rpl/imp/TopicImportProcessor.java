@@ -32,16 +32,16 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import org.adempiere.server.rpl.IImportProcessor;
+import org.adempiere.server.rpl.ReplicationProcessor;
 import org.compiere.model.MIMPProcessor;
 import org.compiere.model.X_IMP_ProcessorParameter;
-import org.compiere.server.ReplicationProcessor;
 import org.compiere.util.CLogger;
 
 /**
  * Aim of this class is to import records from JMS Server.
  * 
  * @author Trifon N. Trifonov
- * @version $Id:$
+ * @version $Id$
  */
 public class TopicImportProcessor implements IImportProcessor {
 	

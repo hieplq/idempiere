@@ -153,6 +153,8 @@ org.eclipse.jetty.ee8:jetty-ee8-apache-jsp:12.0.11
 org.eclipse.jetty.ee8.osgi:jetty-ee8-osgi-boot-jsp:12.0.11
 jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:1.2.7
 org.glassfish.web:javax.servlet.jsp.jstl:1.2.5
+org.eclipse.jetty:jetty-client:12.0.11
+org.eclipse.jetty:jetty-alpn-client:12.0.11
 
 #hazelcast
 com.hazelcast:hazelcast:5.3.7
@@ -163,6 +165,8 @@ com.fasterxml.jackson.datatype:jackson-datatype-json-org:2.15.4
 com.fasterxml.jackson.core:jackson-annotations:2.15.4
 com.fasterxml.jackson.core:jackson-core:2.15.4
 com.fasterxml.jackson.core:jackson-databind:2.15.4
+org.codehaus.woodstox:stax2-api:4.2.1
+com.fasterxml.woodstox:woodstox-core:6.7.0
 
 #jasperreport
 net.sf.jasperreports:jasperreports:6.21.0
@@ -192,7 +196,10 @@ org.zkoss.calendar:calendar:2.1.5
 org.zkoss.theme:breeze:10.0.1
 org.zkoss.theme:iceblue_c:10.0.1
 com.google.javascript:closure-compiler:v20240317
-
+org.javassist:javassist:3.25.0-GA
+org.apache.commons:commons-fileupload2-core:2.0.0-M2
+org.apache.commons:commons-fileupload2-javax:2.0.0-M2
+	    
 #websocket
 org.eclipse.jetty.ee8.websocket:jetty-ee8-websocket-jetty-server:12.0.11
 org.eclipse.jetty.ee8.websocket:jetty-ee8-websocket-jetty-api:12.0.11
@@ -219,6 +226,7 @@ org.springframework:spring-context-support:5.3.27
 org.zkoss.poi:zpoi:3.9.16
 org.apache.poi:ooxml-schemas:1.4
 org.apache.xmlbeans:xmlbeans:3.0.2
+org.dom4j:dom4j:2.1.3
 
 #oidc
 com.nimbusds:oauth2-oidc-sdk:10.7.1
@@ -239,12 +247,16 @@ org.apache.cxf:cxf-rt-transports-http:3.6.3
 org.apache.cxf:cxf-rt-frontend-jaxws:3.6.3
 org.apache.cxf:cxf-core:3.6.3
 org.apache.cxf:cxf-rt-bindings-soap:3.6.3
+org.apache.cxf:cxf-rt-bindings-xml:3.6.3
+org.apache.cxf:cxf-rt-databinding-jaxb:3.6.3
 org.apache.cxf:cxf-rt-frontend-simple:3.6.3
 org.apache.cxf:cxf-rt-ws-addr:3.6.3
 org.apache.cxf:cxf-rt-wsdl:3.6.3
 org.apache.cxf:cxf-rt-ws-policy:3.6.3
 com.sun.xml.messaging.saaj:saaj-impl:1.5.3
 jakarta.xml.soap:jakarta.xml.soap-api:1.4.2
+org.apache.ws.xmlschema:xmlschema-core:2.3.1
+wsdl4j:wsdl4j:1.6.3
 
 org.json:json:20231013
 
@@ -252,3 +264,15 @@ org.json:json:20231013
 biz.aQute.bnd:biz.aQute.tester.junit-platform:7.0.0
 biz.aQute.bnd:biz.aQute.tester:7.0.0
 
+#org.glassfish.jersey
+org.glassfish.jersey.core:jersey-server:2.34
+org.glassfish.jersey.core:jersey-common:2.34
+org.glassfish.jersey.core:jersey-client:2.34
+org.glassfish.jersey.inject:jersey-hk2:2.34
+org.glassfish.jersey.ext:jersey-entity-filtering:2.34
+org.glassfish.jersey.media:jersey-media-json-jackson:2.34
+org.glassfish.jersey.containers:jersey-container-servlet-core:2.34
+org.glassfish.hk2:hk2-locator:2.6.1
+org.glassfish.hk2:hk2-api:2.6.1
+org.glassfish.hk2:hk2-utils:2.6.1
+org.glassfish.hk2:osgi-resource-locator:1.0.3

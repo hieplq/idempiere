@@ -132,3 +132,8 @@ Import-Package: com.google.javascript.jscomp;resolution:=optional,\
 -nouses: true
 -exportcontents: bsh.*;version=2.0
 
+-privatepackage: \
+	com.akunagroup.uk.postcode,\
+	org.krysalis.barcode4j.impl.qr,\
+	org.krysalis.barcode4j.tools;-split-package:=merge-first
+	

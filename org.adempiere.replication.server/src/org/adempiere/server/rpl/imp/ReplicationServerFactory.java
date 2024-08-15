@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.server.IServerFactory;
+import org.adempiere.server.rpl.ReplicationProcessor;
 import org.compiere.model.MIMPProcessor;
-import org.compiere.server.ReplicationProcessor;
 import org.osgi.service.component.annotations.Component;
 
 /**

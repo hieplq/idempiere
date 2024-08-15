@@ -22,4 +22,5 @@ Import-Package: *
 Export-Package: \
 	org.idempiere.webservices.resources.cxf,\
 	schemas,\
+	org.idempiere.webservices.resources,\
 	schemas.configuration

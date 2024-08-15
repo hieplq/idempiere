@@ -17,3 +17,4 @@ Export-Package: \
 	org.idempiere.process,\
 	org.adempiere.base.process,\
 	org.adempiere.base.process.factory
+-privatepackage: org.compiere.install

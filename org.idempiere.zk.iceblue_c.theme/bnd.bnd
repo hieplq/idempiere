@@ -8,8 +8,15 @@ Bundle-SymbolicName: org.idempiere.zk.iceblue_c.theme
 Bundle-Version: 12.0.0
 Bundle-Vendor: iDempiere
 Import-Package: *
-Eclipse-BundleShape: dir
 Fragment-Host: org.adempiere.ui.zk;bundle-version="12.0.0"
-Jetty-WarPrependFragmentResourcePath: /
-
 -buildpath: org.adempiere.ui.zk;version=latest
+Export-Package: \
+	metainfo.zk;-split-package:=merge-first,\
+	web.theme.iceblue_c,\
+	web.theme.iceblue_c.css,\
+	web.theme.iceblue_c.css.fragment,\
+	web.theme.iceblue_c.images,\
+	web.theme.iceblue_c.zul.calendar,\
+	web.theme.iceblue_c.zul.dashboard,\
+	web.theme.iceblue_c.zul.desktop,\
+	web.theme.iceblue_c.zul.login

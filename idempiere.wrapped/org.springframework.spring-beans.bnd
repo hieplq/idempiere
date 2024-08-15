@@ -6,4 +6,3 @@ Bundle-Version: ${ver}
 Export-Package: *;version=${ver}
 Import-Package: *;resolution:=optional
 -buildrepo: Local
-

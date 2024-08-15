@@ -1,0 +1,8 @@
+-includeresource: @${repo;org.dom4j:dom4j;latest}
+Bundle-SymbolicName: idempiere.wrapped.org.dom4j.dom4j
+ver: 2.1.3
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+Import-Package: *;resolution:=optional
+-buildrepo: Local

@@ -37,7 +37,12 @@
 	org.apache.commons.commons-text,\
 	org.eclipse.jetty.websocket-api,\
 	idempiere.wrapped.org.springframework.spring-web,\
-	idempiere.wrapped.org.jfree.jcommon
+	idempiere.wrapped.org.jfree.jcommon,\
+	zkwebfragment;version='10.0',\
+	zel;version='10.0',\
+	zkbind;version='10.0',\
+	zkplus,\
+	org.idempiere.zk.billboard;version=latest
 -resolve: auto
 bin: target/classes
 src: WEB-INF/src
@@ -46,7 +51,10 @@ Bundle-SymbolicName: org.adempiere.ui.zk;singleton:=true
 Bundle-Version: 12.0.0
 Bundle-Vendor: iDempiere Community
 Bundle-Activator: org.adempiere.webui.WebUIActivator
-Import-Package: !org.cyberneko.html.parsers, *
+Import-Package: \
+	!org.cyberneko.html.parsers,\
+	org.compiere.css,\
+	*
 DynamicImport-Package: action.images
 Web-ContextPath: webui
 Jetty-Environment: ee8
@@ -61,8 +69,9 @@ Jetty-Environment: ee8
 	WEB-INF/zk.xml=WEB-INF/zk.xml, \
 	admin.zul, error.zul, gif.jsp, index.zul, manifest.json, \
 	plugin.xml, sessiontimeout.zul, theme.zs, timeout.zul, schema/=schema/,\
-	zul=zul, css=css, images=images, js=js
-
+	zul=zul, css=css, images=images, js=js,\
+	web/=WEB-INF/src/web,\
+	metainfo/=WEB-INF/src/metainfo
 Export-Package: \
 	org.idempiere.ui.zk.media,\
 	fi.jawsy.jawwa.zk.atmosphere,\
@@ -101,4 +110,14 @@ Export-Package: \
 	org.adempiere.webui.acct,\
 	org.zkforge.keylistener,\
 	org.zkoss.addon.chosenbox
--privatepackage: org.adempiere.webui
+-privatepackage: \
+	org.adempiere.webui,\
+	org.adempiere.webui.scheduler,\
+	org.idempiere.ui.zk.websocket,\
+	org.adempiere.webui.sso.filter,\
+	org.adempiere.webui.apps.graph.jfreegraph
+Require-Bundle: zcommon, zel, zhtml, zk, zkbind,\
+	zkplus, zkwebfragment, zul, zweb,\
+	org.idempiere.zk.extra,\
+	org.idempiere.zk.billboard
+Service-Component: OSGI-INF/*.xml

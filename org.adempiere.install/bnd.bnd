@@ -33,3 +33,4 @@ Bundle-SymbolicName: org.adempiere.install;singleton:=true
 
 
 
+-privatepackage: org.compiere.install.images

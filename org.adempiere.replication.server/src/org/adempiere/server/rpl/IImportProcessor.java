@@ -30,8 +30,6 @@ package org.adempiere.server.rpl;
 
 import java.util.Properties;
 
-import org.compiere.server.ReplicationProcessor;
-
 /**
  * Interface for Import processor
  * @author Trifon Trifonov

@@ -1,0 +1,8 @@
+-includeresource: @${repo;wsdl4j:wsdl4j;latest}
+Bundle-SymbolicName: idempiere.wrapped.wsdl4j.wsdl4j
+ver: 1.6.3
+-output: ${bsn}-${ver}.jar
+Bundle-Version: ${ver}
+Export-Package: *;version=${ver}
+Import-Package: *;resolution:=optional
+-buildrepo: Local

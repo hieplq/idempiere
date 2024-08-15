@@ -29,6 +29,7 @@ Export-Package: \
 	org.compiere.apps.form,\
 	org.idempiere.apps.form,\
 	org.netbeans.api.visual.widget,\
+	org.compiere.css,\
 	org.netbeans.api.visual.model,\
 	org.compiere.minigrid,\
 	org.compiere.grid.ed,\
@@ -37,3 +38,6 @@ Export-Package: \
 	org.compiere.apps.wf,\
 	org.adempiere.ui.print,\
 	org.openide
+-privatepackage: \
+	org.compiere.css,\
+	org.compiere.install
