@@ -1,4 +1,4 @@
--runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
 -runee: JavaSE-17
 -buildpath: \
 	org.eclipse.osgi;version='3.18',\
@@ -7,7 +7,9 @@
 	org.adempiere.base;version=latest,\
 	com.sun.mail.jakarta.mail;version='1.6',\
 	org.apache.commons.collections,\
-	org.apache.ant:ant;version='1.10'
+	org.apache.ant:ant;version='1.10',\
+	com.sun.activation.jakarta.activation;version='1.2',\
+	org.eclipse.jetty.servlet-api;version='4.0'
 -resolve: auto
 bin: target/classes
 Bundle-SymbolicName: org.adempiere.base.process

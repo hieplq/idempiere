@@ -1,2 +1,0 @@
--include: share.bndrun
--runproperties: ${runproperties}, setup.mode=gui

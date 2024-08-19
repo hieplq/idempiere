@@ -52,7 +52,6 @@ import org.compiere.Adempiere;
 import org.compiere.db.CConnection;
 import org.compiere.db.Database;
 import org.compiere.model.MSystem;
-import org.compiere.model.SystemProperties;
 import org.compiere.util.CLogMgt;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -67,7 +66,7 @@ import org.eclipse.jetty.util.security.Password;
  *	Configuration Data
  *
  *  @author Jorg Janke
- *  @version $Id: ConfigurationData.java,v 1.4 2006/07/30 00:57:42 jjanke Exp $
+ *  @version $Id$
  */
 public class ConfigurationData
 {
@@ -226,9 +225,7 @@ public class ConfigurationData
 	public boolean load()
 	{
 		//	Load idempiereEnv.properties
-		String adempiereHome = SystemProperties.getIdempiereHome();
-		if (adempiereHome == null || adempiereHome.length() == 0)
-			adempiereHome = System.getProperty("user.dir");
+		String adempiereHome = Ini.getAdempiereHome();
 
 		boolean envLoaded = false;
 		String fileName = adempiereHome + File.separator + IDEMPIERE_ENV_FILE;

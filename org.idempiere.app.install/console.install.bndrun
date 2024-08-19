@@ -1,0 +1,2 @@
+-include: install.bndrun
+-runproperties.console: setup.mode=console

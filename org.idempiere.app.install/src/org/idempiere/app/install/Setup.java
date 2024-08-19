@@ -19,32 +19,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,          *
  * MA 02110-1301, USA.                                                 *
  **********************************************************************/
-package org.idempiere.app.post.migration;
+package org.idempiere.app.install;
 
-import org.adempiere.base.PostMigrationApplication;
+import org.compiere.install.InstallApplication;
+import org.compiere.install.console.ConsoleInstallApplication;
+import org.compiere.install.console.SilentInstallApplication;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
 @Component(immediate = true)
-public class PostMigrationService {
-
+public class Setup {
 	@Activate
 	void activate(ComponentContext context) {
-		try {
-			start();
-		} catch (Throwable t) {
-			stop(1);
+		String[] args = new String[0];
+		//get command line arguments
+		ServiceReference<?> serviceRef = context.getBundleContext().getServiceReference("aQute.launcher.Launcher");
+		if (serviceRef != null) {
+			args = (String[]) serviceRef.getProperties().get("launcher.arguments");
 		}
-		stop(0);
+		try {
+			start(context, args);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			stop();
+		}
 	}
 
-	protected void start() throws Exception {
-		PostMigrationApplication app = new PostMigrationApplication();
-		app.start();
+	private void start(ComponentContext context, String[] args) throws Exception {
+		String mode = System.getProperty("setup.mode", "gui");
+
+		if ("console".equalsIgnoreCase(mode)) {
+			ConsoleInstallApplication console = new ConsoleInstallApplication();
+			console.run(args);
+		} else if ("silent".equalsIgnoreCase(mode)) {
+			SilentInstallApplication silent = new SilentInstallApplication();
+			silent.run(args);
+		} else {
+			InstallApplication gui = new InstallApplication();
+			gui.run(args);
+		}
+		stop();
 	}
 
-	protected void stop(int status) {
-		System.exit(status);
+	protected void stop() {
+		System.exit(0);
 	}
 }

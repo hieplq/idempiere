@@ -14,6 +14,8 @@
 package org.compiere.install;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -27,6 +29,32 @@ import org.apache.tools.ant.ProjectHelper;
 public class InstallApplication {
 
 	/**
+	 * Get path to build.xml file
+	 * @return path or null
+	 */
+	public static String getBuildFilePath() {
+		String path = null;
+		String userDir = System.getProperty("user.dir");
+		if (userDir.endsWith("org.idempiere.app.install")) {
+			path = userDir.substring(0, userDir.length() - "org.idempiere.app.install".length())
+					+ "org.adempiere.install/build.xml";
+		} else {
+			path = userDir + "/org.adempiere.install/build.xml";
+		}
+		
+		if (!Files.exists(Paths.get(path))) {
+			String buildFile = userDir + "/build.xml";
+			String envFile = userDir + "/idempiereEnvTemplate.properties";
+			if (Files.exists(Paths.get(buildFile)) && Files.exists(Paths.get(envFile))) {
+				path = buildFile;
+			} else {
+				path = null;
+			}
+		}
+		return path;
+	}
+	
+	/**
 	 * Run setup dialog
 	 * @param args
 	 * @throws Exception
@@ -37,20 +65,12 @@ public class InstallApplication {
 		while (Setup.instance.isDisplayable()) {
 			Thread.sleep(2000);
 		}
-		String path = System.getProperty("user.dir");
-		if (path.endsWith("org.idempiere.app.install")) {
-			path = path.substring(0, path.length() - "org.idempiere.app.install".length())
-					+ "org.adempiere.install/build.xml";
-		} else {
-			path = path + "/org.adempiere.install/build.xml";
-		}
-		File file = new File(path);
-		//only exists if it is running from development environment
-		if (file.exists()) {
+		String path = getBuildFilePath();
+		if (path != null) {
 			Project project = new Project();
 			ProjectHelper helper = ProjectHelper.getProjectHelper();
 			project.addReference("ant.projectHelper", helper);
-			helper.parse(project, file);
+			helper.parse(project, new File(path));
 			DefaultLogger logger = new DefaultLogger();
 			logger.setOutputPrintStream(System.out);
 			logger.setErrorPrintStream(System.err);

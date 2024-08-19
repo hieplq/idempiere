@@ -67,21 +67,12 @@ public class SilentSetup {
 		/**	Run Ant	**/
 		try
 		{
-			String path = System.getProperty("user.dir");
-			if (path.endsWith("org.idempiere.app.install")) {
-				path = path.substring(0, path.length() - "org.idempiere.app.install".length())
-						+ "org.adempiere.install/build.xml";
-			} else {
-				path = path + "/org.adempiere.install/build.xml";
-			}
-			File file = new File(path);
-			System.out.println("file="+path+" exists="+file.exists());
-			//only exists if it is running from development environment
-			if (file.exists()) {
+			String path = InstallApplication.getBuildFilePath();
+			if (path != null) {
 				Project project = new Project();
 				ProjectHelper helper = ProjectHelper.getProjectHelper();
 				project.addReference("ant.projectHelper", helper);
-				helper.parse(project, file);
+				helper.parse(project, new File(path));
 				DefaultLogger logger = new DefaultLogger();
 				logger.setOutputPrintStream(System.out);
 				logger.setErrorPrintStream(System.err);

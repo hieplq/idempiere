@@ -1,5 +1,5 @@
--runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
--runee: JavaSE-17
+-runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
+-runee: JavaSE-17-runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
 -resolve: auto
 bin: target/classes
 src: src

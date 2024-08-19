@@ -12,24 +12,18 @@ goto START
 :JAVA_HOME_OK
 @Set JAVA=%JAVA_HOME%\bin\java
 
-
 :START
 @Echo =======================================
 @Echo Starting iDempiere Server ...
 @Echo =======================================
 
-FOR %%c in (plugins\org.eclipse.equinox.launcher_1.*.jar) DO set JARFILE=%%c
+FOR %%c in (idempiere.server*.jar) DO set JARFILE=%%c
 
-@Set VMOPTS=%VMOPTS% -Dorg.osgi.framework.bootdelegation=sun.security.ssl
-@Set VMOPTS=%VMOPTS% -Dosgi.compatibility.bootdelegation=true
 @Set VMOPTS=%VMOPTS% -Djetty.home=jettyhome
 @Set VMOPTS=%VMOPTS% -Djetty.base=jettyhome
-@Set VMOPTS=%VMOPTS% -Djetty.etc.config.urls=etc/jetty-bytebufferpool.xml,etc/jetty-threadpool.xml,etc/jetty.xml,etc/jetty-http.xml,etc/jetty-deploy.xml,etc/jetty-ssl-context.xml,etc/jetty-ssl.xml,etc/jetty-https.xml,etc/jetty-http-forwarded.xml
-@Set VMOPTS=%VMOPTS% -Dorg.apache.cxf.osgi.http.transport.disable=true
 @Set VMOPTS=%VMOPTS% -Dosgi.console=localhost:12612
-@Set VMOPTS=%VMOPTS% -Dmail.mime.encodefilename=true
-@Set VMOPTS=%VMOPTS% -Dmail.mime.decodefilename=true
-@Set VMOPTS=%VMOPTS% -Dmail.mime.encodeparameters=true
-@Set VMOPTS=%VMOPTS% -Dmail.mime.decodeparameters=true
+@Set VMOPTS=%VMOPTS% -Dlaunch.keep=true 
+@Set VMOPTS=%VMOPTS% -Dlaunch.storage.dir=bundle-cache
 
-@"%JAVA%" %IDEMPIERE_JAVA_OPTIONS% %VMOPTS% -jar %JARFILE% -application org.adempiere.server.application
+@"%JAVA%" %IDEMPIERE_JAVA_OPTIONS% %VMOPTS% -jar %JARFILE%
+

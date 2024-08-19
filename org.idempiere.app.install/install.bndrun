@@ -5,8 +5,9 @@
 	bnd.identity;id='org.compiere.db.postgresql.provider';version=latest,\
 	bnd.identity;id='org.compiere.db.oracle.provider';version=latest,\
 	bnd.identity;id='org.eclipse.osgi.util';version:Version='3.7.200',\
-	bnd.identity;id='org.eclipse.osgi';version:Version='3.18.500',\
-	bnd.identity;id='org.adempiere.base';version=latest
+	bnd.identity;id='org.eclipse.osgi';version='[3.18,3.19)',\
+	bnd.identity;id='org.adempiere.base';version=latest,\
+	bnd.identity;id='org.apache.logging.log4j.to.slf4j';version:Version='2.23.1'
 -runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
 -runee: JavaSE-17
 -runvm: \
@@ -17,6 +18,7 @@
 	slf4j.api;version='[2.0.12,2.0.13)',\
 	slf4j.jdk14;version='[2.0.12,2.0.13)',\
 	org.apache.logging.log4j.api;version='[2.23.1,2.23.2)',\
+	org.apache.logging.log4j.to.slf4j;version='[2.23.1,2.23.2)',\
 	org.apache.aries.spifly.dynamic.bundle;version='[1.3.7,1.3.8)',\
 	org.apache.felix.scr;version='[2.2.6,2.2.7)',\
 	org.compiere.db.oracle.provider;version=snapshot,\
@@ -111,10 +113,11 @@
 	org.eclipse.equinox.cm;version='[1.5.200,1.5.201)',\
 	org.eclipse.equinox.event;version='[1.6.200,1.6.201)',\
 	org.eclipse.jetty.util;version='[12.0.11,12.0.12)',\
-	com.google.zxing.core;version='[3.4.1,3.4.2)'
-runproperties: IDEMPIERE_HOME=${workspace},\
-	launch.activation.eager=true, \
-	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream", \
+	com.google.zxing.core;version='[3.4.1,3.4.2)'	
+-runproperties: launch.activation.eager=true, \
+	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl", \
 	osgi.noShutdown=true, \
-	osgi.compatibility.bootdelegation=true
+	osgi.compatibility.bootdelegation=true, \
+	setup.mode=gui
+	
 	

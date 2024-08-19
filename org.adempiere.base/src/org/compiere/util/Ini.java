@@ -608,8 +608,31 @@ public final class Ini implements Serializable
 		if (env == null || env.trim().length() == 0)
 		{
 			//client - user home, server - current working directory
-			String current = isClient() ? System.getProperty("user.home")
-					: System.getProperty("user.dir");
+			String current = null;
+			if (isClient())
+			{
+				current = System.getProperty("user.home");
+			}
+			else
+			{
+				//check user.dir and immediate parent
+				String userDir = System.getProperty("user.dir");
+				File currentFolder = new File(userDir);
+				for(int i = 0;currentFolder != null && currentFolder.exists() && currentFolder.canRead() && i < 2;i++) 
+				{
+					File test = new File(currentFolder, "org.adempiere.base"); //eclipse
+					File test1 = new File(currentFolder, "idempiereEnvTemplate.properties"); //server
+					if (test.exists() || test1.exists())
+					{
+						current = currentFolder.getAbsolutePath();
+						break;
+					}
+					else
+					{
+						currentFolder = currentFolder.getParentFile();
+					}
+				}
+			}
 			if (current != null && current.trim().length() > 0)
 			{
 				//check directory exists and writable

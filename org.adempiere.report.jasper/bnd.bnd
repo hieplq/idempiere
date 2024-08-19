@@ -1,16 +1,17 @@
--runfw: org.eclipse.osgi;version='[3.13.100.v20180827-1536,3.13.100.v20180827-1536]'
+-runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
 -runee: JavaSE-17
 -buildpath: \
 	org.eclipse.osgi;version='3.18',\
 	org.osgi.service.component.annotations,\
 	org.osgi.service.component,\
 	org.adempiere.base;version=latest,\
-	idempiere.wrapped.org.jfree.jfreechart,\
+	idempiere.wrapped.org.jfree.jfreechart;version=latest,\
 	org.osgi.service.event,\
 	net.sf.jasperreports.engine,\
 	com.github.librepdf.openpdf;version='1.3',\
 	idempiere.wrapped.net.sourceforge.barbecue.barbecue;version=latest,\
-	org.apache.commons.commons-codec
+	org.apache.commons.commons-codec,\
+	idempiere.wrapped.org.jfree.jcommon;version=latest
 -resolve: auto
 bin: target/classes
 Bundle-Name: iDempiere JasperReport integration

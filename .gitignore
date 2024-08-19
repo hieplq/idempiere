@@ -22,4 +22,4 @@ org.idempiere.maven.to.p2/org.idempiere.webservice.client/.settings/
 cnf/local/*
 cnf/release/*
 cnf/templates/*
-
+distributions/*

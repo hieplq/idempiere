@@ -5,7 +5,7 @@
 	bnd.identity;id='org.compiere.db.postgresql.provider';version=latest,\
 	bnd.identity;id='org.compiere.db.oracle.provider';version=latest,\
 	bnd.identity;id='org.adempiere.server';version=latest,\
-	bnd.identity;id='org.eclipse.osgi';version:Version='3.18.500',\
+	bnd.identity;id='org.eclipse.osgi';version='[3.18,3.19)',\
 	bnd.identity;id='org.adempiere.base';version=latest,\
 	bnd.identity;id='org.eclipse.jetty.server';version:Version='12.0.11',\
 	bnd.identity;id='org.eclipse.jetty.ee8.osgi.boot';version:Version='12.0.11',\
@@ -311,14 +311,20 @@
 	org.glassfish.jersey.core.jersey-client;version='[2.34.0,2.34.1)',\
 	org.glassfish.jersey.core.jersey-common;version='[2.34.0,2.34.1)',\
 	org.glassfish.jersey.core.jersey-server;version='[2.34.0,2.34.1)'
--runproperties: IDEMPIERE_HOME=${workspace},\
-	launch.activation.eager=true, \
-	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream", \
-	osgi.noShutdown=true, \
+-runproperties: launch.activation.eager=true, \
+	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl", \
 	osgi.compatibility.bootdelegation=true, \
+	osgi.noShutdown=true, \
 	osgi.console=,\
 	jetty.home=${workspace}/jettyhome,\
-	jetty.etc.config.urls="etc/jetty-bytebufferpool.xml,etc/jetty-threadpool.xml,etc/jetty.xml,etc/jetty-http.xml,etc/jetty-deploy.xml,etc/jetty-ssl-context.xml,etc/jetty-ssl.xml,etc/jetty-https.xml,etc/jetty-http-forwarded.xml"
+	jetty.etc.config.urls="etc/jetty-bytebufferpool.xml,etc/jetty-threadpool.xml,etc/jetty.xml,etc/jetty-http.xml,etc/jetty-deploy.xml,etc/jetty-ssl-context.xml,etc/jetty-ssl.xml,etc/jetty-https.xml,etc/jetty-http-forwarded.xml",\
+	mail.mime.encodefilename=true,\
+	mail.mime.decodefilename=true,\
+	mail.mime.encodeparameters=true,\
+	mail.mime.decodeparameters=true,\
+	org.apache.cxf.osgi.http.transport.disable=true,\
+	launch.name="idempiere.server.jar"
+	
 -runvm: \
 	--add-modules=java.se, --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, \
 	--add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.management/sun.management=ALL-UNNAMED, \

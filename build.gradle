@@ -1,1 +1,68 @@
-// Available to customize the build
+task exportJars {
+    dependsOn ':org.adempiere.server:export', ':org.idempiere.app.install:export', ':org.idempiere.app.sign.database.build:export'
+}
+
+task deleteDistributions(type: Delete) {
+    delete "distributions/idempiere-server"
+    delete fileTree('distributions') {
+		include 'idempiere-server*.zip'
+	}
+    dependsOn 'exportJars'
+}
+
+task copyUtils(type: Copy) {
+    from 'org.adempiere.server-feature/utils.unix'
+    into 'distributions/idempiere-server/utils'
+    dependsOn 'deleteDistributions'
+}
+
+task copyData(type: Copy) {
+    from 'org.adempiere.server-feature/data'
+    into 'distributions/idempiere-server/data'
+    dependsOn 'copyUtils'
+}
+
+task copyJettyHome(type: Copy) {
+    from 'org.adempiere.server-feature/jettyhome'
+    into 'distributions/idempiere-server/jettyhome'
+    dependsOn 'copyData'
+}
+
+task copyRootFiles(type: Copy) {
+    from ('org.adempiere.server-feature') {
+		include 'build.xml'
+		include '*.sh'
+		include '*.properties'
+		include 'hazelcast-template.xml'
+    }
+    into 'distributions/idempiere-server/'
+    dependsOn 'copyJettyHome'
+}
+
+task copyJars(type: Copy) {
+    from 'org.adempiere.server/generated/distributions/executable/idempiere.server.jar'
+    into 'distributions/idempiere-server'
+    from ('org.idempiere.app.install/generated/distributions/executable') {
+		include 'install.jar'
+    }
+    into 'distributions/idempiere-server'
+    from 'org.idempiere.app.sign.database.build/generated/distributions/executable/sign.database.build.jar'
+    into 'distributions/idempiere-server'
+    dependsOn 'copyRootFiles'
+}
+
+task createDistributionFiles {
+    dependsOn 'copyJars'
+}
+
+task createZip(type: Zip) {
+    from 'distributions/'
+    destinationDirectory = file("distributions")
+    def gmtTimeZone = TimeZone.getTimeZone("GMT")
+    def formatter = new java.text.SimpleDateFormat("yyyyMMddHHmm")
+    formatter.timeZone = gmtTimeZone
+    archiveFileName = "idempiere-server-12.v${formatter.format(new Date())}.zip"
+    include 'idempiere-server'
+    include '*/*'
+    dependsOn 'createDistributionFiles'
+}

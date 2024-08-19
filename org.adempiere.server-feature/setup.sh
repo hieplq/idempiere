@@ -2,15 +2,20 @@
 #
 echo ... Setup iDempiere Server
 
+if [ "$JAVA_HOME" ]; then
+  JAVA=$JAVA_HOME/bin/java
+else
+  JAVA=java
+  echo JAVA_HOME is not set.
+  echo You may not be able to start the Setup
+  echo Set JAVA_HOME to the directory of your local JDK.
+fi
+
 # setup application requires getVar.sh to be executable
 find . -name '*.sh' -exec chmod u+x '{}' \;
 
-# Setup idempiere.properties and iDempiereEnv.properties
-./idempiere --launcher.ini setup.ini -application org.adempiere.install.application $@
-
-echo ... Setup Jetty
-# Setup Jetty
-./idempiere --launcher.ini setup.ini -application org.eclipse.ant.core.antRunner -buildfile build.xml
+#setup idempiere.properties, idempiereEnv.propertiess and jetty
+"$JAVA" -jar install*.jar $@
 
 echo ...
 echo For problems, check log file in base directory

@@ -19,9 +19,3 @@ plugins {
   id 'biz.aQute.bnd.workspace'
 }
 
-sourceSets {
-    main.java {
-        srcDir 'src'
-        outputDir 'target/classes'
-    }
-}

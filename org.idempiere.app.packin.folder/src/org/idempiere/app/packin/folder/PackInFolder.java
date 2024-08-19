@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
 @Component(immediate = true)
-public class PackInFolderService {
+public class PackInFolder {
 	@Activate
 	void activate(ComponentContext context) {
 		String[] args = null;
