@@ -24,6 +24,11 @@ FOR %%c in (idempiere.server*.jar) DO set JARFILE=%%c
 @Set VMOPTS=%VMOPTS% -Dosgi.console=localhost:12612
 @Set VMOPTS=%VMOPTS% -Dlaunch.keep=true 
 @Set VMOPTS=%VMOPTS% -Dlaunch.storage.dir=bundle-cache
+@Set VMOPTS=%VMOPTS% --add-modules=java.se 
+@Set VMOPTS=%VMOPTS% --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED 
+@Set VMOPTS=%VMOPTS% --add-opens=java.base/java.lang=ALL-UNNAMED
+@Set VMOPTS=%VMOPTS% --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+@Set VMOPTS=%VMOPTS% --add-opens=java.management/sun.management=ALL-UNNAMED
+@Set VMOPTS=%VMOPTS% --add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
 
 @"%JAVA%" %IDEMPIERE_JAVA_OPTIONS% %VMOPTS% -jar %JARFILE%
-

@@ -30,6 +30,12 @@ VMOPTS="-Djetty.home=$BASE/jettyhome
 -Dosgi.console=$HOST:$TELNET_PORT
 -Dlaunch.keep=true 
 -Dlaunch.storage.dir=$BASE/bundle-cache 
+--add-modules=java.se 
+--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED 
+--add-opens=java.base/java.lang=ALL-UNNAMED
+--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+--add-opens=java.management/sun.management=ALL-UNNAMED
+--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
 "
 
 "$JAVA" ${DEBUG} $IDEMPIERE_JAVA_OPTIONS $VMOPTS -jar "$BASE"/idempiere.server*.jar

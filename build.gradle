@@ -1,5 +1,23 @@
+task deleteExportedJars(type: Delete) {
+	delete fileTree('org.adempiere.server/generated/distributions/executable') {
+		include '*.jar'
+	}
+	delete fileTree('org.idempiere.app.install/generated/distributions/executable') {
+		include '*.jar'
+	}
+	delete fileTree('org.idempiere.app.sign.database.build/generated/distributions/executable') {
+		include '*.jar'
+	}
+}
+
+task buildAll {
+	mustRunAfter 'deleteExportedJars'
+	dependsOn 'deleteExportedJars', gradle.includedBuilds*.task(':build')
+}
+
 task exportJars {
-    dependsOn ':org.adempiere.server:export', ':org.idempiere.app.install:export', ':org.idempiere.app.sign.database.build:export'
+	mustRunAfter 'buildAll'
+	dependsOn 'buildAll', ':org.adempiere.server:export', ':org.idempiere.app.install:export', ':org.idempiere.app.sign.database.build:export'
 }
 
 task deleteDistributions(type: Delete) {
@@ -55,7 +73,7 @@ task createDistributionFiles {
     dependsOn 'copyJars'
 }
 
-task createZip(type: Zip) {
+task createDistributions(type: Zip) {
     from 'distributions/'
     destinationDirectory = file("distributions")
     def gmtTimeZone = TimeZone.getTimeZone("GMT")
