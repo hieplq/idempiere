@@ -72,7 +72,8 @@
 	bnd.identity;id='org.apache.commons.commons-fileupload2-javax';version:Version='2.0.0.M2',\
 	bnd.identity;id=javassist;version:Version='3.25.0.GA',\
 	bnd.identity;id='org.apache.felix.gogo.shell',\
-	bnd.identity;id='org.glassfish.jersey.containers.jersey-container-servlet-core';version:Version='2.34.0'
+	bnd.identity;id='org.glassfish.jersey.containers.jersey-container-servlet-core';version:Version='2.34.0',\
+	bnd.identity;id='org.eclipse.jetty.jndi';version:Version='12.0.11'
 -runbundles: \
 	slf4j.api;version='[2.0.12,2.0.13)',\
 	slf4j.jdk14;version='[2.0.12,2.0.13)',\
@@ -149,6 +150,7 @@
 	org.eclipse.equinox.common;version='[3.18.100,3.18.101)',\
 	org.eclipse.equinox.event;version='[1.6.200,1.6.201)',\
 	org.eclipse.jdt.core.compiler.batch;version='[3.35.0,3.35.1)',\
+	org.atmosphere.runtime;version='[2.7.2,2.7.3)',\
 	org.eclipse.jetty.ee8.websocket.api;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.websocket.common;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.websocket.server;version='[12.0.11,12.0.12)',\
@@ -159,6 +161,9 @@
 	org.eclipse.jetty.deploy;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.osgi.boot;version='[12.0.11,12.0.12)',\
+	org.eclipse.jetty.ee8.annotations;version='[12.0.11,12.0.12)',\
+	org.eclipse.jetty.ee8.osgi.boot.jsp;version='[12.0.11,12.0.12)',\
+	org.eclipse.jetty.ee8.plus;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.security;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.server;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.servlet;version='[12.0.11,12.0.12)',\
@@ -179,7 +184,6 @@
 	org.eclipse.jetty.ee8.websocket.javax.common;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.ee8.websocket.javax.server;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.websocket.core.client;version='[12.0.11,12.0.12)',\
-	org.atmosphere.runtime;version='[2.7.2,2.7.3)',\
 	org.krysalis.barcode4j;version='[2.1.0,2.1.1)',\
 	org.mortbay.jasper.apache-el;version='[9.0.90,9.0.91)',\
 	org.mortbay.jasper.apache-jsp;version='[9.0.90,9.0.91)',\
@@ -206,9 +210,6 @@
 	javax.enterprise.cdi-api;version='[2.0.0,2.0.1)',\
 	javax.interceptor-api;version='[1.2.2,1.2.3)',\
 	javax.servlet.jsp.jstl-api;version='[1.2.7,1.2.8)',\
-	org.eclipse.jetty.ee8.annotations;version='[12.0.11,12.0.12)',\
-	org.eclipse.jetty.ee8.osgi.boot.jsp;version='[12.0.11,12.0.12)',\
-	org.eclipse.jetty.ee8.plus;version='[12.0.11,12.0.12)',\
 	org.eclipse.jetty.plus;version='[12.0.11,12.0.12)',\
 	org.glassfish.web.javax.servlet.jsp.jstl;version='[1.2.5,1.2.6)',\
 	com.fasterxml.jackson.core.jackson-annotations;version='[2.15.4,2.15.5)',\
@@ -310,7 +311,8 @@
 	org.glassfish.jersey.containers.jersey-container-servlet-core;version='[2.34.0,2.34.1)',\
 	org.glassfish.jersey.core.jersey-client;version='[2.34.0,2.34.1)',\
 	org.glassfish.jersey.core.jersey-common;version='[2.34.0,2.34.1)',\
-	org.glassfish.jersey.core.jersey-server;version='[2.34.0,2.34.1)'
+	org.glassfish.jersey.core.jersey-server;version='[2.34.0,2.34.1)',\
+	org.eclipse.jetty.jndi;version='[12.0.11,12.0.12)'
 -runproperties: launch.activation.eager=true, \
 	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl", \
 	osgi.compatibility.bootdelegation=true, \
