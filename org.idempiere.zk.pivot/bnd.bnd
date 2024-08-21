@@ -22,6 +22,6 @@ Import-Package: *
 Fragment-Host: org.adempiere.ui.zk;bundle-version="12.0.0"
 
 Export-Package: \
-	metainfo.zk;-split-package:=merge-first,\
+	metainfo.zk;-split-package:=first,\
 	org.idempiere.zk.pivot,\
 	web.js.pivot

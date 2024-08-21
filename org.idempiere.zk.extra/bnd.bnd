@@ -33,7 +33,7 @@ Import-Package: *;resolution:=optional
 	
 Export-Package: \
 	org.zkoss.calendar,\
-	metainfo.zk;-split-package:=merge-first,\
+	metainfo.zk;-split-package:=first,\
 	org.zkoss.calendar.api,\
 	org.zkoss.calendar.event,\
 	org.zkoss.calendar.impl,\

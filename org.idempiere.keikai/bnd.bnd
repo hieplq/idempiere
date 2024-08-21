@@ -36,8 +36,8 @@ Fragment-Host: org.adempiere.ui.zk;bundle-version="12.0.0"
 Export-Package: \
 	org.idempiere.keikai.view,\
 	metainfo,\
-	metainfo.tld;'-split-package:'=merge-first,\
-	metainfo.zk;'-split-package:'=merge-first
+	metainfo.tld;'-split-package:'=first,\
+	metainfo.zk;'-split-package:'=first
 -exportcontents: io.keikai.*,\
 	org.zkoss.poi.*
 -fixupmessages: \

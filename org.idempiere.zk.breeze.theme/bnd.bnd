@@ -1,5 +1,5 @@
 -runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
--runee: JavaSE-17-runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
+-runee: JavaSE-17
 -resolve: auto
 bin: target/classes
 src: src
@@ -10,7 +10,7 @@ Import-Package: *
 Fragment-Host: org.adempiere.ui.zk;bundle-version="12.0.0"
 -buildpath: org.adempiere.ui.zk;version=latest
 Export-Package: \
-	metainfo.zk;-split-package:=merge-first,\
+	metainfo.zk;-split-package:=first,\
 	web.theme;-split-package:=first,\
 	web.theme.default,\
 	web.theme.default.css,\

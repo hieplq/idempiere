@@ -14,7 +14,7 @@ Import-Package: *
 	zul
 Export-Package: \
 	org.idempiere.zk.billboard,\
-	metainfo.zk;-split-package:=merge-first,\
+	metainfo.zk;-split-package:=first,\
 	web.js.zul.billboard,\
 	web.js.zul.billboard.css,\
 	web.js.zul.billboard.ext,\
