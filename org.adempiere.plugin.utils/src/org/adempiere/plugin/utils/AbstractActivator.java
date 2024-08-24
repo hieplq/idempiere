@@ -15,7 +15,9 @@ package org.adempiere.plugin.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import org.adempiere.base.Core;
@@ -35,15 +37,14 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Trx;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkEvent;
-import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-public abstract class AbstractActivator implements BundleActivator, ServiceTrackerCustomizer<IDictionaryService, IDictionaryService>, FrameworkListener{
+public abstract class AbstractActivator implements BundleActivator, ServiceTrackerCustomizer<IDictionaryService, IDictionaryService> {
 
 	protected final static CLogger logger = CLogger.getCLogger(AbstractActivator.class.getName());
 	protected BundleContext context;
@@ -52,18 +53,21 @@ public abstract class AbstractActivator implements BundleActivator, ServiceTrack
 	private String trxName = null;
 	private ProcessInfo m_processInfo = null;
 	private IProcessUI m_processUI = null;
-	private final static Object mutex = new Object();
-	private static boolean isFrameworkStarted = false;
-	
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		this.context = context;
+		this.context = context;		
 		if (logger.isLoggable(Level.INFO)) logger.info(getName() + " " + getVersion() + " starting...");
 		serviceTracker = new ServiceTracker<IDictionaryService, IDictionaryService>(context, IDictionaryService.class.getName(), this);
 		serviceTracker.open();
-		if (!isFrameworkStarted())
-			context.addFrameworkListener(this);
+		if (Adempiere.getThreadPoolExecutor() != null) {
+			Adempiere.getThreadPoolExecutor().schedule(new FrameworkStateRunnable(context), 1, TimeUnit.SECONDS);
+		} else {
+			MyServerStateChangeListener ssl = new MyServerStateChangeListener(() -> {
+				Adempiere.getThreadPoolExecutor().schedule(new FrameworkStateRunnable(context), 1, TimeUnit.SECONDS);
+			});
+			Adempiere.addServerStateChangeListener(ssl);
+		}
 		start();
 		if (logger.isLoggable(Level.INFO)) logger.info(getName() + " " + getVersion() + " ready.");
 	}
@@ -72,7 +76,6 @@ public abstract class AbstractActivator implements BundleActivator, ServiceTrack
 	public void stop(BundleContext context) throws Exception {
 		stop();
 		serviceTracker.close();
-		context.removeFrameworkListener(this);
 		this.context = null;
 		if (logger.isLoggable(Level.INFO)) logger.info(context.getBundle().getSymbolicName() + " "
 				+ context.getBundle().getHeaders().get("Bundle-Version")
@@ -221,22 +224,6 @@ public abstract class AbstractActivator implements BundleActivator, ServiceTrack
 			m_processInfo.setSummary(msg);
 	}
 	
-	@Override
-	public void frameworkEvent(FrameworkEvent event) {
-		if (event.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
-			synchronized(mutex) {
-				isFrameworkStarted = true;
-				frameworkStarted();
-			}
-		}
-	}
-	
-	public static Boolean isFrameworkStarted() {
-		synchronized(mutex) {
-	        return isFrameworkStarted;
-	    }
-	}
-	
 	protected abstract void frameworkStarted();
 
 	/**
@@ -260,8 +247,7 @@ public abstract class AbstractActivator implements BundleActivator, ServiceTrack
 			ServiceReference<IDictionaryService> reference) {
 		Runnable runnable = () -> {
 			service = context.getService(reference);
-			if (isFrameworkStarted())
-				frameworkStarted ();
+			Adempiere.getThreadPoolExecutor().schedule(new FrameworkStateRunnable(context), 1, TimeUnit.SECONDS);
 		};
 		if (Adempiere.isStarted()) {
 			Adempiere.getThreadPoolExecutor().submit(runnable);
@@ -293,6 +279,42 @@ public abstract class AbstractActivator implements BundleActivator, ServiceTrack
 				Adempiere.getThreadPoolExecutor().submit(runnable);
 				Adempiere.removeServerStateChangeListener(this);
 			}			
+		}		
+	}
+	
+	private class FrameworkStateRunnable implements Runnable {
+		private BundleContext context;
+		private int installedCount = 0;
+		private int resolvedCount = 0;
+		private int activeCount = 0;
+		private boolean starting = false;
+
+		private FrameworkStateRunnable(BundleContext context) {
+			this.context = context;
+			Bundle[] bundles = context.getBundles();
+			Arrays.stream(bundles).forEach(e -> {
+				if (e.getState() == Bundle.INSTALLED)
+					installedCount++;
+				else if (e.getState() == Bundle.RESOLVED)
+					resolvedCount++;
+				else if (e.getState() == Bundle.ACTIVE)
+					activeCount++;
+				else if (e.getState() == Bundle.STARTING)
+					this.starting  = true;
+			});
+		}
+		
+		@Override
+		public void run() {
+			FrameworkStateRunnable next = new FrameworkStateRunnable(context);
+			if (next.starting) {
+				Adempiere.getThreadPoolExecutor().schedule(next, 5, TimeUnit.SECONDS);
+			} else if (next.installedCount != this.installedCount || next.resolvedCount != this.resolvedCount
+					|| next.activeCount != this.activeCount) {
+				Adempiere.getThreadPoolExecutor().schedule(next, 5, TimeUnit.SECONDS);
+			} else {
+				AbstractActivator.this.frameworkStarted();
+			}
 		}		
 	}
 }

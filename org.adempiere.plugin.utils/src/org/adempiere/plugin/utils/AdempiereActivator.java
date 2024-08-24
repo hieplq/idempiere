@@ -18,7 +18,6 @@ import org.compiere.util.AdempiereSystemError;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkEvent;
 
 public class AdempiereActivator extends AbstractActivator {
 
@@ -153,13 +152,6 @@ public class AdempiereActivator extends AbstractActivator {
 		ServerContext.setCurrentInstance(serverContext);
 	};
 	
-	@Override
-	public void frameworkEvent(FrameworkEvent event) {
-		if (event.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
-			frameworkStarted();
-		}		
-	}
-
 	protected void frameworkStarted() {
 		if (service != null) {
 			if (Adempiere.isStarted()) {
