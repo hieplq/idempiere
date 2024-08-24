@@ -13,7 +13,6 @@
 *.groovy crlf=input
 *.h crlf=input ident
 *.html crlf=input ident
-*.java crlf=input ident
 *.js crlf=input
 *.lib crlf=input
 *.md crlf=input
