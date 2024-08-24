@@ -24,7 +24,7 @@ jobs:
                 java-version: 17
         -   name: Build
             shell: bash
-            run: ./gradlew --debug build
+            run: ./gradlew --no-build-cache build
         -   name: Create distributions
             shell: bash
-            run: ./gradlew createDistributions
+            run: ./gradlew --no-build-cache createDistributions
