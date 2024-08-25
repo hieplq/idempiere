@@ -48,6 +48,12 @@
 		index=${.}/zkoss.maven; \
 		readOnly=true; \
 		name="Zk OSS Maven"				
+-plugin.9.atlassian: \
+	aQute.bnd.repository.maven.provider.MavenBndRepository; \
+		releaseUrl=https://packages.atlassian.com/mvn/maven-atlassian-external/; \
+		index=${.}/atlassian.maven; \
+		readOnly=true; \
+		name="Atlassian Repository"
 -plugin.p2.1: \
  	aQute.bnd.repository.p2.provider.P2Repository; \
  	url = https://idempiere.github.io/binary.file/p2.repackaged/jasperstudio/6.17.0; \

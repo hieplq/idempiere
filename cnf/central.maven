@@ -185,7 +185,6 @@ org.netbeans.api:org-openide-util:RELEASE124
 org.netbeans.api:org-openide-util-lookup:RELEASE124
 
 #zk
-org.outerj.daisy:daisydiff:1.2.2-atlassian-hosted
 com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1
 com.googlecode.owasp-java-html-sanitizer:java8-shim:20240325.1
 com.googlecode.owasp-java-html-sanitizer:java10-shim:20240325.1
