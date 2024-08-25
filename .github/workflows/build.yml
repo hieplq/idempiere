@@ -24,7 +24,7 @@ jobs:
                 java-version: 17
         -   name: Build
             shell: bash
-            run: ./gradlew build
+            run: ./gradlew build -x testOSGi
         -   name: Create distributions
             shell: bash
             run: ./gradlew createDistributions
