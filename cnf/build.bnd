@@ -41,7 +41,13 @@
 		releaseUrl=https://idempiere.github.io/binary.file/maven.zk/; \
 		index=${.}/idempiere-zk.maven; \
 		readOnly=true; \
-		name="Maven iDempiere.Zk"		
+		name="Maven iDempiere.Zk"
+-plugin.8.zkoss: \
+	aQute.bnd.repository.maven.provider.MavenBndRepository; \
+		releaseUrl=https://mavensync.zkoss.org/maven2/; \
+		index=${.}/zkoss.maven; \
+		readOnly=true; \
+		name="Zk OSS Maven"				
 -plugin.p2.1: \
  	aQute.bnd.repository.p2.provider.P2Repository; \
  	url = https://idempiere.github.io/binary.file/p2.repackaged/jasperstudio/6.17.0; \

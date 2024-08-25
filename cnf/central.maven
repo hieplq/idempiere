@@ -186,16 +186,9 @@ org.netbeans.api:org-openide-util-lookup:RELEASE124
 
 #zk
 org.outerj.daisy:daisydiff:1.2.2-atlassian-hosted
-org.zkoss.zkforge:ckez:4.18.0.0
 com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1
 com.googlecode.owasp-java-html-sanitizer:java8-shim:20240325.1
 com.googlecode.owasp-java-html-sanitizer:java10-shim:20240325.1
-org.zkoss.zkforge:gmapsz:3.2.0
-org.zkoss.zkforge:timelinez:2.3.1_50
-org.zkoss.zkforge:timeplotz:1.1_50
-org.zkoss.calendar:calendar:2.1.5
-org.zkoss.theme:breeze:10.0.1
-org.zkoss.theme:iceblue_c:10.0.1
 com.google.javascript:closure-compiler:v20240317
 org.javassist:javassist:3.25.0-GA
 org.apache.commons:commons-fileupload2-core:2.0.0-M2
