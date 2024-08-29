@@ -23,3 +23,5 @@ cnf/local/*
 cnf/release/*
 cnf/templates/*
 distributions/*
+.idea
+**/.idea-tmp-generated/

@@ -5,13 +5,13 @@
 	org.osgi.service.component.annotations,\
 	org.osgi.service.component,\
 	org.adempiere.base;version=latest,\
-	idempiere.wrapped.org.jfree.jfreechart;version=latest,\
+	idempiere.wrapped.org.jfree.jfreechart;version='1.0.19',\
 	org.osgi.service.event,\
 	net.sf.jasperreports.engine,\
 	com.github.librepdf.openpdf;version='1.3',\
-	idempiere.wrapped.net.sourceforge.barbecue.barbecue;version=latest,\
+	idempiere.wrapped.net.sourceforge.barbecue.barbecue;version='1.5.0',\
 	org.apache.commons.commons-codec,\
-	idempiere.wrapped.org.jfree.jcommon;version=latest
+	idempiere.wrapped.org.jfree.jcommon;version='1.0.24'
 -resolve: auto
 bin: target/classes
 Bundle-Name: iDempiere JasperReport integration

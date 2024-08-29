@@ -7,7 +7,7 @@
 	org.adempiere.base;version=latest,\
 	lib/idempiere-xmlbeans.jar;version=file,\
 	jakarta.jws-api,\
-	idempiere.wrapped.org.apache.xmlbeans.xmlbeans;version=latest,\
+	idempiere.wrapped.org.apache.xmlbeans.xmlbeans;version='5.0.3',\
 	org.codehaus.jettison.jettison,\
 	jakarta.annotation-api,\
 	org.apache.commons.commons-codec,\
