@@ -3,6 +3,6 @@ Bundle-SymbolicName: idempiere.wrapped.wsdl4j.wsdl4j
 ver: 1.6.3
 -output: ${bsn}-${ver}.jar
 Bundle-Version: ${ver}
-Export-Package: *;version=${ver}
+Export-Package: *;version=${ver};-noimport:=true
 Import-Package: *;resolution:=optional
 -buildrepo: Local

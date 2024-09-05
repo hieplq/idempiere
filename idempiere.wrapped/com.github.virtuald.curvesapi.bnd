@@ -3,6 +3,6 @@ Bundle-SymbolicName: idempiere.wrapped.com.github.virtuald.curvesapi
 ver: 1.06
 -output: ${bsn}-${ver}.jar
 Bundle-Version: ${ver}
-Export-Package: *;version=${ver}
+Export-Package: *;version=${ver};-noimport:=true
 -buildrepo: Local
 

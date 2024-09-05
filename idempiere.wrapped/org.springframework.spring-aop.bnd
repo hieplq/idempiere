@@ -3,6 +3,6 @@ Bundle-SymbolicName: idempiere.wrapped.org.springframework.spring-aop
 ver: 5.3.27
 -output: ${bsn}-${ver}.jar
 Bundle-Version: ${ver}
-Export-Package: *;version=${ver}
+Export-Package: *;version=${ver};-noimport:=true
 Import-Package: *;resolution:=optional
 -buildrepo: Local

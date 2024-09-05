@@ -3,8 +3,6 @@ Bundle-SymbolicName: idempiere.wrapped.org.apache.xmlgraphics.xmlgraphics-common
 ver: 2.6
 -output: ${bsn}-${ver}.jar
 Bundle-Version: ${ver}
-Export-Package: *;version=${ver}
-# Uncomment next line to customize imports. The last entry MUST be "*"
-# Import-Package: *
+Export-Package: *;version=${ver};-noimport:=true
 -buildrepo: Local
 

@@ -3,7 +3,7 @@ Bundle-SymbolicName: idempiere.wrapped.de.rototor.pdfbox.graphics2d
 ver: 0.30
 -output: ${bsn}-${ver}.jar
 Bundle-Version: ${ver}
-Export-Package: *;version=${ver}
+Export-Package: *;version=${ver};-noimport:=true
 Import-Package: *;resolution:=optional
 -buildrepo: Local
 

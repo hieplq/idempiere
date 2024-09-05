@@ -3,7 +3,7 @@ Bundle-SymbolicName: idempiere.wrapped.org.apache.poi.poi-ooxml-lite
 ver: 5.2.2
 -output: ${bsn}-${ver}.jar
 Bundle-Version: ${ver}
-Export-Package: *;version=${ver}
+Export-Package: *;version=${ver};-noimport:=true
 Import-Package: com.microsoft.schemas.*;resolution:=optional,org.openxmlformats.schemas.*;resolution:=optional,*
 -buildrepo: Local
 

@@ -3,7 +3,7 @@ Bundle-SymbolicName: idempiere.wrapped.io.grpc.grpc-context
 ver: 1.27.2
 -output: ${bsn}-${ver}.jar
 Bundle-Version: ${ver}
-Export-Package: *;version=${ver}
+Export-Package: *;version=${ver};-noimport:=true
 Import-Package: *;resolution:=optional
 -buildrepo: Local
 

@@ -3,7 +3,7 @@ Bundle-SymbolicName: idempiere.wrapped.dev.samstevens.totp.totp
 ver: 1.7.1
 -output: ${bsn}-${ver}.jar
 Bundle-Version: ${ver}
-Export-Package: *;version=${ver}
+Export-Package: *;version=${ver};-noimport:=true
 Import-Package: *;resolution:=optional
 -buildrepo: Local
 
