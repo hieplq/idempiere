@@ -80,7 +80,7 @@ public class DB_Oracle implements AdempiereDatabase
 {
 
 	private static final String POOL_PROPERTIES = "hikaricp.properties";
-
+	
     /**
      *  Oracle Database
      */
@@ -319,9 +319,9 @@ public class DB_Oracle implements AdempiereDatabase
         StringBuilder sb = new StringBuilder("DB_Oracle[");
         sb.append(m_connectionURL);
         try
-        {
+        {        	
             StringBuilder logBuffer = new StringBuilder();
-            HikariPoolMXBean mxBean = m_ds.getHikariPoolMXBean();
+            HikariPoolMXBean mxBean = m_ds.getHikariPoolMXBean();            
 
             logBuffer.append("# Connections: ").append(mxBean.getTotalConnections());
             logBuffer.append(" , # Busy Connections: ").append(mxBean.getActiveConnections());
@@ -350,12 +350,12 @@ public class DB_Oracle implements AdempiereDatabase
         StringBuilder sb = new StringBuilder();
         try
         {
-            HikariPoolMXBean mxBean = m_ds.getHikariPoolMXBean();
+            HikariPoolMXBean mxBean = m_ds.getHikariPoolMXBean();            
 
             sb.append("# Connections: ").append(mxBean.getTotalConnections());
             sb.append(" , # Busy Connections: ").append(mxBean.getActiveConnections());
             sb.append(" , # Idle Connections: ").append(mxBean.getIdleConnections());
-            sb.append(" , # Threads waiting on connection: ").append(mxBean.getThreadsAwaitingConnection());
+            sb.append(" , # Threads waiting on connection: ").append(mxBean.getThreadsAwaitingConnection());        	        	
             sb.append(" , # Min Pool Size: ").append(m_ds.getMinimumIdle());
             sb.append(" , # Max Pool Size: ").append(m_ds.getMaximumPoolSize());
             sb.append(" , # Open Transactions: ").append(Trx.getOpenTransactions().length);
@@ -540,7 +540,7 @@ public class DB_Oracle implements AdempiereDatabase
         }
         return result.toString();
     }   //  TO_NUMBER
-
+    
 	/**
 	 *	@return string with right casting for JSON inserts
 	 */
@@ -592,19 +592,19 @@ public class DB_Oracle implements AdempiereDatabase
 	private String getPoolPropertiesFile ()
 	{
 		String base = Ini.getAdempiereHome();
-
+		
 		if (base != null && !base.endsWith(File.separator)) {
 			base += File.separator;
 		}
-
+		
 		//
 		return base + getName() + File.separator + POOL_PROPERTIES;
 	}	//	getFileName
-
+    
 	public DataSource getDataSource(CConnection connection)
 	{
 		ensureInitialized(connection);
-
+			
 		return m_ds;
 	}
 
@@ -635,7 +635,7 @@ public class DB_Oracle implements AdempiereDatabase
 		{
 			conn.setTransactionIsolation(transactionIsolation);
 		}
-		if (conn.getAutoCommit() != autoCommit)
+		if (conn.getAutoCommit() != autoCommit) 
 		{
 			conn.setAutoCommit(autoCommit);
 		}
@@ -671,23 +671,23 @@ public class DB_Oracle implements AdempiereDatabase
         return DriverManager.getConnection (dbUrl, dbUid, dbPwd);
     }   //  getDriverConnection
 
-	private Properties getPoolProperties() {
+	private Properties getPoolProperties() {	
 		//check property file from home
 		File userPropertyFile = new File(getPoolPropertiesFile());
 		URL propertyFileURL = null;
-
+		
 		if (userPropertyFile.exists() && userPropertyFile.canRead())
-		{
+		{			
 			try {
 				propertyFileURL = userPropertyFile.toURI().toURL();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-
+			
 		if (propertyFileURL == null)
 		{
-			propertyFileURL = OracleBundleActivator.bundleContext.getBundle().getEntry("META-INF/pool/server.default.properties");
+			propertyFileURL = OracleBundleActivator.bundleContext.getBundle().getEntry("META-INF/pool/server.default.properties");						
 		}
 
 		Properties poolProperties = new Properties();
@@ -695,40 +695,40 @@ public class DB_Oracle implements AdempiereDatabase
 			poolProperties.load(propertyFileInputStream);
 		} catch (Exception e) {
 			throw new DBException(e);
-		}
+		} 
 
 		//auto create property file at home folder from default config
-		if (!userPropertyFile.exists())
+		if (!userPropertyFile.exists())			
 		{
-			try {
+			try {				
 				Path directory = userPropertyFile.toPath().getParent();
 				Files.createDirectories(directory);
-
+								
 				try (InputStream propertyFileInputStream = propertyFileURL.openStream()) {
 					Files.copy(propertyFileInputStream, userPropertyFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-				}
-
+				} 
+			
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-
+		
 		return poolProperties;
 	}
-
+	
 	/** Boolean to indicate the PostgreSQL connection pool is either initializing or initialized.*/
 	private final AtomicBoolean initialized = new AtomicBoolean(false);
 	/** Latch which can be used to wait for initialization completion. */
-	private final CountDownLatch initializedLatch = new CountDownLatch(1);
-
+	private final CountDownLatch initializedLatch = new CountDownLatch(1); 
+    
 	/**
 	 * Allows the connection pool to be lazily initialized. While it might be preferable to do
-	 * this once upon initialization of this class the current design of iDempiere makes this
+	 * this once upon initialization of this class the current design of iDempiere makes this 
 	 * hard.
-	 *
+	 * 
 	 * Calling this method will block until the pool is configured. This does NOT mean it will
 	 * block until a database connection has been setup.
-	 *
+	 * 
 	 * @param connection
 	 */
 	private void ensureInitialized(CConnection connection) {
@@ -739,7 +739,7 @@ public class DB_Oracle implements AdempiereDatabase
 				return;
 			}
 		}
-
+				
         try {
     		Properties poolProperties = getPoolProperties();
     		// Do not override values which might have been read from the users
@@ -753,27 +753,27 @@ public class DB_Oracle implements AdempiereDatabase
     		if (!poolProperties.containsKey("password")) {
     			poolProperties.put("password", connection.getDbPwd());
     		}
-
+    		
     		HikariConfig hikariConfig = new HikariConfig(poolProperties);
     		hikariConfig.setDriverClassName(DRIVER);
     		m_ds = new HikariDataSource(hikariConfig);
-
+            
             m_connectionURL = m_ds.getJdbcUrl();
-
+            
             initializedLatch.countDown();
         }
         catch (Exception ex) {
         	throw new IllegalStateException("Could not initialise Hikari Datasource", ex);
-        }
+        }		
 	}
-
+    
 	/**
 	 * 	Close
 	 */
 	public void close()
 	{
-		if (log.isLoggable(Level.CONFIG))
-		{
+		if (log.isLoggable(Level.CONFIG)) 
+		{ 
 			log.config(toString());
 		}
 
@@ -852,7 +852,7 @@ public class DB_Oracle implements AdempiereDatabase
 			no = DB.executeUpdate("CREATE SEQUENCE "+name.toUpperCase()
 								+ " MINVALUE " + minvalue
 								+ " MAXVALUE " + maxvalue
-								+ " START WITH " + start
+								+ " START WITH " + start 
 								+ " INCREMENT BY " + increment
 								+ " CACHE 20", trxName);
 		}
@@ -902,14 +902,14 @@ public class DB_Oracle implements AdempiereDatabase
 
 	public boolean isPagingSupported() {
 		return true;
-	}
+	}							
 
 	@Override
 	public boolean forUpdate(PO po, int timeout) {
     	//only can lock for update if using trx
     	if (po.get_TrxName() == null)
     		return false;
-
+    	
     	String[] keyColumns = po.get_KeyColumns();
 		if (keyColumns != null && keyColumns.length > 0 && !po.is_new()) {
 			StringBuilder sqlBuffer = new StringBuilder(" SELECT ");
@@ -955,7 +955,7 @@ public class DB_Oracle implements AdempiereDatabase
 				throw new DBException("Could not lock record for " + po.toString() + " caused by " + e.getLocalizedMessage(), e);
 			} finally {
 				DB.close(rs, stmt);
-			}
+			}			
 		}
 		return false;
 	}
@@ -988,15 +988,15 @@ public class DB_Oracle implements AdempiereDatabase
 			.append("toTableOfVarchar2(")
 			.append(DB.TO_STRING(csv))
 			.append(")");
-
+		
 		return builder.toString();
 	}
-
+	
 	@Override
 	public String intersectClauseForCSV(String columnName, String csv) {
 		return intersectClauseForCSV(columnName, csv, false);
 	}
-
+	
 	@Override
 	public String intersectClauseForCSV(String columnName, String csv, boolean isNotClause) {
 		StringBuilder builder = new StringBuilder();
@@ -1006,12 +1006,12 @@ public class DB_Oracle implements AdempiereDatabase
 		builder.append(" MULTISET INTERSECT ")
 			.append("toTableOfVarchar2(")
 			.append(DB.TO_STRING(csv)).append(") IS ");
-
+		
 		if(!isNotClause)
-			builder.append("NOT ");
-
+			builder.append("NOT "); 
+			
 		builder.append("EMPTY");
-
+		
 		return builder.toString();
 	}
 
@@ -1046,7 +1046,7 @@ public class DB_Oracle implements AdempiereDatabase
 	public String getClobDataType() {
 		return "CLOB";
 	}
-
+	
 	@Override
 	public String getJsonDataType() {
 		return getClobDataType();
@@ -1063,21 +1063,21 @@ public class DB_Oracle implements AdempiereDatabase
 	}
 
 	@Override
-	public String getSQLDDL(MColumn column) {
+	public String getSQLDDL(MColumn column) {				
 		StringBuilder sql = new StringBuilder ().append(column.getColumnName())
 			.append(" ").append(column.getSQLDataType());
 
 		//	Default
 		String defaultValue = column.getDefaultValue();
-		if (defaultValue != null
+		if (defaultValue != null 
 				&& defaultValue.length() > 0
 				&& defaultValue.indexOf('@') == -1		//	no variables
 				&& ( ! (DisplayType.isID(column.getAD_Reference_ID()) && defaultValue.equals("-1") ) ) )  // not for ID's with default -1
 		{
-			if (DisplayType.isText(column.getAD_Reference_ID())
+			if (DisplayType.isText(column.getAD_Reference_ID()) 
 					|| DisplayType.isList(column.getAD_Reference_ID())
 					|| column.getAD_Reference_ID() == DisplayType.YesNo
-					// Two special columns: Defined as Table but DB Type is String
+					// Two special columns: Defined as Table but DB Type is String 
 					|| column.getColumnName().equals("EntityType") || column.getColumnName().equals("AD_Language")
 					|| (column.getAD_Reference_ID() == DisplayType.Button &&
 							!(column.getColumnName().endsWith("_ID"))))
@@ -1104,9 +1104,9 @@ public class DB_Oracle implements AdempiereDatabase
 		if (column.isMandatory())
 			sql.append(" NOT NULL");
 		return sql.toString();
-
+	
 	}
-
+	
 	/**
 	 * 	Get SQL Add command
 	 *	@param table table
@@ -1126,7 +1126,7 @@ public class DB_Oracle implements AdempiereDatabase
 		}
 		return sql.toString();
 	}	//	getSQLAdd
-
+	
 	/**
 	 * 	Get SQL Modify command
 	 *	@param table table
@@ -1139,22 +1139,22 @@ public class DB_Oracle implements AdempiereDatabase
 		StringBuilder sqlBase = new StringBuilder ("ALTER TABLE ")
 			.append(table.getTableName())
 			.append(" MODIFY ").append(column.getColumnName());
-
+		
 		//	Default
 		StringBuilder sqlDefault = new StringBuilder(sqlBase)
 			.append(" ").append(column.getSQLDataType());
 		String defaultValue = column.getDefaultValue();
 		String originalDefaultValue = defaultValue;
-		if (defaultValue != null
+		if (defaultValue != null 
 			&& defaultValue.length() > 0
 			&& defaultValue.indexOf('@') == -1		//	no variables
 			&& ( ! (DisplayType.isID(column.getAD_Reference_ID()) && defaultValue.equals("-1") ) ) )  // not for ID's with default -1
 		{
-			if (DisplayType.isText(column.getAD_Reference_ID())
+			if (DisplayType.isText(column.getAD_Reference_ID()) 
 				|| DisplayType.isList(column.getAD_Reference_ID())
 				|| column.getAD_Reference_ID() == DisplayType.YesNo
 				|| column.getAD_Reference_ID() == DisplayType.Payment
-				// Two special columns: Defined as Table but DB Type is String
+				// Two special columns: Defined as Table but DB Type is String 
 				|| column.getColumnName().equals("EntityType") || column.getColumnName().equals("AD_Language")
 				|| (column.getAD_Reference_ID() == DisplayType.Button &&
 						!(column.getColumnName().endsWith("_ID"))))
@@ -1171,17 +1171,19 @@ public class DB_Oracle implements AdempiereDatabase
 			defaultValue = null;
 		}
 		sql.append(sqlDefault);
-
+		
 		//	Constraint
+		if (column.getAD_Reference_ID() == DisplayType.JSON)
+			sql.append(" CONSTRAINT ").append(column.getAD_Table().getTableName()).append("_").append(column.getColumnName()).append("_isjson CHECK (").append(column.getColumnName()).append(" IS JSON)");
 
 		//	Null Values
 		if (column.isMandatory() && defaultValue != null && defaultValue.length() > 0)
 		{
-			if (!(DisplayType.isText(column.getAD_Reference_ID())
+			if (!(DisplayType.isText(column.getAD_Reference_ID()) 
 					|| DisplayType.isList(column.getAD_Reference_ID())
 					|| column.getAD_Reference_ID() == DisplayType.YesNo
 					|| column.getAD_Reference_ID() == DisplayType.Payment
-					// Two special columns: Defined as Table but DB Type is String
+					// Two special columns: Defined as Table but DB Type is String 
 					|| column.getColumnName().equals("EntityType") || column.getColumnName().equals("AD_Language")
 					|| (column.getAD_Reference_ID() == DisplayType.Button &&
 							!(column.getColumnName().endsWith("_ID")))))
@@ -1195,7 +1197,7 @@ public class DB_Oracle implements AdempiereDatabase
 				.append(" WHERE ").append(column.getColumnName()).append(" IS NULL");
 			sql.append(DB.SQLSTATEMENT_SEPARATOR).append(sqlSet);
 		}
-
+		
 		//	Null
 		if (setNullOption)
 		{
@@ -1215,7 +1217,7 @@ public class DB_Oracle implements AdempiereDatabase
 		//java.sql.SQLTimeoutException: ORA-01013: user requested cancel of current operation
 		return "72000".equals(ex.getSQLState()) && ex.getErrorCode() == 1013;
 	}
-
+	
 	@Override
 	public ITablePartitionService getTablePartitionService() {
 		return new TablePartitionService();
