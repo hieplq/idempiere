@@ -314,7 +314,7 @@
 	org.glassfish.jersey.core.jersey-server;version='[2.34.0,2.34.1)',\
 	org.eclipse.jetty.jndi;version='[12.0.11,12.0.12)'
 -runproperties: launch.activation.eager=true, \
-	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl", \
+	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl,com.intellij.rt.debugger.agent", \
 	osgi.compatibility.bootdelegation=true, \
 	osgi.noShutdown=true, \
 	osgi.console=,\
