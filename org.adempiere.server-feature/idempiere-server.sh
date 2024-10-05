@@ -13,8 +13,10 @@ else
   echo Set JAVA_HOME to the directory of your local JDK.
 fi
 
+DEBUG_PORT=${DEBUG_PORT:-4554}
+
 if [ "$1" = "debug" ]; then
-  DEBUG="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=4554,server=y,suspend=n"
+  DEBUG="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=n"
 fi
 
 echo ===================================
@@ -39,4 +41,3 @@ VMOPTS="-Djetty.home=$BASE/jettyhome
 "
 
 "$JAVA" ${DEBUG} $IDEMPIERE_JAVA_OPTIONS $VMOPTS -jar "$BASE"/idempiere.server*.jar
-
