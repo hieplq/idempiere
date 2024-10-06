@@ -25,3 +25,4 @@ cnf/templates/*
 distributions/*
 .idea
 **/.idea-tmp-generated/
+*.iml
