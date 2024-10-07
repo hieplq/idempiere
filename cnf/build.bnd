@@ -104,6 +104,5 @@ javac.target: 17
 -noimportjava: true
 -resolve.effective: resolve,active, meta;skip:='osgi.ee'
 bin: target/classes
-testbin: target/test
-testsrc: test/src
-
+testbin: target/classes
+testsrc: src
