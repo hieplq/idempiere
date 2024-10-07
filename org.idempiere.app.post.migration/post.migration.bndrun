@@ -1,6 +1,3 @@
--resolve: manual
--runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
--runee: JavaSE-17
 -runrequires: \
 	bnd.identity;id='org.adempiere.base';version=latest,\
 	bnd.identity;id='slf4j.api';version:Version='2.0.12',\
@@ -116,12 +113,4 @@
 	org.eclipse.equinox.event;version='[1.6.200,1.6.201)',\
 	org.eclipse.jetty.util;version='[12.0.11,12.0.12)',\
 	com.google.zxing.core;version='[3.4.1,3.4.2)'
--runproperties: launch.activation.eager=true, \
-	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl", \
-	osgi.noShutdown=true, \
-	osgi.compatibility.bootdelegation=true
--runvm: \
-	--add-modules=java.se, --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, \
-	--add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.management/sun.management=ALL-UNNAMED, \
-	--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
 	

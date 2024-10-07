@@ -1,5 +1,3 @@
--runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
--runee: JavaSE-17
 -buildpath: \
 	org.eclipse.osgi;version='3.18',\
 	org.osgi.service.component.annotations,\
@@ -8,10 +6,7 @@
 	org.eclipse.equinox.common;version='3.18',\
 	org.adempiere.base;version=latest,\
 	org.adempiere.pipo;version=latest
--resolve: auto
-bin: target/classes
 Bundle-Version: 12.0.0
 Bundle-SymbolicName: org.adempiere.pipo.handlers;singleton:=true
 Import-Package: *
 -includeresource: plugin.xml
-

@@ -1,5 +1,3 @@
--runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
--runee: JavaSE-17
 -runrequires: \
 	bnd.identity;id='org.adempiere.base';version:Version='12.0.0',\
 	bnd.identity;id='org.idempiere.test';version:Version='12.0.0.qualifier',\
@@ -180,13 +178,4 @@
 	zkbind;version='[10.0.1,10.0.2)',\
 	zkplus;version='[10.0.1,10.0.2)',\
 	zkwebfragment;version='[10.0.1,10.0.2)'
--runproperties: launch.activation.eager=true, \
-	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl", \
-	osgi.noShutdown=true, \
-	osgi.compatibility.bootdelegation=true
--runvm: \
-	--add-modules=java.se, --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, \
-	--add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.management/sun.management=ALL-UNNAMED, \
-	--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
-		
 -runblacklist: bnd.identity;id='org.eclipse.osgi';version:Version='3.19.0'

@@ -1,5 +1,3 @@
--runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
--runee: JavaSE-17
 -buildpath: \
 	org.eclipse.osgi;version='3.18',\
 	org.osgi.service.component.annotations,\
@@ -16,8 +14,6 @@
 	bcprov,\
 	bcpkix,\
 	org.eclipse.jetty.util;version='12.0'
--resolve: auto
-bin: target/classes
 Bundle-Activator: org.adempiere.install.InstallBundleActivator
 Bundle-Version: 12.0.0
 Export-Package: \
@@ -29,8 +25,4 @@ Import-Package: *
 -includeresource: org/compiere/install/images/=src/org/compiere/install/images/,\
 	plugin.xml, schema/=schema/
 Bundle-SymbolicName: org.adempiere.install;singleton:=true
-
-
-
-
 -privatepackage: org.compiere.install.images

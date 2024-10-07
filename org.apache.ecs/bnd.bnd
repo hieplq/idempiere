@@ -5,4 +5,3 @@ Export-Package: \
 	org.apache.ecs.storage,\
 	org.apache.ecs.xhtml,\
 	org.apache.ecs.xml
-bin: target/classes

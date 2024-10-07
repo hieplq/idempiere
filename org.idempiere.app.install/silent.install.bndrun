@@ -1,2 +1,2 @@
 -include: install.bndrun
--runproperties.silent: setup.mode=silent
+-runproperties.install+: setup.mode=silent

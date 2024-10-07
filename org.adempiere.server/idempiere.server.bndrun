@@ -1,5 +1,3 @@
--runee: JavaSE-17
--runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
 -runrequires: \
 	bnd.identity;id='org.eclipse.equinox.registry';version:Version='3.11.300',\
 	bnd.identity;id='org.compiere.db.postgresql.provider';version=latest,\
@@ -313,11 +311,7 @@
 	org.glassfish.jersey.core.jersey-common;version='[2.34.0,2.34.1)',\
 	org.glassfish.jersey.core.jersey-server;version='[2.34.0,2.34.1)',\
 	org.eclipse.jetty.jndi;version='[12.0.11,12.0.12)'
--runproperties: launch.activation.eager=true, \
-	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl,com.intellij.rt.debugger.agent", \
-	osgi.compatibility.bootdelegation=true, \
-	osgi.noShutdown=true, \
-	osgi.console=,\
+-runproperties.server: osgi.console=,\
 	jetty.home=${workspace}/jettyhome,\
 	jetty.etc.config.urls="etc/jetty-bytebufferpool.xml,etc/jetty-threadpool.xml,etc/jetty.xml,etc/jetty-http.xml,etc/jetty-deploy.xml,etc/jetty-ssl-context.xml,etc/jetty-ssl.xml,etc/jetty-https.xml,etc/jetty-http-forwarded.xml",\
 	mail.mime.encodefilename=true,\
@@ -326,8 +320,4 @@
 	mail.mime.decodeparameters=true,\
 	org.apache.cxf.osgi.http.transport.disable=true,\
 	launch.name="idempiere.server.jar"
--runvm: \
-	--add-modules=java.se, --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, \
-	--add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.management/sun.management=ALL-UNNAMED, \
-	--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
 	

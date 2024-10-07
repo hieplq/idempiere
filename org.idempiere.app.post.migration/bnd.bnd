@@ -1,10 +1,8 @@
--runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
--runee: JavaSE-17
 -buildpath: \
 	org.osgi.service.component.annotations;version='1.5',\
 	org.adempiere.base;version=latest,\
 	org.osgi.service.component;version='1.5',\
 	org.eclipse.osgi;version='3.18'
 Bundle-Version: 12.0.0
--resolve: auto
-bin: target/classes
+Bundle-SymbolicName: org.idempiere.app.post.migration
+  

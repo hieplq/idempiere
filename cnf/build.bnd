@@ -102,7 +102,20 @@ mockito-deps: org.objenesis; version=2.6.0,\
 javac.source: 17
 javac.target: 17
 -noimportjava: true
--resolve.effective: resolve,active, meta;skip:='osgi.ee'
+-resolve.effective: resolve, active, meta;skip:='osgi.ee'
+src: src
 bin: target/classes
 testbin: target/classes
 testsrc: src
+-runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
+-runee: JavaSE-17
+-runvm: \
+	--add-modules=java.se, --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, \
+	--add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.management/sun.management=ALL-UNNAMED, \
+	--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
+-runproperties: launch.activation.eager=true, \
+	org.osgi.framework.bootdelegation="javax.xml,javax.xml.stream,sun.security.ssl,com.intellij.rt.debugger.agent", \
+	osgi.compatibility.bootdelegation=true, \
+	osgi.noShutdown=true
+	
+
