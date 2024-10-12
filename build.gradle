@@ -74,13 +74,13 @@ task createDistributionFiles {
 }
 
 task createDistributions(type: Zip) {
-    from 'distributions/'
+    from('distributions/idempiere-server/') {
+		into('idempiere-server')
+	}
     destinationDirectory = file("distributions")
     def gmtTimeZone = TimeZone.getTimeZone("GMT")
     def formatter = new java.text.SimpleDateFormat("yyyyMMddHHmm")
     formatter.timeZone = gmtTimeZone
-    archiveFileName = "idempiere-server-12.v${formatter.format(new Date())}.zip"
-    include 'idempiere-server'
-    include '*/*'
+    archiveFileName = "idempiere-server-12.v${formatter.format(new Date())}.zip"    
     dependsOn 'createDistributionFiles'
 }
