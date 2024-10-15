@@ -5,10 +5,5 @@
 	<classpathentry kind="src" output="target/classes" path="src/main/server"/>
 	<classpathentry kind="src" output="target/classes" path="src/main/servlet"/>
 	<classpathentry kind="src" output="target/classes" path="src/main/home"/>
-	<classpathentry kind="src" output="test/classes" path="test/src">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

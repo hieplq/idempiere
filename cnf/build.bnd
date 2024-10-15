@@ -105,8 +105,7 @@ javac.target: 17
 -resolve.effective: resolve, active, meta;skip:='osgi.ee'
 src: src
 bin: target/classes
-testbin: test/classes
-testsrc: test/src
+testbin: target/classes
 -runfw: org.eclipse.osgi;version='[3.18.500.v20230801-1826,3.18.500.v20230801-1826]'
 -runee: JavaSE-17
 -runvm: \
