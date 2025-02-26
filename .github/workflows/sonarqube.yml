@@ -38,17 +38,16 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_SCANNER_JAVA_OPTS: "-Xmx7g"
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar \
-          -Dsonar.projectKey=idempiere_idempiere \
+          -Dsonar.projectKey=${{ github.repository_owner }}_idempiere \
           -Dsonar.exclusions=**/I_*.java,**/X_*.java \
-          -Dsonar.organization=idempiere \
+          -Dsonar.organization=${{ github.repository_owner }} \
           -Dsonar.host.url=https://sonarcloud.io \
           -DmaterializeProduct=none \
           -DassembleRepository=none \
           -Dsonar.sourceEncoding=UTF-8 \
-          -Dsonar.scanner.javaOpts="-Xmx6g" \
+          -Dsonar.scanner.java.Opts="-Xmx6g" \
           -Dsonar.issue.ignore.multicriteria=e1,e2 \
           -Dsonar.issue.ignore.multicriteria.e1.ruleKey=java:S3252 \
           -Dsonar.issue.ignore.multicriteria.e1.resourceKey=**/*.java \
