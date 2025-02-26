@@ -47,7 +47,7 @@ jobs:
           -DmaterializeProduct=none \
           -DassembleRepository=none \
           -Dsonar.sourceEncoding=UTF-8 \
-          -Dsonar.scanner.java.Opts="-Xmx6g" \
+          -Dsonar.scanner.javaOpts="-Xmx6g" \
           -Dsonar.issue.ignore.multicriteria=e1,e2 \
           -Dsonar.issue.ignore.multicriteria.e1.ruleKey=java:S3252 \
           -Dsonar.issue.ignore.multicriteria.e1.resourceKey=**/*.java \
