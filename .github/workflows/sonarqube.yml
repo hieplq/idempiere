@@ -40,9 +40,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar \
-          -Dsonar.projectKey=${{ github.repository_owner }}_idempiere \
+          -Dsonar.projectKey=${{ vars.sonarProjectKey }} \
           -Dsonar.exclusions=**/I_*.java,**/X_*.java \
-          -Dsonar.organization=${{ github.repository_owner }} \
+          -Dsonar.organization=${{ vars.sonarOrganization }} \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.scanner.javaOpts="-Xmx6g" \
           -DmaterializeProduct=none \
