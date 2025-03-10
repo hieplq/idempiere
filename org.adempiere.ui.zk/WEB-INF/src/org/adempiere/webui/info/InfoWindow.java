@@ -2312,11 +2312,8 @@ public class InfoWindow extends InfoPanel implements ValueChangeListener, EventL
         dataSql = dataSql + orderClause;
 
         // for SELECT DISTINCT, ORDER BY expressions must appear in select list - applies for lookup columns and multiselection columns
-        if(dataSql.startsWith("SELECT DISTINCT") && indexOrderColumn > 0) {
-        	ColumnInfo orderColumnInfo = p_layout[indexOrderColumn];
-        	if (DisplayType.isLookup(orderColumnInfo.getAD_Reference_ID()) || DisplayType.isChosenMultipleSelection(orderColumnInfo.getAD_Reference_ID())) {
-        		dataSql = appendOrderByToSelectList(dataSql, orderClause);
-        	}
+        if(dataSql.startsWith("SELECT DISTINCT") && isHasLookupOrderBy()) {
+        	dataSql = appendOrderByToSelectList(dataSql, orderClause);
         }
 
         if (end > start && isUseDatabasePaging() && DB.getDatabase().isPagingSupported())

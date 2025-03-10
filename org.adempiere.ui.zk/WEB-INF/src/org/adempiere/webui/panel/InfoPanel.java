@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -74,6 +75,7 @@ import org.adempiere.webui.part.WindowContainer;
 import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.Dialog;
+import org.apache.commons.lang3.StringUtils;
 import org.compiere.minigrid.ColumnInfo;
 import org.compiere.minigrid.IDColumn;
 import org.compiere.minigrid.UUIDColumn;
@@ -518,10 +520,6 @@ public abstract class InfoPanel extends Window implements EventListener<Event>, 
 	protected String              m_sqlOrder;
 	private String              m_sqlUserOrder;
 	
-	protected int              	  indexOrderColumn = -1;
-	/** sql column name of infocolumn (can be alias) */
-	protected String              sqlOrderColumn;
-	protected Boolean             isColumnSortAscending = null;
 	/**ValueChange listeners       */
     private ArrayList<ValueChangeListener> listeners = new ArrayList<ValueChangeListener>();
 	/** Loading success indicator       */
@@ -736,6 +734,11 @@ public abstract class InfoPanel extends Window implements EventListener<Event>, 
 		m_sqlOrder = "";
 		if (orderBy != null && orderBy.trim().length() > 0)
 			m_sqlOrder = " ORDER BY " + orderBy;
+		
+		//addColumnOrder(1, true, false);
+		//addColumnOrder(2, true, false);
+		//addColumnOrder(3, true, false);
+		//addColumnOrder(4, true, false);
 	}   //  prepareTable
 
 	/**
@@ -1375,24 +1378,37 @@ public abstract class InfoPanel extends Window implements EventListener<Event>, 
 	 * so need to validate it by comparing the sql of current sort column
 	 */
 	protected void validateOrderIndex() {
-		if (indexOrderColumn > 0 && (indexOrderColumn + 1 > p_layout.length || !p_layout[indexOrderColumn].getColSQL().trim().equals(sqlOrderColumn))) {
-			// try to find out new index of ordered column, in case has other column is hide or display
-			for (int testIndex = 0; testIndex < p_layout.length; testIndex++) {
-				if (p_layout[testIndex].getColSQL().trim().equals(sqlOrderColumn) || p_layout[testIndex].getDisplayColumn().equals(sqlOrderColumn)) {
-					indexOrderColumn = testIndex;
-					break;
+		Map<Integer, Map.Entry<String, Boolean>> mOrderInfoNew = new HashMap<>();
+		 
+		for (int colIndex : mOrderInfo.keySet()) {
+			int indexOrderColumn = colIndex;
+			String sqlOrderColumn = mOrderInfo.get(colIndex).getKey();
+			
+			if (indexOrderColumn > 0 && (indexOrderColumn + 1 > p_layout.length || !p_layout[indexOrderColumn].getColSQL().trim().equals(sqlOrderColumn))) {
+				// try to find out new index of ordered column, in case has other column is hide or display
+				for (int testIndex = 0; testIndex < p_layout.length; testIndex++) {
+					if (p_layout[testIndex].getColSQL().trim().equals(sqlOrderColumn) || p_layout[testIndex].getDisplayColumn().equals(sqlOrderColumn)) {
+						indexOrderColumn = testIndex;
+						break;
+					}
 				}
-			}
-			
-			// index still incorrect and can't find out new index (ordered column become hide column)
-			if (indexOrderColumn > 0 && (indexOrderColumn + 1 > p_layout.length
-					|| (!p_layout[indexOrderColumn].getColSQL().trim().equals(sqlOrderColumn) && !p_layout[indexOrderColumn].getDisplayColumn().equals(sqlOrderColumn)))) {
-				indexOrderColumn = -1;
-				sqlOrderColumn = null;
-				m_sqlUserOrder = null;
-			}
+				
+				// index still incorrect and can't find out new index (ordered column become hide column)
+				if (indexOrderColumn > 0 && (indexOrderColumn + 1 > p_layout.length
+						|| (!p_layout[indexOrderColumn].getColSQL().trim().equals(sqlOrderColumn) && !p_layout[indexOrderColumn].getDisplayColumn().equals(sqlOrderColumn)))) {
+					indexOrderColumn = -1;
+					sqlOrderColumn = null;
+					m_sqlUserOrder = null;
+				}
+				
+				if (indexOrderColumn > 0) {
+					mOrderInfoNew.put(indexOrderColumn, new AbstractMap.SimpleEntry<>(sqlOrderColumn, mOrderInfo.get(colIndex).getValue()));
+				}
+				
+			}	
 		}
-			
+		
+		mOrderInfo = mOrderInfoNew;
 	}
 	
 	/**
@@ -1401,12 +1417,12 @@ public abstract class InfoPanel extends Window implements EventListener<Event>, 
 	 */
 	protected String getUserOrderClause() {
 		validateOrderIndex();
-		if (indexOrderColumn < 0) {
+		if (mOrderInfo.size() == 0) {
 			return m_sqlOrder;
 		}
 		
 		if (m_sqlUserOrder == null) {
-			m_sqlUserOrder = getUserOrderClause (indexOrderColumn);
+			m_sqlUserOrder = getUserOrderClause (mOrderInfo);
 		}
 		return m_sqlUserOrder;
 	}
@@ -1417,21 +1433,42 @@ public abstract class InfoPanel extends Window implements EventListener<Event>, 
 	 * @param col
 	 * @return order clause
 	 */
-	protected String getUserOrderClause(int col) {
-		ColumnInfo orderColumnInfo = p_layout[col];
-		String displayColumn = orderColumnInfo.getDisplayColumn();
-		String colsql = !Util.isEmpty(displayColumn) ? displayColumn : p_layout[col].getColSQL().trim();
+	protected String getUserOrderClause(Map<Integer, Entry<String, Boolean>> mOrderInfo) {
+		StringBuilder orderBuild = new StringBuilder();
 		
-		colsql = getSelectForOrderBy(colsql);
-		if(!Util.isEmpty(displayColumn) && (DisplayType.isLookup(orderColumnInfo.getAD_Reference_ID()) || DisplayType.isChosenMultipleSelection(orderColumnInfo.getAD_Reference_ID()))) {
-			String from = getFromForOrderBy(orderColumnInfo, displayColumn);
-			String where = getWhereForOrderBy(orderColumnInfo);
+		for (Integer col : mOrderInfo.keySet()) {
+			ColumnInfo orderColumnInfo = p_layout[col];
+			String displayColumn = orderColumnInfo.getDisplayColumn();
+			String colsql = !Util.isEmpty(displayColumn) ? displayColumn : p_layout[col].getColSQL().trim();
+			String colOrderSql = null;
+			colsql = getSelectForOrderBy(colsql);
+			if(!Util.isEmpty(displayColumn) && (DisplayType.isLookup(orderColumnInfo.getAD_Reference_ID()) || DisplayType.isChosenMultipleSelection(orderColumnInfo.getAD_Reference_ID()))) {
+				String from = getFromForOrderBy(orderColumnInfo, displayColumn);
+				String where = getWhereForOrderBy(orderColumnInfo);
+				
+				if(orderColumnInfo.getAD_Reference_Value_ID() > 0 
+						&& (orderColumnInfo.getAD_Reference_ID() == DisplayType.Table || orderColumnInfo.getAD_Reference_ID() == DisplayType.Search)) {
+					MRefTable refTable = MRefTable.get(orderColumnInfo.getAD_Reference_Value_ID());
+					if (refTable != null && StringUtils.isNotEmpty(refTable.getOrderByClause())) {
+						colsql = refTable.getOrderByClause();
+					}
+				}
+				
+				colOrderSql = String.format("(SELECT %s FROM %s WHERE %s) %s ", colsql, from, where, mOrderInfo.get(col).getValue()? "" : "DESC");
+			}
+			else {
+				colOrderSql = String.format("%s %s ", colsql, mOrderInfo.get(col).getValue()? "" : "DESC");
+			}
 			
-			return String.format(" ORDER BY (SELECT %s FROM %s WHERE %s) %s ", colsql, from, where, isColumnSortAscending? "" : "DESC");
+			if (orderBuild.length() == 0)
+                orderBuild.append("ORDER BY ");
+			else
+				orderBuild.append(", ");
+			
+			orderBuild.append(colOrderSql);
 		}
-		else {
-			return String.format(" ORDER BY %s %s ", colsql, isColumnSortAscending? "" : "DESC");
-		}
+		
+		return orderBuild.toString();
 	}
 
 	/**
@@ -2885,14 +2922,17 @@ public abstract class InfoPanel extends Window implements EventListener<Event>, 
 		Listhead listHead = contentPanel.getListHead();
 		if (listHead != null) {
 			List<?> headers = listHead.getChildren();
-			for(Object obj : headers)
-			{
-				Listheader header = (Listheader) obj;
-				if (header.getColumnIndex() == indexOrderColumn)
-	              header.setSortDirection(isColumnSortAscending?"ascending":"descending");
-	            else
-	              header.setSortDirection("natural");
+			for (int indexOrderColumn : mOrderInfo.keySet()) {
+				for(Object obj : headers)
+				{
+					Listheader header = (Listheader) obj;
+					if (header.getColumnIndex() == indexOrderColumn)
+		              header.setSortDirection(mOrderInfo.get(indexOrderColumn).getValue()?"ascending":"descending");
+		            else
+		              header.setSortDirection("natural");
+				}
 			}
+			
 		}
 	}
 	
@@ -3168,6 +3208,33 @@ public abstract class InfoPanel extends Window implements EventListener<Event>, 
         }
     } 
     
+    protected Map<Integer, Map.Entry<String, Boolean>> mOrderInfo = new HashMap<>();
+    
+    protected boolean isHasLookupOrderBy() {
+		for (int col : mOrderInfo.keySet()) {
+			ColumnInfo orderColumnInfo = p_layout[col];
+        	if (DisplayType.isLookup(orderColumnInfo.getAD_Reference_ID()) || DisplayType.isChosenMultipleSelection(orderColumnInfo.getAD_Reference_ID())) {
+        		return true;
+        	}
+		}
+		return false;
+    }
+    
+    protected void addColumnOrder(int colIndex, boolean ascending, boolean reset) {
+    	if (colIndex <= 0)// 0 mean checkbox column
+    		return;
+    	if (reset)
+    		mOrderInfo.clear();
+    		
+    	String displayColumn = p_layout[colIndex].getDisplayColumn();
+		String sqlOrderColumn = !Util.isEmpty(displayColumn) ? displayColumn : p_layout[colIndex].getColSQL().trim();
+		
+		mOrderInfo.put(colIndex, new AbstractMap.SimpleEntry<>(sqlOrderColumn, ascending));
+		
+		m_sqlUserOrder = null; // clear cache value
+    }
+    
+    
     /**
      * @param cmpr {@link WListItemRenderer.ColumnComparator}
      * @param ascending
@@ -3178,10 +3245,7 @@ public abstract class InfoPanel extends Window implements EventListener<Event>, 
 		
 		// keep column order
 		int col = lsc.getColumnIndex();
-		indexOrderColumn = col;
-		isColumnSortAscending = ascending;
-		String displayColumn = p_layout[col].getDisplayColumn();
-		sqlOrderColumn = !Util.isEmpty(displayColumn) ? displayColumn : p_layout[col].getColSQL().trim();
+		addColumnOrder(col, ascending, true);
 		m_sqlUserOrder = null; // clear cache value
 		
 		if (m_useDatabasePaging)
