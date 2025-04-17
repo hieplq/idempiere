@@ -688,7 +688,7 @@ public class MDepreciationWorkfile extends X_A_Depreciation_Workfile
 		
 		if(depreciationMethod != null) {
 			DepreciationDTO depreciationDTO = new DepreciationDTO();
-			depreciationDTO.useFullLife = new BigDecimal(this.getA_Life_Period());// at the moment, int is ok for Thai, but for other country BigDecima is suitable, need to change AD
+			depreciationDTO.useFullLife = new BigDecimal(this.getUseLifeMonths());// at the moment, int is ok for Thai, but for other country BigDecima is suitable, need to change AD
 			depreciationDTO.useFullLifeUnit = Calendar.MONTH;
 			depreciationDTO.depreciationId = this.get_ID();
 			depreciationDTO.inServiceDate = this.getA_Asset().getAssetServiceDate();
@@ -698,7 +698,6 @@ public class MDepreciationWorkfile extends X_A_Depreciation_Workfile
 			
 			// it's safe, at the moment, core disable setting of lifePeriods_F
 			lifePeriods_C = lifePeriods;
-			lifePeriods_F = lifePeriods;
 		}
 		
 		Timestamp startDateAcct = getDateAcct();
@@ -742,13 +741,13 @@ public class MDepreciationWorkfile extends X_A_Depreciation_Workfile
 			if (lifePeriods_F > currentPeriod || !depreciation_F.requireLastPeriodAdjustment())
 			{
 				setFiscal(true);
-				exp_F = depreciation_F.invoke(this, assetacct, currentPeriod, accumDep_F, depreciationMethod);
+				//exp_F = depreciation_F.invoke(this, assetacct, currentPeriod, accumDep_F, depreciationMethod);
 				accumDep_F = accumDep_F.add(exp_F);
 			}
 			else if (lifePeriods_F == currentPeriod)
 			{	// last period (fiscal)
 				if (depreciationMethod != null && depreciationMethod.isPeriodAdjustment()) {
-					exp_C = depreciation_C.invoke(this, assetacct, currentPeriod, accumDep_C, depreciationMethod);
+					//exp_F = depreciation_C.invoke(this, assetacct, currentPeriod, accumDep_C, depreciationMethod);
 				}else {
 					exp_F = assetCost.subtract(accumDep_F);
 				}
