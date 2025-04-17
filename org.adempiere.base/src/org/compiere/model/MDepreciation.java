@@ -232,7 +232,7 @@ public class MDepreciation extends X_A_Depreciation implements ImmutablePOSuppor
 			depreciationDTO.period = A_Current_Period;
 			depreciationDTO.salvage = assetwk.getA_Salvage_Value();
 			depreciationDTO.totalAmount = assetwk.getA_Asset_Cost();
-			depreciationDTO.useFullLife = new BigDecimal(assetwk.getA_Life_Period());// at the moment, int is ok for Thai, but for other country BigDecima is suitable, need to change AD
+			depreciationDTO.useFullLife = new BigDecimal(assetwk.getUseLifeMonths());// at the moment, int is ok for Thai, but for other country BigDecima is suitable, need to change AD
 			depreciationDTO.useFullLifeUnit = Calendar.MONTH;
 			depreciationDTO.trxName = assetwk.get_TrxName();
 			depreciationDTO.depreciationId = assetwk.get_ID();
