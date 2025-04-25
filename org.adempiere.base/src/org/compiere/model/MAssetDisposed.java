@@ -506,7 +506,7 @@ implements DocAction
 			change.saveEx(get_TrxName());
 			
 			assetwk.adjustCost(disposalAmt.negate(), Env.ZERO, false);
-			assetwk.adjustAccumulatedDepr(accumDeprAmt.negate(), accumDeprAmt.negate(), false);
+			assetwk.adjustAccumulatedDepr(accumDeprAmt.negate(), assetwk.getA_Accumulated_Depr_F().negate(), false);
 			assetwk.saveEx();
 			assetwk.buildDepreciation();
 		}
