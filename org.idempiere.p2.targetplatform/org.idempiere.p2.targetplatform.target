@@ -1868,5 +1868,11 @@ Export-Package:        *;version="${version}";-noimport:=true
     	<version>2.7.3</version>
     	<type>jar</type>
     </location>
+    <location includeSource="true" missingManifest="generate" type="Maven">
+    	<groupId>com.github.beanio</groupId>
+    	<artifactId>beanio</artifactId>
+    	<version>3.2.1</version>
+    	<type>jar</type>
+    </location>
   </locations>
 </target>
