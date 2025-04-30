@@ -273,8 +273,8 @@ public class TabEditor
 		if (field.getPlaceholder() != null && field.getPlaceholder().equals(defaultField.get_Translation(MField.COLUMNNAME_Placeholder, Env.getAD_Language(Env.getCtx()), true)))
 			field.setPlaceholder(defaultField.getPlaceholder());
 				
-		if (!field.is_Changed())
-			return;
+		//if (!field.is_Changed())
+			//return;
 
 		MUserDefField udfield = MUserDefField.get(Env.getCtx(), field.getAD_Field_ID(), m_tab.getAD_Tab_ID(), m_tab.getAD_Window_ID(), true);
 		int AD_UserDef_Field_ID = 0;
@@ -306,11 +306,11 @@ public class TabEditor
 			udfield.setIsReadOnly(field.isReadOnly() ? "Y" : "N");
 		if (field.is_ValueChanged(MField.COLUMNNAME_SeqNo))
 			udfield.setSeqNo(field.getSeqNo());
-		if (field.is_ValueChanged(MField.COLUMNNAME_XPosition))
+		//if (field.is_ValueChanged(MField.COLUMNNAME_XPosition))
 			udfield.setXPosition(field.getXPosition());
 		if (field.is_ValueChanged(MField.COLUMNNAME_NumLines))
 			udfield.setNumLines(field.getNumLines());
-		if (field.is_ValueChanged(MField.COLUMNNAME_ColumnSpan))
+		//if (field.is_ValueChanged(MField.COLUMNNAME_ColumnSpan))
 			udfield.setColumnSpan(field.getColumnSpan());
 		if (field.is_ValueChanged(MField.COLUMNNAME_SortNo))
 			udfield.setSortNo(field.getSortNo().intValue());
