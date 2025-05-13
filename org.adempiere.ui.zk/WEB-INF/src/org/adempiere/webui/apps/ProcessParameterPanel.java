@@ -411,6 +411,19 @@ public class ProcessParameterPanel extends Panel implements
 			centerPanel.appendChild(rows);
 			dynamicDisplay();
 
+			boolean isAllInvisible = true;
+			for (int i = 0; i < m_wEditors.size(); i++) {
+				if((m_wEditors.get(i).getComponent().isVisible()) 
+						|| (m_wEditors2.get(i) != null && m_wEditors2.get(i).getComponent().isVisible())){
+					isAllInvisible = false;
+					break;
+				}
+					
+			}
+			
+			if(isAllInvisible)
+				return false;
+			
 			if (m_processInfo.getAD_Process_ID() > 0) {
 				String className = MProcess.get(Env.getCtx(), m_processInfo.getAD_Process_ID()).getClassname();
 
