@@ -166,7 +166,7 @@ public class MAsset extends X_A_Asset {
 	 * Construct from MIFixedAsset (import)
 	 * @param ifa
 	 */
-	protected MAsset (MIFixedAsset ifa)
+	public MAsset (MIFixedAsset ifa)
 	{
 		this(ifa.getCtx(), 0, ifa.get_TrxName());
 		
