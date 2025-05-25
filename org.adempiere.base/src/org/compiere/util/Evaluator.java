@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+import org.compiere.model.MColumn;
 import org.idempiere.expression.logic.LogicEvaluator;
 
 /**
@@ -135,6 +136,54 @@ public class Evaluator
 		}
 	}   //  parseDepends
 
+	public static String parseSQLExpression(String sqlExpression, Properties ctx, int windowNo, int tabNo) {
+		return parseSQLExpression(sqlExpression, ctx, windowNo, tabNo, null, null, null);
+	}
+	
+	public static String parseSQLExpression(String sqlExpression, Properties ctx, int windowNo, int tabNo, String targetObjectName, String columnName, String trxName) {
+		String	defStr = "";
+		if (sqlExpression != null && sqlExpression.startsWith(MColumn.VIRTUAL_UI_COLUMN_PREFIX))
+		{
+			String sql = sqlExpression.substring(5);			//	w/o tag
+			//hengsin, capture unparseable error to avoid subsequent sql exception
+			sql = Env.parseContext(ctx, windowNo, sql, false, false);	//	replace variables
+			if (sql.equals(""))
+			{
+				s_log.log(Level.WARNING, "(" + columnName + ") - Default SQL variable parse failed: "
+					+ sqlExpression);
+			}
+			else
+			{
+				PreparedStatement stmt = null;
+				ResultSet rs = null;
+				try{
+					stmt = DB.prepareStatement(sql, trxName);
+					rs = stmt.executeQuery();
+					if (rs.next())
+						defStr = rs.getString(1);
+					else{
+						if (s_log.isLoggable(Level.INFO))
+							s_log.log(Level.INFO, "(" + columnName + ") - no Result: " + sql);
+					}
+				}catch (SQLException e){
+					s_log.log(Level.WARNING, "(" + columnName + ") " + sql, e);
+				}finally{
+					DB.close(rs, stmt);
+					rs = null;
+					stmt = null;
+				}
+			}
+			
+			if (defStr != null && defStr.length() > 0){
+				if (s_log.isLoggable(Level.FINE)) 
+					s_log.fine("[SQL] " + columnName + "=" + defStr);
+				return defStr;
+			}
+
+		}	//	SQL Statement
+		
+		return sqlExpression;
+	}
 	/**
 	 * Evaluate a SQL logic expression (with @SQL= prefix)
 	 * @param sqlLogic
