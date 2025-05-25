@@ -75,6 +75,7 @@ import org.compiere.util.AdempiereSystemError;
 import org.compiere.util.CLogger;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
+import org.compiere.util.Evaluator;
 import org.compiere.util.Msg;
 import org.compiere.util.Trx;
 import org.compiere.util.Util;
@@ -210,6 +211,8 @@ public abstract class AbstractProcessDialog extends Window implements IProcessUI
 		MProcess process = MProcess.get(AD_Process_ID);
 		m_Name = trl ? process.get_Translation(MProcess.COLUMNNAME_Name) : process.getName();
 		m_Description = trl ? process.get_Translation(MProcess.COLUMNNAME_Description) : process.getDescription();
+		
+		m_Description = Evaluator.parseSQLExpression(m_Description, m_ctx, m_WindowNo, m_TabNo);
 		m_Help = trl ? process.get_Translation(MProcess.COLUMNNAME_Help) : process.getHelp();
 		if((pi != null) && !Util.isEmpty(pi.getShowHelp()))
 			m_ShowHelp = pi.getShowHelp();
