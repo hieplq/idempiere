@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import javax.mail.internet.AddressException;
@@ -676,6 +677,7 @@ public class MUser extends X_AD_User implements ImmutablePOSupport
 	 * 	Set EMail - reset email validation date
 	 *	@param EMail email
 	 */
+	@Override
 	public void setEMail(String EMail)
 	{
 		super.setEMail (EMail);
@@ -970,6 +972,9 @@ public class MUser extends X_AD_User implements ImmutablePOSupport
 	@Override
 	protected boolean beforeSave (boolean newRecord)
 	{
+		if (is_ValueChanged(COLUMNNAME_LDAPUser) && !Util.isEmpty(getLDAPUser(), true) && Util.isEmpty(getPassword())) {
+			setPassword(UUID.randomUUID().toString());
+		}
 		//	New Email Address invalidates previous email verification
 		if (!newRecord && is_ValueChanged("EMail"))
 			setEMailVerifyDate(null);
