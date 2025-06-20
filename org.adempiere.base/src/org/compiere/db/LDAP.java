@@ -57,7 +57,10 @@ public class LDAP
 		if ("openldap".equals(MSysConfig.getValue(MSysConfig.LDAP_TYPE))) {
 			principal = new StringBuilder("uid=").append(userName).append(",").append(domain);
 		} else {
-			principal = new StringBuilder(userName).append("@").append(domain);
+			principal = new StringBuilder(userName);
+			if (userName.indexOf("@") < 0) {
+				principal.append("@").append(domain);
+			}
 		}
 		env.put(Context.SECURITY_PRINCIPAL, principal.toString());
 		env.put(Context.SECURITY_CREDENTIALS, password);
