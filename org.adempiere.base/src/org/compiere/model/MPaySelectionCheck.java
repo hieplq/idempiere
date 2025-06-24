@@ -476,6 +476,7 @@ public class MPaySelectionCheck extends X_C_PaySelectionCheck
 
 					depositBatch.setProcessed(true);
 					depositBatch.saveEx();
+					depositBatch.processIt(DocAction.ACTION_Complete);
 				}
 
 			} catch (Exception e) {
