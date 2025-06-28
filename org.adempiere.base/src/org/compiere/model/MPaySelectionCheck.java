@@ -442,6 +442,12 @@ public class MPaySelectionCheck extends X_C_PaySelectionCheck
 					}
 					depositBatch.setDateDeposit(new Timestamp((new Date()).getTime()));
 					depositBatch.setDateDoc(new Timestamp((new Date()).getTime()));
+					
+					if (depositBatch.getC_Currency_ID() <= 0) {
+						depositBatch.setC_Currency_ID(Env.getContextAsInt(Env.getCtx(), "$C_Currency_ID"));
+					}
+					
+					depositBatch.setDescription(checks[0].getC_PaySelection().getName());
 					depositBatch.saveEx();
 				}
 
