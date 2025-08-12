@@ -49,6 +49,7 @@ import org.adempiere.webui.util.BrowserToken;
 import org.adempiere.webui.util.UserPreference;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.Dialog;
+import org.adempiere.webui.window.FDialog;
 import org.adempiere.webui.window.LoginWindow;
 import org.compiere.Adempiere;
 import org.compiere.model.MClient;
@@ -60,6 +61,7 @@ import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
+import org.compiere.util.EMail;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
 import org.compiere.util.Language;
@@ -91,6 +93,7 @@ import org.zkoss.zul.A;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Image;
+import org.zkoss.zul.Vbox;
 
 /**
  * Login panel of {@link LoginWindow}
@@ -128,6 +131,8 @@ public class LoginPanel extends Window implements EventListener<Event>
     protected ConfirmPanel pnlButtons; 
     protected boolean email_login = MSysConfig.getBooleanValue(MSysConfig.USE_EMAIL_FOR_LOGIN, false);
     protected String validLstLanguage = null;
+    // Martin 12/08/2025
+    Button btnRegister = null;
 
 	/* Number of failures to calculate an incremental delay on every trial */
 	private int failures = 0;
@@ -383,6 +388,27 @@ public class LoginPanel extends Window implements EventListener<Event>
         	td.appendChild(btnResetPassword);
         	btnResetPassword.addEventListener(Events.ON_CLICK, this);
     	}
+    	// Martin 12/08/2025
+    	// Add Register button row
+    	tr = new Tr();
+    	tr.setId("rowRegister");
+    	table.appendChild(tr);
+
+    	td = new Td();
+    	tr.appendChild(td);
+    	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+    	td.appendChild(new Label("")); // empty label cell
+    	if (isLabelAboveInput()) {
+    	    tr = new Tr();
+    	    table.appendChild(tr);
+    	}
+
+    	td = new Td();
+    	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+    	tr.appendChild(td);
+    	td.appendChild(btnRegister);
+
+    	//
 
     	div = new Div();
     	div.setSclass(ITheme.LOGIN_BOX_FOOTER_CLASS);
@@ -460,6 +486,13 @@ public class LoginPanel extends Window implements EventListener<Event>
         
         btnResetPassword = new A(Msg.getMsg(Language.getBaseAD_Language(), "ForgotMyPassword"));
         btnResetPassword.setId("btnResetPassword");
+        
+        // Martin 12/08/2025
+        btnRegister = new Button(Msg.getMsg(Language.getBaseAD_Language(), "Register"));
+        btnRegister.setId("btnRegister");
+        btnRegister.setSclass("btn btn-primary"); // Optional: style like Bootstrap
+        btnRegister.addEventListener(Events.ON_CLICK, e -> openRegistrationWindow());
+
         
         if (lstLanguage.getItems().size() > 0){
         	validLstLanguage = (String)lstLanguage.getItems().get(0).getLabel();
@@ -804,5 +837,89 @@ public class LoginPanel extends Window implements EventListener<Event>
 		}
 		return arrstr;
 	}
+	
+	// Martin 12/08/2025
+	private void openRegistrationWindow() {
+	    Window win = new Window();
+	    win.setTitle("User Registration");
+	    win.setWidth("400px");
+	    win.setClosable(true);
+	    win.setSizable(false);
+
+	    // Registration form components
+	    Textbox txtName = new Textbox();
+	    txtName.setPlaceholder("Full Name");
+	    txtName.setHflex("1");
+
+	    Textbox txtEmail = new Textbox();
+	    txtEmail.setPlaceholder("Email");
+	    txtEmail.setHflex("1");
+
+	    Textbox txtOtp = new Textbox();
+	    txtOtp.setPlaceholder("Enter OTP");
+	    txtOtp.setHflex("1");
+
+	    Button btnSendOtp = new Button("Send OTP");
+	    btnSendOtp.addEventListener(Events.ON_CLICK, ev -> {
+	        sendOtpToEmail(txtEmail.getValue());
+	    });
+
+	    Button btnRegisterUser = new Button("Register");
+	    btnRegisterUser.addEventListener(Events.ON_CLICK, ev -> {
+	        registerNewUser(txtName.getValue(), txtEmail.getValue(), txtOtp.getValue());
+	        win.detach();
+	    });
+
+	    Vbox form = new Vbox();
+	    form.setSpacing("5px");
+	    form.appendChild(txtName);
+	    form.appendChild(txtEmail);
+	    form.appendChild(btnSendOtp);
+	    form.appendChild(txtOtp);
+	    form.appendChild(btnRegisterUser);
+
+	    win.appendChild(form);
+
+	    // Attach window to this component (must be attached to a page)
+	    this.appendChild(win);
+
+	    // Now call setMode to make it modal
+	    win.setMode(Window.MODAL);
+	}
+
+
+	
+	private void sendOtpToEmail(String email) {
+	    String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
+	    // Store OTP in session or DB for verification
+	    getDesktop().getSession().setAttribute("OTP_CODE", otp);
+
+	    MClient client = MClient.get(Env.getCtx());
+	    EMail mail = client.createEMail(email, "Your OTP Code", "Your OTP is: " + otp);
+	    if (mail != null && EMail.SENT_OK.equals(mail.send())) {
+	        FDialog.info(0, this, "OTP sent to " + email);
+	    } else {
+	        FDialog.error(0, this, "Failed to send OTP. Check email config.");
+	    }
+	}
+	
+	private void registerNewUser(String name, String email, String otp) {
+	    String storedOtp = (String) getDesktop().getSession().getAttribute("OTP_CODE");
+	    if (storedOtp == null || !storedOtp.equals(otp)) {
+	        FDialog.error(0, this, "Invalid OTP");
+	        return;
+	    }
+
+	    MUser user = new MUser(Env.getCtx(), 0, null);
+	    user.setName(name);
+	    user.setEMail(email);
+	    user.setIsActive(true);
+	    user.saveEx();
+
+	    FDialog.info(0, this, "Registration successful. You can now log in.");
+	}
+
+
+
 
 }
