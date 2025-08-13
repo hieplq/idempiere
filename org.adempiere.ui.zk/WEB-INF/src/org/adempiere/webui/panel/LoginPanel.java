@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.adempiere.util.LogAuthFailure;
@@ -57,6 +58,7 @@ import org.compiere.model.MSession;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MSystem;
 import org.compiere.model.MUser;
+import org.compiere.model.MUserRoles;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.CLogger;
@@ -910,14 +912,45 @@ public class LoginPanel extends Window implements EventListener<Event>
 	        return;
 	    }
 
+	    // 1️⃣ Create the new user
 	    MUser user = new MUser(Env.getCtx(), 0, null);
 	    user.setName(name);
 	    user.setEMail(email);
 	    user.setIsActive(true);
+
+	    // 2️⃣ Generate temporary password
+	    String tempPassword = UUID.randomUUID().toString().substring(0, 8);
+	    user.setPassword(tempPassword); // Will be hashed by iDempiere
 	    user.saveEx();
 
-	    FDialog.info(0, this, "Registration successful. You can now log in.");
+	    // 3️⃣ Link user to role 1000023
+	    MUserRoles roleLink = new MUserRoles(Env.getCtx(), 0, null);
+	    roleLink.setAD_User_ID(user.getAD_User_ID());
+	    roleLink.setAD_Role_ID(1000023);
+	    roleLink.setIsActive(true);
+	    roleLink.saveEx();
+
+	    // 4️⃣ Send email with temp password
+	    MClient client = MClient.get(Env.getCtx());
+	    EMail emailer = client.createEMail(email,
+	            "Your iDempiere Account",
+	            "Hello " + name + ",\n\nYour account has been created.\n" +
+	            "Temporary password: " + tempPassword + "\n\n" +
+	            "Please log in and change your password immediately.");
+
+	    if (emailer != null) {
+	        String status = emailer.send();
+	        if (!EMail.SENT_OK.equals(status)) {
+	        	logger.warning("Failed to send email to " + email + " - Status: " + status);
+	        }
+	    } else {
+	    	logger.warning("Email object is null - check mail configuration.");
+	    }
+
+	    // 5️⃣ Show success dialog
+	    FDialog.info(0, this, "Registration successful. Check your email for your password.");
 	}
+
 
 
 
