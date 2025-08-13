@@ -917,6 +917,8 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    user.setName(name);
 	    user.setEMail(email);
 	    user.setIsActive(true);
+	    user.set_ValueNoCheck(MUser.COLUMNNAME_AD_Client_ID, 1000000);
+	    user.setAD_Org_ID(1000017);
 
 	    // 2️⃣ Generate temporary password
 	    String tempPassword = UUID.randomUUID().toString().substring(0, 8);
@@ -928,6 +930,8 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    roleLink.setAD_User_ID(user.getAD_User_ID());
 	    roleLink.setAD_Role_ID(1000023);
 	    roleLink.setIsActive(true);
+	    user.set_ValueNoCheck(MUserRoles.COLUMNNAME_AD_Client_ID, 1000000);
+	    roleLink.setAD_Org_ID(1000017);
 	    roleLink.saveEx();
 
 	    // 4️⃣ Send email with temp password
