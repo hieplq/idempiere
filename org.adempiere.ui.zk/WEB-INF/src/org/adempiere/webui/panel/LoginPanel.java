@@ -390,47 +390,48 @@ public class LoginPanel extends Window implements EventListener<Event>
         	td.appendChild(btnResetPassword);
         	btnResetPassword.addEventListener(Events.ON_CLICK, this);
     	}
-    	// Martin 12/08/2025
-    	// Add Register button row
-    	tr = new Tr();
-    	tr.setId("rowRegister");
-    	table.appendChild(tr);
-
-    	td = new Td();
-    	tr.appendChild(td);
-    	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-    	td.appendChild(new Label("")); // empty label cell
-    	if (isLabelAboveInput()) {
-    	    tr = new Tr();
-    	    table.appendChild(tr);
-    	}
-
-    	td = new Td();
-    	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-    	tr.appendChild(td);
-    	td.appendChild(btnRegister);
-
-    	//
+ 
+  
 
     	div = new Div();
     	div.setSclass(ITheme.LOGIN_BOX_FOOTER_CLASS);
-        pnlButtons = new ConfirmPanel(false, false, false, false, false, false, true);
-        pnlButtons.addActionListener(this);
-        Button okBtn = pnlButtons.getButton(ConfirmPanel.A_OK);
-        okBtn.setWidgetListener("onClick", "zAu.cmd0.showBusy(null)");
-        okBtn.addCallback(ComponentCtrl.AFTER_PAGE_DETACHED, t -> ((AbstractComponent)t).setWidgetListener("onClick", null));
 
-        Button helpButton = pnlButtons.createButton(ConfirmPanel.A_HELP);
-		helpButton.addEventListener(Events.ON_CLICK, this);
-		helpButton.addSclass(ITheme.LOGIN_BUTTON_CLASS);
-		pnlButtons.addComponentsRight(helpButton);
+    	pnlButtons = new ConfirmPanel(false, false, false, false, false, false, true);
+    	pnlButtons.addActionListener(this);
+
+    	// OK button
+    	Button okBtn = pnlButtons.getButton(ConfirmPanel.A_OK);
+    	okBtn.setWidgetListener("onClick", "zAu.cmd0.showBusy(null)");
+    	okBtn.addCallback(ComponentCtrl.AFTER_PAGE_DETACHED,
+    	    t -> ((AbstractComponent) t).setWidgetListener("onClick", null));
+    	okBtn.addSclass(ITheme.LOGIN_BUTTON_CLASS);
+
+    	// Help button
+    	Button helpButton = pnlButtons.createButton(ConfirmPanel.A_HELP);
+    	helpButton.addEventListener(Events.ON_CLICK, this);
+    	helpButton.addSclass(ITheme.LOGIN_BUTTON_CLASS);
+    	pnlButtons.addComponentsRight(helpButton);
+
+    	div.appendChild(pnlButtons);
+
+    	// --- Add Register button as a new row below OK + Help ---
+    	btnRegister.setLabel("Register User");
+    	btnRegister.addEventListener(Events.ON_CLICK, this);
+    	btnRegister.addSclass(ITheme.LOGIN_BUTTON_CLASS);
+
+    	// Wrap in a Div to align with the left side of OK
+    	Div registerRow = new Div();
+    	registerRow.setStyle("margin-top:6px; text-align:left;"); // adjust alignment as needed
+    	registerRow.appendChild(btnRegister);
+
+    	div.appendChild(registerRow);
+    	form.appendChild(div);
+    	this.appendChild(form);
+
         
-        LayoutUtils.addSclass(ITheme.LOGIN_BOX_FOOTER_PANEL_CLASS, pnlButtons);
-        ZKUpdateUtil.setWidth(pnlButtons, null);
-        pnlButtons.getButton(ConfirmPanel.A_OK).addSclass(ITheme.LOGIN_BUTTON_CLASS);
-        div.appendChild(pnlButtons);
-        form.appendChild(div);
-        this.appendChild(form);
+     
+   
+
 	}
 
 	/**
@@ -918,7 +919,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    user.setEMail(email);
 	    user.setIsActive(true);
 	    user.set_ValueNoCheck(MUser.COLUMNNAME_AD_Client_ID, 1000000);
-	    user.setAD_Org_ID(1000017);
+	 //   user.setAD_Org_ID(0);
 
 	    // 2️⃣ Generate temporary password
 	    String tempPassword = UUID.randomUUID().toString().substring(0, 8);
@@ -928,10 +929,10 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    // 3️⃣ Link user to role 1000023
 	    MUserRoles roleLink = new MUserRoles(Env.getCtx(), 0, null);
 	    roleLink.setAD_User_ID(user.getAD_User_ID());
-	    roleLink.setAD_Role_ID(1000023);
 	    roleLink.setIsActive(true);
-	    user.set_ValueNoCheck(MUserRoles.COLUMNNAME_AD_Client_ID, 1000000);
-	    roleLink.setAD_Org_ID(1000017);
+	    roleLink.set_ValueNoCheck(MUserRoles.COLUMNNAME_AD_Client_ID, 1000000);
+	   // roleLink.setAD_Org_ID(0);
+	    roleLink.setAD_Role_ID(1000023);
 	    roleLink.saveEx();
 
 	    // 4️⃣ Send email with temp password
