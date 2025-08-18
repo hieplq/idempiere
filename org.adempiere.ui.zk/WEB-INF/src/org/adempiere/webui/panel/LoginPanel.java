@@ -906,6 +906,8 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    Vbox form = new Vbox();
 	    form.setSpacing("5px");
 	    form.appendChild(txtName);
+	    form.appendChild(txtIDPassport);
+	    form.appendChild(txtCellNo);
 	    form.appendChild(txtEmail);
 	    form.appendChild(btnSendOtp);
 	    form.appendChild(txtOtp);
