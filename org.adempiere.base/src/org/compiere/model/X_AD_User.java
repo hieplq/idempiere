@@ -1492,4 +1492,19 @@ public class X_AD_User extends PO implements I_AD_User, I_Persistent
 	{
 		return (String)get_Value(COLUMNNAME_ZZ_ID_Passport_No);
 	}
+
+	/** Set Passport No.
+		@param ZZ_Passport_No Passport No
+	*/
+	public void setZZ_Passport_No (String ZZ_Passport_No)
+	{
+		set_Value (COLUMNNAME_ZZ_Passport_No, ZZ_Passport_No);
+	}
+
+	/** Get Passport No.
+		@return Passport No	  */
+	public String getZZ_Passport_No()
+	{
+		return (String)get_Value(COLUMNNAME_ZZ_Passport_No);
+	}
 }

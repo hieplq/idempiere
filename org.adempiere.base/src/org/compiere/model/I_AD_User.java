@@ -860,4 +860,13 @@ public interface I_AD_User
 
 	/** Get ID/Passport No	  */
 	public String getZZ_ID_Passport_No();
+
+    /** Column name ZZ_Passport_No */
+    public static final String COLUMNNAME_ZZ_Passport_No = "ZZ_Passport_No";
+
+	/** Set Passport No	  */
+	public void setZZ_Passport_No (String ZZ_Passport_No);
+
+	/** Get Passport No	  */
+	public String getZZ_Passport_No();
 }
