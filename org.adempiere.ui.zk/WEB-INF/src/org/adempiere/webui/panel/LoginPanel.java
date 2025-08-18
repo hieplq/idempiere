@@ -51,7 +51,6 @@ import org.adempiere.webui.util.UserPreference;
 import org.adempiere.webui.window.Dialog;
 import org.adempiere.webui.window.FDialog;
 import org.adempiere.webui.window.LoginWindow;
-import org.adempiere.webui.window.WEMailDialog;
 import org.compiere.Adempiere;
 import org.compiere.model.MClient;
 import org.compiere.model.MSession;
@@ -94,6 +93,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Vbox;
 
@@ -874,7 +874,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    // Registration form components
 	    Textbox txtName = new Textbox();
 	    txtName.setPlaceholder("Full Name");
-	    txtName.setHflex("1");
+	    txtName.setHflex("2");
 	    
 	    Textbox txtIDPassport = new Textbox();
 	    txtIDPassport.setPlaceholder("ID Number / Passport No");
@@ -886,7 +886,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 
 	    Textbox txtEmail = new Textbox();
 	    txtEmail.setPlaceholder("Email");
-	    txtEmail.setHflex("1");
+	    txtEmail.setHflex("2");
 
 	    Textbox txtOtp = new Textbox();
 	    txtOtp.setPlaceholder("Enter OTP");
