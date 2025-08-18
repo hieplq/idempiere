@@ -78,12 +78,12 @@ public interface I_AD_User
     /** Column name AD_Org_ID */
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
-	/** Set Organization.
+	/** Set Unit.
 	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
-	/** Get Organization.
+	/** Get Unit.
 	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
@@ -851,4 +851,13 @@ public interface I_AD_User
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
+
+    /** Column name ZZ_ID_Passport_No */
+    public static final String COLUMNNAME_ZZ_ID_Passport_No = "ZZ_ID_Passport_No";
+
+	/** Set ID/Passport No	  */
+	public void setZZ_ID_Passport_No (String ZZ_ID_Passport_No);
+
+	/** Get ID/Passport No	  */
+	public String getZZ_ID_Passport_No();
 }

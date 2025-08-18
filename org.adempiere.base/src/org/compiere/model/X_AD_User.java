@@ -32,7 +32,7 @@ public class X_AD_User extends PO implements I_AD_User, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241222L;
+	private static final long serialVersionUID = 20250818L;
 
     /** Standard Constructor */
     public X_AD_User (Properties ctx, int AD_User_ID, String trxName)
@@ -1476,5 +1476,20 @@ public class X_AD_User extends PO implements I_AD_User, I_Persistent
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
+	}
+
+	/** Set ID/Passport No.
+		@param ZZ_ID_Passport_No ID/Passport No
+	*/
+	public void setZZ_ID_Passport_No (String ZZ_ID_Passport_No)
+	{
+		set_Value (COLUMNNAME_ZZ_ID_Passport_No, ZZ_ID_Passport_No);
+	}
+
+	/** Get ID/Passport No.
+		@return ID/Passport No	  */
+	public String getZZ_ID_Passport_No()
+	{
+		return (String)get_Value(COLUMNNAME_ZZ_ID_Passport_No);
 	}
 }
