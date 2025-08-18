@@ -48,10 +48,10 @@ import org.adempiere.webui.theme.ITheme;
 import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.util.BrowserToken;
 import org.adempiere.webui.util.UserPreference;
-import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.Dialog;
 import org.adempiere.webui.window.FDialog;
 import org.adempiere.webui.window.LoginWindow;
+import org.adempiere.webui.window.WEMailDialog;
 import org.compiere.Adempiere;
 import org.compiere.model.MClient;
 import org.compiere.model.MSession;
@@ -134,7 +134,7 @@ public class LoginPanel extends Window implements EventListener<Event>
     protected boolean email_login = MSysConfig.getBooleanValue(MSysConfig.USE_EMAIL_FOR_LOGIN, false);
     protected String validLstLanguage = null;
     // Martin 12/08/2025
-    Button btnRegister = null;
+    protected A btnRegister = null;
 
 	/* Number of failures to calculate an incremental delay on every trial */
 	private int failures = 0;
@@ -389,6 +389,28 @@ public class LoginPanel extends Window implements EventListener<Event>
         	tr.appendChild(td);
         	td.appendChild(btnResetPassword);
         	btnResetPassword.addEventListener(Events.ON_CLICK, this);
+        	
+        	// Martin 18/8/2025  - Register User Button
+        	tr = new Tr();
+            tr.setId("rowRegisterUser");
+            table.appendChild(tr);
+        	td = new Td();
+        	tr.appendChild(td);
+        	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+        	td.appendChild(new Label(""));
+			if (isLabelAboveInput()) {
+				tr = new Tr();
+				table.appendChild(tr);
+			}
+        	td = new Td();
+        	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+        	tr.appendChild(td);
+        	td.appendChild(btnRegister);
+        	btnRegister.addEventListener(Events.ON_CLICK, this);
+        	// --- Add Register button as a new row below OK + Help ---
+        	//btnRegister.setLabel("Register User");
+        	//btnRegister.addEventListener(Events.ON_CLICK, this);
+        	//btnRegister.addSclass(ITheme.LOGIN_BUTTON_CLASS);
     	}
  
   
@@ -414,17 +436,13 @@ public class LoginPanel extends Window implements EventListener<Event>
 
     	div.appendChild(pnlButtons);
 
-    	// --- Add Register button as a new row below OK + Help ---
-    	btnRegister.setLabel("Register User");
-    	btnRegister.addEventListener(Events.ON_CLICK, this);
-    	btnRegister.addSclass(ITheme.LOGIN_BUTTON_CLASS);
 
     	// Wrap in a Div to align with the left side of OK
-    	Div registerRow = new Div();
-    	registerRow.setStyle("margin-top:6px; text-align:left;"); // adjust alignment as needed
-    	registerRow.appendChild(btnRegister);
+    	//Div registerRow = new Div();
+    	//registerRow.setStyle("margin-top:6px; text-align:left;"); // adjust alignment as needed
+    	//registerRow.appendChild(btnRegister);
 
-    	div.appendChild(registerRow);
+    	//div.appendChild(registerRow);
     	form.appendChild(div);
     	this.appendChild(form);
 
@@ -491,10 +509,10 @@ public class LoginPanel extends Window implements EventListener<Event>
         btnResetPassword.setId("btnResetPassword");
         
         // Martin 12/08/2025
-        btnRegister = new Button(Msg.getMsg(Language.getBaseAD_Language(), "Register"));
+        btnRegister = new A("Register User");
         btnRegister.setId("btnRegister");
-        btnRegister.setSclass("btn btn-primary"); // Optional: style like Bootstrap
-        btnRegister.addEventListener(Events.ON_CLICK, e -> openRegistrationWindow());
+        //btnRegister.setSclass("btn btn-primary"); // Optional: style like Bootstrap
+        //btnRegister.addEventListener(Events.ON_CLICK, e -> openRegistrationWindow());
 
         
         if (lstLanguage.getItems().size() > 0){
@@ -530,6 +548,10 @@ public class LoginPanel extends Window implements EventListener<Event>
         else if (event.getTarget() == btnResetPassword)
         {
         	btnResetPasswordClicked();
+        }
+        // Martin 18/8/2025
+        else if (event.getTarget() == btnRegister) {
+        	openRegistrationWindow();
         }
         else if (event.getName().equals(ON_LOAD_TOKEN)) 
         {
@@ -853,6 +875,14 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    Textbox txtName = new Textbox();
 	    txtName.setPlaceholder("Full Name");
 	    txtName.setHflex("1");
+	    
+	    Textbox txtIDPassport = new Textbox();
+	    txtIDPassport.setPlaceholder("ID Number / Passport No");
+	    txtIDPassport.setHflex("1");
+	    
+	    Textbox txtCellNo = new Textbox();
+	    txtCellNo.setPlaceholder("Cell No");
+	    txtCellNo.setHflex("1");
 
 	    Textbox txtEmail = new Textbox();
 	    txtEmail.setPlaceholder("Email");
@@ -869,7 +899,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 
 	    Button btnRegisterUser = new Button("Register");
 	    btnRegisterUser.addEventListener(Events.ON_CLICK, ev -> {
-	        registerNewUser(txtName.getValue(), txtEmail.getValue(), txtOtp.getValue());
+	        registerNewUser(txtName.getValue(), txtIDPassport.getValue(),txtCellNo.getValue(),txtEmail.getValue(), txtOtp.getValue());
 	        win.detach();
 	    });
 
@@ -899,6 +929,8 @@ public class LoginPanel extends Window implements EventListener<Event>
 
 	    MClient client = MClient.get(Env.getCtx());
 	    EMail mail = client.createEMail(email, "Your OTP Code", "Your OTP is: " + otp);
+	 //   EMail mail = client.createEMail(getFrom(), to, getSubject(), replaceBASE64Img(getMessage()), true);
+	  //  EMail mail = client.createEMail(MUser.get(Env.getCtx(),"maugustine@ntier.co.za"), "martinaugustine91@gmail.com", "Test OTP", WEMailDialog.replaceBASE64Img("This is the message "), true);
 	    if (mail != null && EMail.SENT_OK.equals(mail.send())) {
 	        FDialog.info(0, this, "OTP sent to " + email);
 	    } else {
@@ -906,7 +938,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    }
 	}
 	
-	private void registerNewUser(String name, String email, String otp) {
+	private void registerNewUser(String name, String idPassport, String cellNo,String email, String otp) {
 	    String storedOtp = (String) getDesktop().getSession().getAttribute("OTP_CODE");
 	    if (storedOtp == null || !storedOtp.equals(otp)) {
 	        FDialog.error(0, this, "Invalid OTP");
@@ -916,6 +948,8 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    // 1️⃣ Create the new user
 	    MUser user = new MUser(Env.getCtx(), 0, null);
 	    user.setName(name);
+	    user.setPhone(cellNo);
+	    user.setZZ_ID_Passport_No(idPassport);
 	    user.setEMail(email);
 	    user.setIsActive(true);
 	    user.set_ValueNoCheck(MUser.COLUMNNAME_AD_Client_ID, 1000000);
