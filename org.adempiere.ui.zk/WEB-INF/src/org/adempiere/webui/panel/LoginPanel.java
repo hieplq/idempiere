@@ -930,38 +930,42 @@ public class LoginPanel extends Window implements EventListener<Event>
 
 	        // Required fields (besides ID/Passport handled separately)
 	        if (name.isEmpty() || cellNo.isEmpty() || email.isEmpty() || otp.isEmpty()) {
-	            Messagebox.show("Please fill in all required fields.", 
-	                            "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
+	            Messagebox.show(Msg.getMsg(Env.getCtx(), "FillRequiredFields"), 
+	                            Msg.getMsg(Env.getCtx(), "ValidationErrorTitle"),
+	                            Messagebox.OK, Messagebox.EXCLAMATION);
 	            return;
 	        }
 
-	     // ID / Passport check
+	        // ID / Passport check
 	        if (idNo.isEmpty() && passportNo.isEmpty()) {
-	            Messagebox.show("Please enter either ID Number or Passport Number.",
-	                            "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
+	            Messagebox.show(Msg.getMsg(Env.getCtx(), "EnterIdOrPassport"), 
+	                            Msg.getMsg(Env.getCtx(), "ValidationErrorTitle"),
+	                            Messagebox.OK, Messagebox.EXCLAMATION);
 	            return;
 	        }
 
 	        if (!idNo.isEmpty() && !passportNo.isEmpty()) {
-	            Messagebox.show("You can only enter either ID Number OR Passport Number, not both.",
-	                            "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
+	            Messagebox.show(Msg.getMsg(Env.getCtx(), "OnlyOneIdOrPassport"), 
+	                            Msg.getMsg(Env.getCtx(), "ValidationErrorTitle"),
+	                            Messagebox.OK, Messagebox.EXCLAMATION);
 	            return;
 	        }
 
 	        // ID No format validation
 	        if (!idNo.isEmpty()) {
 	            if (!idNo.matches("\\d{13}")) {
-	                Messagebox.show("ID Number must contain exactly 13 numeric digits.",
-	                                "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
+	                Messagebox.show(Msg.getMsg(Env.getCtx(), "InvalidIdNumber"), 
+	                                Msg.getMsg(Env.getCtx(), "ValidationErrorTitle"),
+	                                Messagebox.OK, Messagebox.EXCLAMATION);
 	                return;
 	            }
 	        }
-
 
 	        // ✅ Passed all checks → proceed
 	        registerNewUser(name, idNo, passportNo, cellNo, email, otp);
 	        win.detach();
 	    });
+
 
 	    Vbox form = new Vbox();
 	    form.setSpacing("5px");
