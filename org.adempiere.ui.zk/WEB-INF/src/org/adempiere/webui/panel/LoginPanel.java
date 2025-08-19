@@ -321,6 +321,8 @@ public class LoginPanel extends Window implements EventListener<Event>
     	tr.appendChild(td);
     	td.appendChild(txtPassword);
 
+    	// Martin 19/08/2025 MQA does not need language
+    	/*
     	tr = new Tr();
         tr.setId("rowLanguage");
         table.appendChild(tr);
@@ -337,6 +339,7 @@ public class LoginPanel extends Window implements EventListener<Event>
     	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
     	tr.appendChild(td);
     	td.appendChild(lstLanguage);
+    	*/
     	
     	tr = new Tr();
         tr.setId("rowSelectRole");
@@ -511,8 +514,7 @@ public class LoginPanel extends Window implements EventListener<Event>
         // Martin 12/08/2025
         btnRegister = new A("Register User");
         btnRegister.setId("btnRegister");
-        //btnRegister.setSclass("btn btn-primary"); // Optional: style like Bootstrap
-        //btnRegister.addEventListener(Events.ON_CLICK, e -> openRegistrationWindow());
+        lstLanguage.setVisible(false);
 
         
         if (lstLanguage.getItems().size() > 0){
@@ -933,18 +935,28 @@ public class LoginPanel extends Window implements EventListener<Event>
 	            return;
 	        }
 
-	        // ID / Passport check
+	     // ID / Passport check
 	        if (idNo.isEmpty() && passportNo.isEmpty()) {
-	            Messagebox.show("Please enter either ID Number or Passport Number.", 
+	            Messagebox.show("Please enter either ID Number or Passport Number.",
 	                            "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
 	            return;
 	        }
 
 	        if (!idNo.isEmpty() && !passportNo.isEmpty()) {
-	            Messagebox.show("You can only enter either ID Number OR Passport Number, not both.", 
+	            Messagebox.show("You can only enter either ID Number OR Passport Number, not both.",
 	                            "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
 	            return;
 	        }
+
+	        // ID No format validation
+	        if (!idNo.isEmpty()) {
+	            if (!idNo.matches("\\d{13}")) {
+	                Messagebox.show("ID Number must contain exactly 13 numeric digits.",
+	                                "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
+	                return;
+	            }
+	        }
+
 
 	        // ✅ Passed all checks → proceed
 	        registerNewUser(name, idNo, passportNo, cellNo, email, otp);
@@ -1010,6 +1022,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    // 2️⃣ Generate temporary password
 	    String tempPassword = UUID.randomUUID().toString().substring(0, 8);
 	    user.setPassword(tempPassword); // Will be hashed by iDempiere
+	    user.setIsExpired(true);
 	    user.saveEx();
 
 	    // 3️⃣ Link user to role 1000023

@@ -321,6 +321,8 @@ public class RolePanel extends Window implements EventListener<Event>, Deferrabl
 		if (isLabelAboveInput())
 			lstWarehouse.setWidth("100%");
     	
+		// Martin 19/08/2025 MQA does not need language
+		/*
     	tr = new Tr();
     	tr.setId("rowLanguage");
     	table.appendChild(tr);
@@ -339,6 +341,7 @@ public class RolePanel extends Window implements EventListener<Event>, Deferrabl
     	td.appendChild(lstLanguage);
 		if (isLabelAboveInput())
 			lstLanguage.setWidth("100%");
+		*/
 
     	tr = new Tr();
         tr.setId("rowDate");
