@@ -93,8 +93,8 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Comboitem;
-import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Image;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Vbox;
 
 /**
@@ -876,9 +876,13 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    txtName.setPlaceholder("Full Name");
 	    txtName.setHflex("2");
 	    
-	    Textbox txtIDPassport = new Textbox();
-	    txtIDPassport.setPlaceholder("ID Number / Passport No");
-	    txtIDPassport.setHflex("1");
+	    Textbox txtIDNo= new Textbox();
+	    txtIDNo.setPlaceholder("ID Number No");
+	    txtIDNo.setHflex("1");
+	    
+	    Textbox txtPassportNo = new Textbox();
+	    txtPassportNo.setPlaceholder("Passport No");
+	    txtPassportNo.setHflex("1");
 	    
 	    Textbox txtCellNo = new Textbox();
 	    txtCellNo.setPlaceholder("Cell No");
@@ -896,17 +900,62 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    btnSendOtp.addEventListener(Events.ON_CLICK, ev -> {
 	        sendOtpToEmail(txtEmail.getValue());
 	    });
+	    
+	    txtIDNo.addEventListener(Events.ON_CHANGE, ev -> {
+	        if (!txtIDNo.getValue().trim().isEmpty()) {
+	            txtPassportNo.setDisabled(true);
+	        } else {
+	            txtPassportNo.setDisabled(false);
+	        }
+	    });
+
+	    txtPassportNo.addEventListener(Events.ON_CHANGE, ev -> {
+	        if (!txtPassportNo.getValue().trim().isEmpty()) {
+	            txtIDNo.setDisabled(true);
+	        } else {
+	            txtIDNo.setDisabled(false);
+	        }
+	    });
 
 	    Button btnRegisterUser = new Button("Register");
 	    btnRegisterUser.addEventListener(Events.ON_CLICK, ev -> {
-	        registerNewUser(txtName.getValue(), txtIDPassport.getValue(),txtCellNo.getValue(),txtEmail.getValue(), txtOtp.getValue());
+	        String name = txtName.getValue().trim();
+	        String idNo = txtIDNo.getValue().trim();
+	        String passportNo = txtPassportNo.getValue().trim();
+	        String cellNo = txtCellNo.getValue().trim();
+	        String email = txtEmail.getValue().trim();
+	        String otp = txtOtp.getValue().trim();
+
+	        // Required fields (besides ID/Passport handled separately)
+	        if (name.isEmpty() || cellNo.isEmpty() || email.isEmpty() || otp.isEmpty()) {
+	            Messagebox.show("Please fill in all required fields.", 
+	                            "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
+	            return;
+	        }
+
+	        // ID / Passport check
+	        if (idNo.isEmpty() && passportNo.isEmpty()) {
+	            Messagebox.show("Please enter either ID Number or Passport Number.", 
+	                            "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
+	            return;
+	        }
+
+	        if (!idNo.isEmpty() && !passportNo.isEmpty()) {
+	            Messagebox.show("You can only enter either ID Number OR Passport Number, not both.", 
+	                            "Validation Error", Messagebox.OK, Messagebox.EXCLAMATION);
+	            return;
+	        }
+
+	        // ✅ Passed all checks → proceed
+	        registerNewUser(name, idNo, passportNo, cellNo, email, otp);
 	        win.detach();
 	    });
 
 	    Vbox form = new Vbox();
 	    form.setSpacing("5px");
 	    form.appendChild(txtName);
-	    form.appendChild(txtIDPassport);
+	    form.appendChild(txtIDNo);
+	    form.appendChild(txtPassportNo);
 	    form.appendChild(txtCellNo);
 	    form.appendChild(txtEmail);
 	    form.appendChild(btnSendOtp);
@@ -940,7 +989,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    }
 	}
 	
-	private void registerNewUser(String name, String idPassport, String cellNo,String email, String otp) {
+	private void registerNewUser(String name, String idNo,String passportNo, String cellNo,String email, String otp) {
 	    String storedOtp = (String) getDesktop().getSession().getAttribute("OTP_CODE");
 	    if (storedOtp == null || !storedOtp.equals(otp)) {
 	        FDialog.error(0, this, "Invalid OTP");
@@ -951,7 +1000,8 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    MUser user = new MUser(Env.getCtx(), 0, null);
 	    user.setName(name);
 	    user.setPhone(cellNo);
-	    user.setZZ_ID_Passport_No(idPassport);
+	    user.setZZ_ID_Passport_No(idNo);
+	    user.setZZ_Passport_No(passportNo);
 	    user.setEMail(email);
 	    user.setIsActive(true);
 	    user.set_ValueNoCheck(MUser.COLUMNNAME_AD_Client_ID, 1000000);

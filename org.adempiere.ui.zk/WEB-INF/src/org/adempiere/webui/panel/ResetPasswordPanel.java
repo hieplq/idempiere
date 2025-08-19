@@ -285,6 +285,25 @@ public class ResetPasswordPanel extends Window implements EventListener<Event>
     	if (m_email_login)
     	{
     		txtEmail.setText(m_userName);
+    		// Martin 19/8/2025
+    		StringBuilder whereClause = new StringBuilder("Password IS NOT NULL ");
+    		whereClause.append("AND COALESCE(LDAPUser,EMail)=? ");
+			whereClause.append(" AND")
+					.append(" EXISTS (SELECT * FROM AD_User_Roles ur")
+					.append("         INNER JOIN AD_Role r ON (ur.AD_Role_ID=r.AD_Role_ID)")
+					.append("         WHERE ur.AD_User_ID=AD_User.AD_User_ID AND ur.IsActive='Y' AND r.IsActive='Y') AND ")
+					.append(" EXISTS (SELECT * FROM AD_Client c")
+					.append("         WHERE c.AD_Client_ID=AD_User.AD_Client_ID")
+					.append("         AND c.IsActive='Y') AND ")
+					.append(" AD_User.IsActive='Y'");
+			
+			List<MUser> users_all = new Query(m_ctx, MUser.Table_Name, whereClause.toString(), null)
+				.setParameters(m_userName)
+				.setOrderBy(MUser.COLUMNNAME_AD_User_ID)
+				.list();
+			if (users_all != null && users_all.size() >= 1) {
+				txtUserId.setText(users_all.get(0).getName());
+			}
     	} else {
     		txtUserId.setText(m_userName);
     	}
