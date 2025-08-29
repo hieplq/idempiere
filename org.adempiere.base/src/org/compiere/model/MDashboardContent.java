@@ -262,6 +262,13 @@ public class MDashboardContent extends X_PA_DashboardContent
     		.getPO(getAD_Menu_ID(), get_TrxName());
     }
     
+    // Martin 29/8/2025
+    public I_AD_Menu getAD_Menu(int id)
+    {
+    	return (I_AD_Menu)MTable.get(getCtx(), I_AD_Menu.Table_Name)
+    		.getPO(id, get_TrxName());
+    }
+    
     /**
      * Parse Process Parameters
      * @param parameters
