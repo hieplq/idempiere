@@ -801,6 +801,7 @@ public class DashboardController implements EventListener<Event> {
     	
     	if (1 == 1)
     	{
+    		/*
     		int AD_Menu_ID = 1000070;
         	Div div = new Div();
         	//div.setStyle("margin-top: 160px;"); 
@@ -815,6 +816,14 @@ public class DashboardController implements EventListener<Event> {
 
 			div.appendChild(btn);
 			components.add(div);
+			*/
+			components.add(
+				    ZZ_MenuLinksBuilder.fromQuery(
+				        dashboardContent,
+				        this,
+				        "260px 0 0 0"
+				    )
+				);
     	}
     	
     	//Report & Process
