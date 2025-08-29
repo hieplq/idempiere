@@ -797,6 +797,23 @@ public class DashboardController implements EventListener<Event> {
 			div.appendChild(btn);
 			components.add(div);
     	}
+    	// Martin for demo 29/8/2025
+    	
+    	if (1 == 1)
+    	{
+    		int AD_Menu_ID = 1000070;
+        	Div div = new Div();
+        	//div.setStyle("margin-top: 160px;"); 
+        	div.setStyle("margin: 160px 0 0 5ch;");
+			ToolBarButton btn = new ToolBarButton(String.valueOf(AD_Menu_ID));
+			I_AD_Menu menu = dashboardContent.getAD_Menu(AD_Menu_ID);
+			btn.setLabel(menu.getName());
+			btn.setAttribute("AD_Menu_ID", AD_Menu_ID);
+			btn.addEventListener(Events.ON_CLICK, this);
+			btn.setStyle("color:#fff !important;");
+			div.appendChild(btn);
+			components.add(div);
+    	}
     	
     	//Report & Process
     	int AD_Process_ID = dashboardContent.getAD_Process_ID();
