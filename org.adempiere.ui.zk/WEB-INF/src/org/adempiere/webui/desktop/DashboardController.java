@@ -804,13 +804,15 @@ public class DashboardController implements EventListener<Event> {
     		int AD_Menu_ID = 1000070;
         	Div div = new Div();
         	//div.setStyle("margin-top: 160px;"); 
-        	div.setStyle("margin: 160px 0 0 5ch;");
+        	div.setStyle("margin: 260px 0 0 0ch;");
 			ToolBarButton btn = new ToolBarButton(String.valueOf(AD_Menu_ID));
 			I_AD_Menu menu = dashboardContent.getAD_Menu(AD_Menu_ID);
 			btn.setLabel(menu.getName());
 			btn.setAttribute("AD_Menu_ID", AD_Menu_ID);
 			btn.addEventListener(Events.ON_CLICK, this);
-			btn.setStyle("color:#fff !important;");
+			//btn.setStyle("color:#fff !important;");
+			btn.setStyle("color:#fff !important; font-size:18px !important; line-height:1.2; padding:6px 12px;");
+
 			div.appendChild(btn);
 			components.add(div);
     	}
