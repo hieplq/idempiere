@@ -799,7 +799,7 @@ public class DashboardController implements EventListener<Event> {
     	}
     	// Martin for demo 29/8/2025
     	
-    	if (1 == 1)
+    	if (dashboardContent.get_ID() >= 1000000)
     	{
     		/*
     		int AD_Menu_ID = 1000070;
