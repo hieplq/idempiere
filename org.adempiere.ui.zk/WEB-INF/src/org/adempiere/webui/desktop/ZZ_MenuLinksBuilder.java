@@ -8,6 +8,7 @@ import org.adempiere.webui.component.ToolBarButton;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.MDashboardContent;
 import org.compiere.util.DB;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -107,20 +108,50 @@ public final class ZZ_MenuLinksBuilder {
     private static Vlayout baseList(String marginCss) {
         Vlayout list = new Vlayout();
         list.setSpacing("2px");
-        list.setSclass("menu-links");  // <-- key for the selector
+        list.setSclass("menu-links");
         list.setStyle("margin:" + (marginCss == null ? "0" : marginCss) + ";align-items:flex-start;");
 
-        // Inject CSS for left alignment
+        // CSS: prevent wrappers/buttons from stretching full width
         Style st = new Style();
         st.setContent(
-            "/* fallback, extra-specific */\n" +
-            ".menu-links .z-vlayout-inner .z-toolbarbutton .z-toolbarbutton-content{" +
-            "justify-content:flex-start!important;}"
+            ".menu-links .z-vlayout-inner{width:auto !important;}" +
+            ".menu-links .z-toolbarbutton{width:auto !important;display:inline-block;}" +
+            ".menu-links .z-toolbarbutton .z-toolbarbutton-content{justify-content:flex-start!important;}"
         );
         list.appendChild(st);
 
+        // Run the width-equalizing JS only on the UI thread, after attachment.
+        list.addEventListener(Events.ON_CREATE, ev -> runFixMenuLinkWidths((Vlayout) ev.getTarget()));
+        list.addEventListener(Events.ON_AFTER_SIZE, ev -> runFixMenuLinkWidths((Vlayout) ev.getTarget()));
+
         return list;
     }
+
+    /** UI-thread-only: measure max width and set all buttons to that width */
+    private static void runFixMenuLinkWidths(Vlayout list) {
+        // If not on a UI execution yet, try scheduling on the Desktop
+        if (Executions.getCurrent() == null) {
+            if (list.getDesktop() != null) {
+                Executions.schedule(list.getDesktop(), e -> runFixMenuLinkWidths(list),
+                        new org.zkoss.zk.ui.event.Event("onFixMenuLinkWidths", list));
+            }
+            return;
+        }
+
+        final String uuid = list.getUuid();
+        final String js =
+            "(function(){\n" +
+            "  var w = zk.Widget.$('$" + uuid + "'); if(!w) return;\n" +
+            "  var n = w.$n(); if(!n) return;\n" +
+            "  var btns = n.querySelectorAll('.z-toolbarbutton'); if(!btns.length) return;\n" +
+            "  var max = 0;\n" +
+            "  btns.forEach(function(b){ b.style.width=''; var rw=b.getBoundingClientRect().width; if(rw>max) max=rw;});\n" +
+            "  btns.forEach(function(b){ b.style.width = max + 'px'; });\n" +
+            "})();";
+
+        org.zkoss.zk.ui.util.Clients.evalJavaScript(js);
+    }
+
 
 
 
@@ -130,23 +161,18 @@ public final class ZZ_MenuLinksBuilder {
         btn.setAttribute("AD_Menu_ID", id);
         btn.addEventListener(Events.ON_CLICK, clickListener);
         btn.setStyle(
-        	    "display:block;"
-        	  + "margin:0;"
-        	  + "padding:2px 8px;"
-        	  + "text-align:left !important;"     // <-- add !important
-        	  + "line-height:1.1;"
-        	  + "font-size:18px !important;"
-        	  + "color:#fff !important;"
-        	
-
-        	);
-        	// Optional: avoid stretching if your theme gives it full width
-        	// btn.setHflex("min");
-
-        // Optional: make the button only as wide as its text
-        btn.setHflex("min");
+            "display:inline-block;" +
+            "margin:0;" +
+            "padding:2px 8px;" +
+            "text-align:left !important;" +
+            "line-height:1.1;" +
+            "font-size:18px !important;" +
+            "color:#fff !important;"
+        );
+        // No hflex — avoid stretching while we compute width later
         return btn;
     }
+
 
 }
 

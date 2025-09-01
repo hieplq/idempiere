@@ -14,7 +14,6 @@ import org.compiere.util.DB;
 import org.compiere.util.EMail;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
-import org.compiere.util.Util;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
@@ -67,18 +66,31 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         buildUI();
         wireEvents();
     }
+    
+    /*
 
-    /** Build the form */
+    
     private void buildUI() {
         
         Vbox form = new Vbox();
         form.setSpacing("6px");
        // form.setWidth("100%");     // already present
         form.setHflex("1");  
+        
+        
+     // Registration form components 
+        Textbox txtName = new Textbox(); 
+        txtName.setPlaceholder("Full Name"); 
+        // txtName.setWidth("300px"); 
+        //txtName.setHflex("1"); 
+       // Hbox nameBox = new Hbox(); 
+       // nameBox.setSpacing("5px"); 
+       // nameBox.appendChild(txtName); 
+      //  nameBox.setHflex("2");
+        //txtName.setWidth("610px");
+        txtName.setWidth("4");
+        
 
-        txtName = new Textbox();
-        txtName.setPlaceholder(Msg.getMsg(Env.getCtx(), "FullName"));
-        txtName.setHflex("1");
 
         txtIDNo = new Textbox();
         txtIDNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "IDNumber"));
@@ -109,22 +121,79 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
        // idRow.appendChild(txtPassportNo);
      
         
-        Hlayout otpRow = new Hlayout();
+        //Hlayout otpRow = new Hlayout();
         btnSendOtp.setHflex(null);       // don’t stretch
         txtOtp.setHflex("1");            // take the remaining space
-        otpRow.appendChild(btnSendOtp);
-        otpRow.appendChild(txtOtp);
+        //otpRow.appendChild(btnSendOtp);
+        //otpRow.appendChild(txtOtp);
 
         form.appendChild(txtName);
+        //form.appendChild(nameBox);
         form.appendChild(txtIDNo);
         form.appendChild(txtPassportNo);
         form.appendChild(txtCellNo);
         form.appendChild(txtEmail);
-        form.appendChild(otpRow);
+        form.appendChild(btnSendOtp); 
+        form.appendChild(txtOtp); 
         form.appendChild(btnRegisterUser);
 
         this.appendChild(form);
     }
+    */
+    
+    private void buildUI() {
+        Vbox form = new Vbox();
+        form.setSpacing("8px");
+        // Do NOT set hflex on form when you use explicit widths on children
+        form.setWidth("100%");           // fine to let the form fill the window
+
+        // NAME (large)
+        txtName = new Textbox();
+        txtName.setPlaceholder(Msg.getMsg(Env.getCtx(), "FullName"));
+        txtName.setWidth("600px");       // large, but not full width
+        form.appendChild(txtName);
+
+        // ID NUMBER (smaller, on its own line)
+        txtIDNo = new Textbox();
+        txtIDNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "IDNumber"));
+        txtIDNo.setWidth("300px");
+        form.appendChild(txtIDNo);
+
+        // PASSPORT NUMBER (smaller, stacked under ID)
+        txtPassportNo = new Textbox();
+        txtPassportNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "PassportNumber"));
+        txtPassportNo.setWidth("300px");
+        form.appendChild(txtPassportNo);
+
+        // CELL NUMBER (smaller)
+        txtCellNo = new Textbox();
+        txtCellNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "CellNumber"));
+        txtCellNo.setWidth("300px");
+        form.appendChild(txtCellNo);
+
+        // EMAIL (large)
+        txtEmail = new Textbox();
+        txtEmail.setPlaceholder(Msg.getMsg(Env.getCtx(), "Email"));
+        txtEmail.setWidth("600px");
+        form.appendChild(txtEmail);
+
+        // SEND OTP (button), then OTP BELOW it (smaller)
+        btnSendOtp = new Button(Msg.getMsg(Env.getCtx(), "SendOtp"));
+        form.appendChild(btnSendOtp);
+
+        txtOtp = new Textbox();
+        txtOtp.setPlaceholder(Msg.getMsg(Env.getCtx(), "EnterOTP"));
+        txtOtp.setWidth("220px");        // smaller than other fields
+        form.appendChild(txtOtp);
+
+        // REGISTER
+        btnRegisterUser = new Button(Msg.getMsg(Env.getCtx(), "RegisterMe"));
+        form.appendChild(btnRegisterUser);
+
+        this.appendChild(form);
+    }
+
+
 
     /** Wire listeners */
     private void wireEvents() {
