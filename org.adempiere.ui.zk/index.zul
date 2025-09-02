@@ -12,8 +12,6 @@ Copyright (C) 2007 Ashley G Ramdass.
 <?link rel="stylesheet" type="text/css" href="${themeStyleSheet}"?>
 <?link rel="stylesheet" type="text/css" href="${themeStyleSheetByBrowser}"?>
 <?link rel="stylesheet" type="text/css" href="css/PAPanel.css"?>
-<?link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" ?>
-<?script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" ?>
 <?link rel="manifest" href="manifest.json"?>
 <?style content="
 .z-grid-header > table > tbody > tr.z-columns > th.z-column.hiddencol > .z-column-content {
