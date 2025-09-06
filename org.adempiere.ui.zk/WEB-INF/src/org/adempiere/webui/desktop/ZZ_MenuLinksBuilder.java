@@ -52,6 +52,7 @@ public final class ZZ_MenuLinksBuilder {
             "  AND f.AD_Form_ID = 1000000 " +
             "ORDER BY m.Name";
             */
+        /*
         String sql =
         	    "WITH open_apps AS (" +
         	    "    SELECT DISTINCT TRIM(both ' ' FROM x)::NUMERIC AS zz_program_master_data_id " +
@@ -81,6 +82,43 @@ public final class ZZ_MenuLinksBuilder {
         	    "JOIN program_uu u " +
         	    "  ON m.predefinedcontextvariables ILIKE ('%' || 'ZZ_Program_Master_Data_UU=' || u.zz_program_master_data_uu || '%') " +
         	    "ORDER BY m.ad_menu_id";
+        	*/
+        
+        String sql =
+                "WITH open_apps AS (" +
+                "    SELECT DISTINCT TRIM(both ' ' FROM x)::NUMERIC AS zz_program_master_data_id " +
+                "    FROM adempiere.zz_open_application oa " +
+                "         CROSS JOIN LATERAL unnest(string_to_array(oa.zz_programs, ',')) AS t(x) " +
+                "    WHERE oa.isactive = 'Y' " +
+                "      AND now() BETWEEN oa.startdate AND oa.enddate " +
+                "      AND oa.zz_programs IS NOT NULL " +
+                "), " +
+                "program_uu AS ( " +
+                "    SELECT p.zz_program_master_data_uu " +
+                "    FROM adempiere.zz_program_master_data p " +
+                "    JOIN open_apps a ON a.zz_program_master_data_id = p.zz_program_master_data_id " +
+                "    WHERE p.isactive = 'Y' " +
+                "      AND p.zz_program_master_data_uu IS NOT NULL " +
+                "), " +
+                "menus AS ( " +
+                "    SELECT m.ad_menu_id, m.name, m.predefinedcontextvariables " +
+                "    FROM adempiere.ad_menu m " +
+                "    JOIN adempiere.ad_form f ON f.ad_form_id = m.ad_form_id " +
+                "    WHERE m.isactive = 'Y' " +
+                "      AND m.issummary = 'N' " +
+                "      AND f.ad_form_id = 1000000 " +
+                ") " +
+                "SELECT ad_menu_id " +
+                "FROM ( " +
+                "    SELECT DISTINCT m.ad_menu_id, " +
+                "           CASE WHEN m.ad_menu_id = 1000072 THEN 0 ELSE 1 END AS sort_key " +
+                "    FROM menus m " +
+                "    JOIN program_uu u " +
+                "      ON m.predefinedcontextvariables ILIKE ('%' || 'ZZ_Program_Master_Data_UU=' || u.zz_program_master_data_uu || '%') " +
+                ") s " +
+                "ORDER BY sort_key, ad_menu_id";
+
+
 
 
         PreparedStatement ps = null;

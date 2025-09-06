@@ -348,7 +348,7 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
             mailText.setUser(userOrNull);
         }
 
-        // Push variables into context as #Key
+        // Push variables into context  as #Key
         if (ctxVars != null) {
             for (Map.Entry<String, String> e : ctxVars.entrySet()) {
                 Env.setContext(Env.getCtx(), "#" + e.getKey(), safeTrim(e.getValue()));
@@ -358,7 +358,7 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         String body = mailText.getMailText(true, true, true);
         body = Env.parseVariable(body, userOrNull, null, true);
 
-        // Clean up context variables
+        // Clean up context variables 
         if (ctxVars != null) {
             for (String k : ctxVars.keySet()) {
                 Env.setContext(Env.getCtx(), "#" + k, "");

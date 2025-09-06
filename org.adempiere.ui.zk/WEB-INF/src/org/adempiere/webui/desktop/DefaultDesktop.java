@@ -256,6 +256,13 @@ public class DefaultDesktop extends TabbedDesktop implements MenuListener, Seria
         	}
         });
         
+        // Martin to set dashboard side panels to collapsed
+        int roleID = Env.getAD_Role_ID(Env.getCtx());
+        if (roleID == 1000023) {  // Agent DG application role
+        	updateMenuCollapsedPreference(true);
+        	updateHelpCollapsedPreference(true);
+        }
+        
         UserPreference pref = SessionManager.getSessionApplication().getUserPreference();
         boolean menuCollapsed= pref.isPropertyBool(UserPreference.P_MENU_COLLAPSED);
         w.setOpen(!menuCollapsed);
