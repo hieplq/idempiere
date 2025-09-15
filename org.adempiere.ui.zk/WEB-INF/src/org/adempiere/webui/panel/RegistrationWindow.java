@@ -17,10 +17,11 @@ import org.compiere.util.Msg;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Vbox;
 import org.zkoss.zul.Window;
@@ -67,79 +68,7 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         wireEvents();
     }
     
-    /*
-
-    
-    private void buildUI() {
-        
-        Vbox form = new Vbox();
-        form.setSpacing("6px");
-       // form.setWidth("100%");     // already present
-        form.setHflex("1");  
-        
-        
-     // Registration form components 
-        Textbox txtName = new Textbox(); 
-        txtName.setPlaceholder("Full Name"); 
-        // txtName.setWidth("300px"); 
-        //txtName.setHflex("1"); 
-       // Hbox nameBox = new Hbox(); 
-       // nameBox.setSpacing("5px"); 
-       // nameBox.appendChild(txtName); 
-      //  nameBox.setHflex("2");
-        //txtName.setWidth("610px");
-        txtName.setWidth("4");
-        
-
-
-        txtIDNo = new Textbox();
-        txtIDNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "IDNumber"));
-        txtIDNo.setHflex("1");
-
-        txtPassportNo = new Textbox();
-        txtPassportNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "PassportNumber"));
-        txtPassportNo.setHflex("1");
-
-        txtCellNo = new Textbox();
-        txtCellNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "CellNumber"));
-        txtCellNo.setHflex("1");
-
-        txtEmail = new Textbox();
-        txtEmail.setPlaceholder(Msg.getMsg(Env.getCtx(), "Email"));
-        txtEmail.setHflex("2");
-
-        txtOtp = new Textbox();
-        txtOtp.setPlaceholder(Msg.getMsg(Env.getCtx(), "EnterOTP"));
-        txtOtp.setHflex("1");
-
-        btnSendOtp = new Button(Msg.getMsg(Env.getCtx(), "SendOtp"));
-        btnRegisterUser = new Button(Msg.getMsg(Env.getCtx(), "RegisterMe"));
-
-        // rows: [ID | Passport], [Send OTP | OTP]
-       // Hlayout idRow = new Hlayout();
-       // idRow.appendChild(txtIDNo);
-       // idRow.appendChild(txtPassportNo);
-     
-        
-        //Hlayout otpRow = new Hlayout();
-        btnSendOtp.setHflex(null);       // don’t stretch
-        txtOtp.setHflex("1");            // take the remaining space
-        //otpRow.appendChild(btnSendOtp);
-        //otpRow.appendChild(txtOtp);
-
-        form.appendChild(txtName);
-        //form.appendChild(nameBox);
-        form.appendChild(txtIDNo);
-        form.appendChild(txtPassportNo);
-        form.appendChild(txtCellNo);
-        form.appendChild(txtEmail);
-        form.appendChild(btnSendOtp); 
-        form.appendChild(txtOtp); 
-        form.appendChild(btnRegisterUser);
-
-        this.appendChild(form);
-    }
-    */
+   
     
     private void buildUI() {
         Vbox form = new Vbox();
@@ -156,6 +85,7 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         // ID NUMBER (smaller, on its own line)
         txtIDNo = new Textbox();
         txtIDNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "IDNumber"));
+        txtIDNo.setMaxlength(13);
         txtIDNo.setWidth("300px");
         form.appendChild(txtIDNo);
 
@@ -168,6 +98,7 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         // CELL NUMBER (smaller)
         txtCellNo = new Textbox();
         txtCellNo.setPlaceholder(Msg.getMsg(Env.getCtx(), "CellNumber"));
+        txtCellNo.setMaxlength(10);
         txtCellNo.setWidth("300px");
         form.appendChild(txtCellNo);
 
@@ -179,6 +110,10 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
 
         // SEND OTP (button), then OTP BELOW it (smaller)
         btnSendOtp = new Button(Msg.getMsg(Env.getCtx(), "SendOtp"));
+        
+        
+     // optional: keep disabled until validated
+        btnSendOtp.setDisabled(true);
         form.appendChild(btnSendOtp);
 
         txtOtp = new Textbox();
@@ -188,6 +123,7 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
 
         // REGISTER
         btnRegisterUser = new Button(Msg.getMsg(Env.getCtx(), "RegisterMe"));
+        btnRegisterUser.setDisabled(true); 
         form.appendChild(btnRegisterUser);
 
         this.appendChild(form);
@@ -197,31 +133,81 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
 
     /** Wire listeners */
     private void wireEvents() {
+    	
+    	// ---- Live mutual exclusion while typing (instant toggle) ----
+    	txtIDNo.addEventListener(Events.ON_CHANGING, ev -> {
+    	    InputEvent iev = (InputEvent) ev;
+    	    String v = nvl(iev.getValue());
+    	    boolean hasText = !v.isEmpty();
+    	    txtPassportNo.setDisabled(hasText);
+    	    // Optional: clearWrongValue(txtPassportNo);
+    	    updateButtonsState();
+    	});
+
+    	txtPassportNo.addEventListener(Events.ON_CHANGING, ev -> {
+    	    InputEvent iev = (InputEvent) ev;
+    	    String v = nvl(iev.getValue());
+    	    boolean hasText = !v.isEmpty();
+    	    txtIDNo.setDisabled(hasText);
+    	    // Optional: clearWrongValue(txtIDNo);
+    	    updateButtonsState();
+    	});
+
         // Mutually exclusive ID/Passport UX
+            
         txtIDNo.addEventListener(Events.ON_CHANGE, ev -> {
-	        if (!txtIDNo.getValue().trim().isEmpty()) {
-	            txtPassportNo.setDisabled(true);
-	        } else {
-	            txtPassportNo.setDisabled(false);
-	        }
-	    });
+        	try {
+                String v = nvl(txtIDNo.getValue());
+                if (!v.isEmpty()) {
+                    validateIdNo();                 // throws WrongValueException if invalid
+                    txtPassportNo.setDisabled(true);
+                } else {
+                    txtPassportNo.setDisabled(false);
+                }
+            } finally {
+                updateButtonsState();
+            }
+        });
 
 	    txtPassportNo.addEventListener(Events.ON_CHANGE, ev -> {
-	        if (!txtPassportNo.getValue().trim().isEmpty()) {
-	            txtIDNo.setDisabled(true);
-	        } else {
-	            txtIDNo.setDisabled(false);
+	    	try {
+	            if (!txtPassportNo.getValue().trim().isEmpty()) {
+	                txtIDNo.setDisabled(true);
+	            } else {
+	                txtIDNo.setDisabled(false);
+	            }
+	        } finally {
+	            updateButtonsState();
 	        }
 	    });
-        //txtIDNo.addEventListener(Events.ON_CHANGE, e -> txtPassportNo.setDisabled(!isEmpty(txtIDNo)));
-        //txtPassportNo.addEventListener(Events.ON_CHANGE, e -> txtIDNo.setDisabled(!isEmpty(txtPassportNo)));
+	    
+	    txtName.addEventListener(Events.ON_CHANGE, ev -> updateButtonsState());
+	    
+	 
+	 // Mobile number – validate on blur
+	    txtCellNo.addEventListener(Events.ON_CHANGE, ev -> {
+	        try {
+	            validateCellNo();                   // throws if invalid
+	        } finally {
+	            updateButtonsState();
+	        }
+	    });
 
+	    txtEmail.addEventListener(Events.ON_CHANGE, ev -> {
+	        try {
+	            validateEmailOnBlur();              // throws if invalid or duplicate
+	        } finally {
+	            updateButtonsState();
+	        }
+	    });
+	 // OTP – just presence/format (6 digits) for enabling Register
+	    txtOtp.addEventListener(Events.ON_CHANGE, ev -> updateButtonsState());
         btnSendOtp.addEventListener(Events.ON_CLICK, this);
         btnRegisterUser.addEventListener(Events.ON_CLICK, this);
     }
 
     @Override
-    public void onEvent(Event event) throws Exception {
+    public void onEvent(Event event) throws Exception {    	
         if (event.getTarget() == btnSendOtp) {
             onSendOtp();
         } else if (event.getTarget() == btnRegisterUser) {
@@ -235,6 +221,23 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         String email = nvl(txtEmail.getValue());
         if (email.isEmpty())
             throw new IllegalArgumentException(Msg.getMsg(Env.getCtx(), "FillEmailFirst"));
+
+        // All core fields must be valid before requesting an OTP
+        if (!isCoreFieldsValid()) {
+            String msg = Msg.getMsg(Env.getCtx(), "CompleteFieldsBeforeOTP");
+            if (msg == null || "CompleteFieldsBeforeOTP".equals(msg)) {
+                msg = "Please complete all required fields (Name, ID/Passport, Mobile, valid Email) before requesting an OTP.";
+            }
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (isEmailRegistered(email)) {
+            String msg = Msg.getMsg(Env.getCtx(), "EmailAlreadyRegistered");
+            if (msg == null || "EmailAlreadyRegistered".equals(msg)) {
+                msg = "This email is already registered. Please sign in or use Forgot Password.";
+            }
+            throw new IllegalArgumentException(msg);
+        }
 
         // generate + store OTP in session (or switch to DB if you need multi-device)
         String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
@@ -267,6 +270,7 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         if (name.isEmpty() || cellNo.isEmpty() || email.isEmpty() || otp.isEmpty()) {
             throw new IllegalArgumentException(Msg.getMsg(Env.getCtx(), "FillRequiredFields"));
         }
+        validateCellNo();
         // Exactly one of ID or Passport
         if (idNo.isEmpty() && passportNo.isEmpty()) {
             throw new IllegalArgumentException(Msg.getMsg(Env.getCtx(), "EnterIdOrPassport"));
@@ -277,6 +281,19 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         // ID must be 13 digits if provided
         if (!idNo.isEmpty() && !idNo.matches("\\d{13}")) {
             throw new IllegalArgumentException(Msg.getMsg(Env.getCtx(), "InvalidIdNumber"));
+        }
+        
+        if (!idNo.isEmpty()) {
+            validateIdNo(); // throws on invalid
+        }
+        
+     // Redundant safety: block duplicate emails at creation time too
+        if (isEmailRegistered(email)) {
+            String msg = Msg.getMsg(Env.getCtx(), "EmailAlreadyRegistered");
+            if (msg == null || "EmailAlreadyRegistered".equals(msg)) {
+                msg = "This email is already registered. Please sign in or use Forgot Password.";
+            }
+            throw new IllegalArgumentException(msg);
         }
         // OTP check
         String storedOtp = (String) Executions.getCurrent().getSession().getAttribute("OTP_CODE");
@@ -391,16 +408,156 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         return DB.getSQLValue(null, sql, name, adClientId);
     }
 
-    // ----------------------- Utilities -----------------------
-
-    private static boolean isEmpty(Textbox tb) {
-        String v = tb.getValue();
-        return v == null || v.trim().isEmpty();
-    }
-
     private static String nvl(String s) {
         return s == null ? "" : s.trim();
     }
+    
+    
+    //
+    
+ // ---------- Non-throwing checks used for button enable/disable ----------
+
+    private boolean isNameValid() {
+        return !nvl(txtName.getValue()).isEmpty();
+    }
+
+    private boolean isCellValid() {
+        return nvl(txtCellNo.getValue()).matches("\\d{10}");
+    }
+
+    private boolean isEmailValid() {
+        String email = safeTrim(txtEmail.getValue());
+        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) return false;
+        // Only treat as valid if not already registered
+        return !isEmailRegistered(email);
+    }
+
+    private boolean isIdOrPassportValid() {
+        String id = nvl(txtIDNo.getValue());
+        String pass = nvl(txtPassportNo.getValue());
+
+        if (id.isEmpty() && pass.isEmpty()) return false;   // need one
+        if (!id.isEmpty() && !pass.isEmpty()) return false; // only one allowed
+
+        if (!id.isEmpty()) {
+            if (!id.matches("\\d{13}")) return false;
+            ZZ_SA_IDNumber sa = new ZZ_SA_IDNumber(id);
+            return sa.getIDNumber() != null && sa.isIDNumberValid();
+        }
+        // Passport provided (no extra format rules here)
+        return true;
+    }
+
+    private boolean isOtpEntered() {
+        // Enable Register only when OTP looks like a 6-digit code
+        return nvl(txtOtp.getValue()).matches("\\d{6}");
+    }
+
+    private boolean isCoreFieldsValid() {
+        return isNameValid() && isIdOrPassportValid() && isCellValid() && isEmailValid();
+    }
+
+    // Central controller: enable/disable buttons based on current values
+    private void updateButtonsState() {
+        boolean coreValid = isCoreFieldsValid();
+        btnSendOtp.setDisabled(!coreValid);
+
+        boolean otpOk = isOtpEntered();
+        btnRegisterUser.setDisabled(!(coreValid && otpOk));
+    }
+
+    // 
+    
+    private void validateCellNo() {
+        String cell = nvl(txtCellNo.getValue());
+        // exactly 10 digits, no spaces, no symbols
+        if (!cell.matches("\\d{10}")) {
+            // AD_Message key recommended: "CellMustBe10Digits"
+            String msg = Msg.getMsg(Env.getCtx(), "CellMustBe10Digits", new Object[0]);
+            if (msg == null || msg.equals("CellMustBe10Digits")) {
+                msg = "Mobile number must be exactly 10 digits (digits only).";
+            }
+            throw new WrongValueException(txtCellNo, msg);
+        }
+    }
+    
+    private void validateIdNo() {
+        String id = nvl(txtIDNo.getValue());
+
+        // Fast guard for length/digits so we can give an immediate, clear message
+        if (!id.matches("\\d{13}")) {
+            // AD_Message key suggested: "InvalidIdNumber"
+            String msg = Msg.getMsg(Env.getCtx(), "InvalidIdNumber");
+            if (msg == null || "InvalidIdNumber".equals(msg)) {
+                msg = "ID number must be exactly 13 digits.";
+            }
+            throw new WrongValueException(txtIDNo, msg);
+        }
+
+        ZZ_SA_IDNumber sa = new ZZ_SA_IDNumber(id);
+        // Constructor leaves ID null if basic format fails; also do full CDV/DOB validation
+        boolean ok = sa.getIDNumber() != null && sa.isIDNumberValid();
+        if (!ok) {
+            String msg = Msg.getMsg(Env.getCtx(), "InvalidIdNumber");
+            if (msg == null || "InvalidIdNumber".equals(msg)) {
+                msg = "Invalid South African ID number (date/check digit failed).";
+            }
+            throw new WrongValueException(txtIDNo, msg);
+        }
+    }
+    
+    private boolean isEmailRegistered(String emailRaw) {
+        String email = safeTrim(emailRaw);
+        if (email.isEmpty()) return false;
+
+        // Case/space-insensitive match within your client
+        final String sql =
+            "SELECT COUNT(*) " +
+            "FROM AD_User " +
+            "WHERE IsActive='Y' " +
+            "  AND AD_Client_ID=? " +
+            "  AND UPPER(TRIM(EMail))=UPPER(TRIM(?))";
+
+        int cnt = DB.getSQLValue(null, sql, DEFAULT_CLIENT_ID, email);
+        return cnt > 0;
+    }
+    
+    private void validateEmailOnBlur() {
+        String email = safeTrim(txtEmail.getValue());
+
+        if (email.isEmpty()) {
+            clearWrongValue(txtEmail);
+            updateButtonsState();
+            return;
+        }
+
+        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            String msg = Msg.getMsg(Env.getCtx(), "InvalidEMail");
+            if (msg == null || "InvalidEMail".equals(msg)) msg = "Please enter a valid email address.";
+            throw new WrongValueException(txtEmail, msg);
+        }
+
+        if (isEmailRegistered(email)) {
+            String msg = Msg.getMsg(Env.getCtx(), "EmailAlreadyRegistered");
+            if (msg == null || "EmailAlreadyRegistered".equals(msg)) {
+                msg = "This email is already registered. Please sign in or use Forgot Password.";
+            }
+            throw new WrongValueException(txtEmail, msg);
+        }
+
+        clearWrongValue(txtEmail);
+        updateButtonsState();
+    }
+
+
+    // Utility: clear prior WrongValue state (if any)
+    private void clearWrongValue(Component comp) {
+        // ZK clears the red box automatically when the value changes,
+        // but this ensures we remove any lingering state before enabling OTP.
+        // No-op placeholder in case your framework skin needs a touch here.
+    }
+
+
 
     /** Helper to show modally and handle attachment correctly */
     public static void show(Component attachTo) {
