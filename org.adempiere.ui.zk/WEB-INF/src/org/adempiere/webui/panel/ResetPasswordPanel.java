@@ -123,7 +123,8 @@ public class ResetPasswordPanel extends Window implements EventListener<Event>
      */
     private void init()
     {
-    	createUI();
+    	//createUI(); Martin 16/9/2025
+    	validateResetPassword();
     }
 
     /**
@@ -411,10 +412,13 @@ public class ResetPasswordPanel extends Window implements EventListener<Event>
      */
     protected void validateResetPassword()
     {
+    	loadData();  // Martin added 16/9/2025
+    	m_noSecurityQuestion = true; // Martin
     	String email = txtEmail.getValue();
     	String userid = txtUserId.getValue();
 		if (Util.isEmpty(email) || Util.isEmpty(userid))
-    		throw new IllegalArgumentException(Msg.getMsg(m_ctx, "FillMandatory") + " " + (m_email_login ? lblUserId.getValue() : lblEmail.getValue()));
+			throw new IllegalArgumentException(Msg.getMsg(m_ctx, "InvalidUserNameAndEmail") + " " + (m_email_login ? lblUserId.getValue() : lblEmail.getValue()));
+    		//throw new IllegalArgumentException(Msg.getMsg(m_ctx, "FillMandatory") + " " + (m_email_login ? lblUserId.getValue() : lblEmail.getValue()));
     	List<MUser> users = null;
     	if (m_noSecurityQuestion)
     	{

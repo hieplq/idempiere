@@ -82,9 +82,9 @@ public class ChangePasswordPanel extends Window implements EventListener<Event>
     protected Label lblOldPassword;
     protected Label lblNewPassword;
     protected Label lblRetypeNewPassword;
-    protected Label lblSecurityQuestion;
+    //protected Label lblSecurityQuestion;  Martin 16/9/2025
     protected Label lblAnswer;
-    protected Combobox lstSecurityQuestion;
+   // protected Combobox lstSecurityQuestion;
     protected Textbox txtOldPassword;
     protected Textbox txtNewPassword;
     protected Textbox txtRetypeNewPassword;
@@ -183,6 +183,7 @@ public class ChangePasswordPanel extends Window implements EventListener<Event>
     	tr.appendChild(td);
     	td.appendChild(txtRetypeNewPassword);
     	
+    	/*  Martin 16/09/2025
     	tr = new Tr();
         tr.setId("rowSecurityQuestion");
         table.appendChild(tr);
@@ -206,6 +207,7 @@ public class ChangePasswordPanel extends Window implements EventListener<Event>
     	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
     	tr.appendChild(td);
     	td.appendChild(txtAnswer);
+    	*/
 
     	div = new Div();
     	div.setSclass(ITheme.LOGIN_BOX_FOOTER_CLASS);
@@ -235,7 +237,7 @@ public class ChangePasswordPanel extends Window implements EventListener<Event>
         lblRetypeNewPassword = new Label();
         lblRetypeNewPassword.setId("lblRetypeNewPassword");
         lblRetypeNewPassword.setValue(Msg.getMsg(m_ctx, "New Password Confirm"));
-        
+        /*  Martin 16/9/2025
         lblSecurityQuestion = new Label();
     	lblSecurityQuestion.setId("lblSecurityQuestion");
     	lblSecurityQuestion.setValue(Msg.getMsg(m_ctx, "SecurityQuestion"));
@@ -253,6 +255,7 @@ public class ChangePasswordPanel extends Window implements EventListener<Event>
     	lstSecurityQuestion.getItems().clear();
     	for (int i = 1; i <= ResetPasswordPanel.NO_OF_SECURITY_QUESTION; i++)
     		lstSecurityQuestion.appendItem(Msg.getMsg(m_ctx, ResetPasswordPanel.SECURITY_QUESTION_PREFIX + i), ResetPasswordPanel.SECURITY_QUESTION_PREFIX + i);
+    	*/
 
         txtOldPassword = new Textbox();
         txtOldPassword.setId("txtOldPassword");
@@ -317,12 +320,13 @@ public class ChangePasswordPanel extends Window implements EventListener<Event>
     	String oldPassword = txtOldPassword.getValue();
     	String newPassword = txtNewPassword.getValue();
     	String retypeNewPassword = txtRetypeNewPassword.getValue();
-    	
+    	/*  Martin 16/9/2025
     	String securityQuestion = null;
     	if (lstSecurityQuestion.getSelectedItem() != null)
     		securityQuestion = (String) lstSecurityQuestion.getSelectedItem().getLabel();
     	
     	String answer = txtAnswer.getValue();
+    	*/
     	
     	if (Util.isEmpty(oldPassword))
     		throw new IllegalArgumentException(Msg.getMsg(m_ctx, "OldPasswordMandatory"));
@@ -332,12 +336,13 @@ public class ChangePasswordPanel extends Window implements EventListener<Event>
 
     	if (!newPassword.equals(retypeNewPassword))
     		throw new IllegalArgumentException(Msg.getMsg(m_ctx, "PasswordNotMatch"));
-
+    	/* Martin 16/9/2025
     	if (Util.isEmpty(securityQuestion))
     		throw new IllegalArgumentException(Msg.getMsg(m_ctx, "SecurityQuestionMandatory"));
 
     	if (Util.isEmpty(answer))
     		throw new IllegalArgumentException(Msg.getMsg(m_ctx, "AnswerMandatory"));
+    		*/
 
     	if (!oldPassword.equals(m_userPassword))
     		throw new IllegalArgumentException(Msg.getMsg(m_ctx, "OldPasswordNoMatch"));
@@ -370,8 +375,10 @@ public class ChangePasswordPanel extends Window implements EventListener<Event>
 
 				user.set_ValueOfColumn("Password", newPassword); // will be hashed and validate on saveEx
 	    		user.setIsExpired(false);
+	    		/*  Martin 16/9/2025
 	    		user.setSecurityQuestion(securityQuestion);
-	    		user.setAnswer(answer);    		
+	    		user.setAnswer(answer);
+	    		*/    		
     			user.saveCrossTenantSafeEx(trx.getTrxName());
     			if (tenantsChanged.length() > 0)
     				tenantsChanged.append(", ");
