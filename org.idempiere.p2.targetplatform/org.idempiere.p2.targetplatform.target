@@ -1874,5 +1874,11 @@ Export-Package:        *;version="${version}";-noimport:=true
     	<version>3.2.1</version>
     	<type>jar</type>
     </location>
+    <location includeSource="true" missingManifest="generate" type="Maven">
+    	<groupId>commons-beanutils</groupId>
+	    <artifactId>commons-beanutils</artifactId>
+	    <version>1.11.0</version>
+    	<type>jar</type>
+    </location>
   </locations>
 </target>
