@@ -821,7 +821,7 @@ public class DashboardController implements EventListener<Event> {
 				    ZZ_MenuLinksBuilder.fromQuery(
 				        dashboardContent,
 				        this,
-				        "260px 0 0 0"
+				        "160px 0 0 0"
 				    )
 				);
     	}
