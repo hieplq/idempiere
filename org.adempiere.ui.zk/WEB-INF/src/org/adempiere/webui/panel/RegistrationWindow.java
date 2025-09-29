@@ -314,7 +314,8 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         user.set_ValueOfColumn("ZZ_Passport_No",   passportNo);
 
         // Temp password & force change
-        String tempPwd = UUID.randomUUID().toString().substring(0, 8);
+        //String tempPwd = UUID.randomUUID().toString().substring(0, 8);
+        String tempPwd = PasswordGenerator.generatePassword(8);
         user.setPassword(tempPwd);
         user.setIsExpired(true);
         user.saveEx();
