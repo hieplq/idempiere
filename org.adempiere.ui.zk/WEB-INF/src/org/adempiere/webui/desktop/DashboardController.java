@@ -176,21 +176,21 @@ public class DashboardController implements EventListener<Event> {
 	private final static int MAX_NO_OF_PREFS_IN_ROW = 10;
 	/** Default horizontal flex grow for dashboard gadget. For row oriented layout. */
 	private final static int DEFAULT_FLEX_GROW = 1;
-	
+
 	/**
 	 * default constructor
 	 */
 	public DashboardController() {
 		dashboardLayout = new Anchorlayout();
 		dashboardLayout.setSclass("dashboard-layout");
-        ZKUpdateUtil.setVflex(dashboardLayout, "1");
-        ZKUpdateUtil.setHflex(dashboardLayout, "1");
-        
-        maximizedHolder = new Anchorchildren();                
-        maximizedHolder.setAnchor("100% 100%");
-        maximizedHolder.setStyle("overflow: hidden; border: none; margin: 0; padding: 0;");
+		ZKUpdateUtil.setVflex(dashboardLayout, "1");
+		ZKUpdateUtil.setHflex(dashboardLayout, "1");
+
+		maximizedHolder = new Anchorchildren();                
+		maximizedHolder.setAnchor("100% 100%");
+		maximizedHolder.setStyle("overflow: hidden; border: none; margin: 0; padding: 0;");
 	}
-	
+
 	/**
 	 * Render main or side dashboard
 	 * @param parent Parent Component of dashboard
@@ -198,14 +198,14 @@ public class DashboardController implements EventListener<Event> {
 	 * @param isShowInDashboard true for main/center dashboard, false for left/right side dashboard
 	 */
 	public void render(Component parent, IDesktop desktopImpl, boolean isShowInDashboard) {
-		
+
 		String layoutOrientation = MSysConfig.getValue(MSysConfig.DASHBOARD_LAYOUT_ORIENTATION, Env.getAD_Client_ID(Env.getCtx()));
-        if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS) && isShowInDashboard)
-        	renderRows(parent, desktopImpl, isShowInDashboard, false);
-        else
-        	renderColumns(parent, desktopImpl, isShowInDashboard, false);
+		if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS) && isShowInDashboard)
+			renderRows(parent, desktopImpl, isShowInDashboard, false);
+		else
+			renderColumns(parent, desktopImpl, isShowInDashboard, false);
 	}
-	
+
 	/**
 	 * Render dashboard in column orientation
 	 * @param parent Component
@@ -220,118 +220,118 @@ public class DashboardController implements EventListener<Event> {
 		if (!update && isShowInDashboard)
 			((HtmlBasedComponent)parent).setStyle("overflow-x: auto;");
 		dashboardLayout.getChildren().clear();
-        
-        if (!dashboardLayout.getDesktop().isServerPushEnabled())
-        	dashboardLayout.getDesktop().enableServerPush(true);
-        
-        if (!update)
-        	dashboardRunnable = new DashboardRunnable(parent.getDesktop());
-        
-        columnList = new ArrayList<Anchorchildren>();
-        
-        // Dashboard content
-        Vlayout dashboardColumnLayout = null;
-        int currentColumnNo = 0;
 
-        int noOfCols = 0;
-        int width = 0;
+		if (!dashboardLayout.getDesktop().isServerPushEnabled())
+			dashboardLayout.getDesktop().enableServerPush(true);
 
-        try
+		if (!update)
+			dashboardRunnable = new DashboardRunnable(parent.getDesktop());
+
+		columnList = new ArrayList<Anchorchildren>();
+
+		// Dashboard content
+		Vlayout dashboardColumnLayout = null;
+		int currentColumnNo = 0;
+
+		int noOfCols = 0;
+		int width = 0;
+
+		try
 		{
-        	int AD_User_ID = Env.getAD_User_ID(Env.getCtx());
-        	int AD_Role_ID = Env.getAD_Role_ID(Env.getCtx());
-        	
-        	MDashboardPreference[] dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, true);
-        	MDashboardContent [] dcs =  MDashboardContentAccess.get(Env.getCtx(), AD_Role_ID, AD_User_ID, null);
-        	
-        	if(dps.length == 0){
-        	    createDashboardPreference(AD_User_ID, AD_Role_ID);
-        	    dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, true);
-        	}else{
-        		if(updatePreferences(dps, dcs,Env.getCtx())){        			
-        			dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, true);
-        		}
-        	}
-        	               
-        	noOfCols = MDashboardPreference.getForSessionColumnCount(isShowInDashboard, AD_User_ID, AD_Role_ID);        	
-        	if (ClientInfo.isMobile() && isShowInDashboard) {
-	        	if (ClientInfo.maxWidth(ClientInfo.MEDIUM_WIDTH-1)) {
-	        		if (ClientInfo.maxWidth(ClientInfo.SMALL_WIDTH-1)) {
-	        			noOfCols = 1;
-	        		} else if (noOfCols > 2) {
-	        			noOfCols = 2;
-	        		}
-	        	}
-        	}
-        	this.noOfCols = noOfCols;
-            
-        	int dashboardWidth = isShowInDashboard ? DEFAULT_DASHBOARD_WIDTH : 100;
-            width = noOfCols <= 0 ? dashboardWidth : dashboardWidth / noOfCols;
-            int extraWidth = 100 - (noOfCols <= 0 ? dashboardWidth : width * noOfCols) - (100 - dashboardWidth - 1);
-            for (final MDashboardPreference dp : dps)            	
+			int AD_User_ID = Env.getAD_User_ID(Env.getCtx());
+			int AD_Role_ID = Env.getAD_Role_ID(Env.getCtx());
+
+			MDashboardPreference[] dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, true);
+			MDashboardContent [] dcs =  MDashboardContentAccess.get(Env.getCtx(), AD_Role_ID, AD_User_ID, null);
+
+			if(dps.length == 0){
+				createDashboardPreference(AD_User_ID, AD_Role_ID);
+				dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, true);
+			}else{
+				if(updatePreferences(dps, dcs,Env.getCtx())){        			
+					dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, true);
+				}
+			}
+
+			noOfCols = MDashboardPreference.getForSessionColumnCount(isShowInDashboard, AD_User_ID, AD_Role_ID);        	
+			if (ClientInfo.isMobile() && isShowInDashboard) {
+				if (ClientInfo.maxWidth(ClientInfo.MEDIUM_WIDTH-1)) {
+					if (ClientInfo.maxWidth(ClientInfo.SMALL_WIDTH-1)) {
+						noOfCols = 1;
+					} else if (noOfCols > 2) {
+						noOfCols = 2;
+					}
+				}
+			}
+			this.noOfCols = noOfCols;
+
+			int dashboardWidth = isShowInDashboard ? DEFAULT_DASHBOARD_WIDTH : 100;
+			width = noOfCols <= 0 ? dashboardWidth : dashboardWidth / noOfCols;
+			int extraWidth = 100 - (noOfCols <= 0 ? dashboardWidth : width * noOfCols) - (100 - dashboardWidth - 1);
+			for (final MDashboardPreference dp : dps)            	
 			{            	            	            	
-            	if(!dp.isActive())
-            		continue;
-            	
-            	if (dp.isShowInDashboard() != isShowInDashboard)
-            		continue;
-            	
-            	MDashboardContent dc = new MDashboardContent(dp.getCtx(), dp.getPA_DashboardContent_ID(), dp.get_TrxName());
-            	
-	        	int columnNo = dp.getColumnNo();
-	        	int effColumn = columnNo;
-	        	if (effColumn+1 > noOfCols)
-	        		effColumn = noOfCols-1;
-	        	if(dashboardColumnLayout == null || currentColumnNo != effColumn)
-	        	{
-	        		dashboardColumnLayout = new Vlayout();
-	        		dashboardColumnLayout.setSclass("dashboard-column");
+				if(!dp.isActive())
+					continue;
+
+				if (dp.isShowInDashboard() != isShowInDashboard)
+					continue;
+
+				MDashboardContent dc = new MDashboardContent(dp.getCtx(), dp.getPA_DashboardContent_ID(), dp.get_TrxName());
+
+				int columnNo = dp.getColumnNo();
+				int effColumn = columnNo;
+				if (effColumn+1 > noOfCols)
+					effColumn = noOfCols-1;
+				if(dashboardColumnLayout == null || currentColumnNo != effColumn)
+				{
+					dashboardColumnLayout = new Vlayout();
+					dashboardColumnLayout.setSclass("dashboard-column");
 					dashboardColumnLayout.setAttribute(COLUMN_NO_ATTRIBUTE, columnNo);
 					dashboardColumnLayout.setAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE, isShowInDashboard);
 					dashboardColumnLayout.setAttribute(IS_ADDITIONAL_COLUMN_ATTRIBUTE, false);
-	        		Anchorchildren dashboardColumn = new Anchorchildren();
-	        		dashboardColumn.setAnchor(width + "%" + " 100%");
-	        		if (!ClientInfo.isMobile())
-	        		{
-		        		dashboardColumn.setDroppable("true");
-		        		dashboardColumn.addEventListener(Events.ON_DROP, this);
-	        		}
-	        		dashboardColumn.appendChild(dashboardColumnLayout);
-	        		columnList.add(dashboardColumn);
-	                dashboardLayout.appendChild(dashboardColumn);
-	                ZKUpdateUtil.setHflex(dashboardColumnLayout, "1");
+					Anchorchildren dashboardColumn = new Anchorchildren();
+					dashboardColumn.setAnchor(width + "%" + " 100%");
+					if (!ClientInfo.isMobile())
+					{
+						dashboardColumn.setDroppable("true");
+						dashboardColumn.addEventListener(Events.ON_DROP, this);
+					}
+					dashboardColumn.appendChild(dashboardColumnLayout);
+					columnList.add(dashboardColumn);
+					dashboardLayout.appendChild(dashboardColumn);
+					ZKUpdateUtil.setHflex(dashboardColumnLayout, "1");
 
-	                currentColumnNo = effColumn;
-	        	}
+					currentColumnNo = effColumn;
+				}
 
-	        	Panel panel = null;
-	        	if (update) {
-	        		panel = findPanel(dp.getPA_DashboardContent_ID(), dp.getPA_DashboardPreference_ID());
-	        	} else {
-				panel = newGadgetPanel(dp, dc);
-	        	}
-	        	if (panel != null && panel.getAttribute(PANEL_EMPTY_ATTRIBUTE) == null)
-	        		dashboardColumnLayout.appendChild(panel);
-	        	if (!update) {
-	        		final Panel fp = panel;
-	        		ServerPushTemplate spt = new ServerPushTemplate(dashboardLayout.getDesktop());
-	        		String contextPath = Executions.getCurrent().getContextPath();
-	        		Panelchildren panelChildren = new Panelchildren();
-	        		fp.appendChild(panelChildren);
-	        		BusyDialog busyDialog = new BusyDialog();
-	                busyDialog.setShadow(false);
-	                panelChildren.appendChild(busyDialog);
-	        		//must create zulfile component in foreground UI thread
-	        		Component zComponent = null;
-	        		if (!Util.isEmpty(dc.getZulFilePath(), true)) {
-        	        	try {	        	        		
-        	        		zComponent = Extensions.getDashboardGadget(dc.getZulFilePath(), panelChildren, dc);
-        	        	} catch (Exception e) {
-        	        		throw new AdempiereException(e);
-        	        	}
-	        		}
-	        		final Component zulComponent = zComponent;
-	        		ZkContextRunnable cr = new ZkContextRunnable() {
+				Panel panel = null;
+				if (update) {
+					panel = findPanel(dp.getPA_DashboardContent_ID(), dp.getPA_DashboardPreference_ID());
+				} else {
+					panel = newGadgetPanel(dp, dc);
+				}
+				if (panel != null && panel.getAttribute(PANEL_EMPTY_ATTRIBUTE) == null)
+					dashboardColumnLayout.appendChild(panel);
+				if (!update) {
+					final Panel fp = panel;
+					ServerPushTemplate spt = new ServerPushTemplate(dashboardLayout.getDesktop());
+					String contextPath = Executions.getCurrent().getContextPath();
+					Panelchildren panelChildren = new Panelchildren();
+					fp.appendChild(panelChildren);
+					BusyDialog busyDialog = new BusyDialog();
+					busyDialog.setShadow(false);
+					panelChildren.appendChild(busyDialog);
+					//must create zulfile component in foreground UI thread
+					Component zComponent = null;
+					if (!Util.isEmpty(dc.getZulFilePath(), true)) {
+						try {	        	        		
+							zComponent = Extensions.getDashboardGadget(dc.getZulFilePath(), panelChildren, dc);
+						} catch (Exception e) {
+							throw new AdempiereException(e);
+						}
+					}
+					final Component zulComponent = zComponent;
+					ZkContextRunnable cr = new ZkContextRunnable() {
 						@Override
 						protected void doRun() {
 							try {
@@ -341,58 +341,58 @@ public class DashboardController implements EventListener<Event> {
 							}
 						}
 					};	        		
-	        		Adempiere.getThreadPoolExecutor().submit(new DesktopRunnable(cr, parent.getDesktop()));
-	        	}
-	        }
-            
-            if (dps.length == 0)
-            {
-            	dashboardColumnLayout = new Vlayout();
+					Adempiere.getThreadPoolExecutor().submit(new DesktopRunnable(cr, parent.getDesktop()));
+				}
+			}
+
+			if (dps.length == 0)
+			{
+				dashboardColumnLayout = new Vlayout();
 				dashboardColumnLayout.setAttribute(COLUMN_NO_ATTRIBUTE, "0");
 				dashboardColumnLayout.setAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE, isShowInDashboard);
 				dashboardColumnLayout.setAttribute(IS_ADDITIONAL_COLUMN_ATTRIBUTE, true);
-        		Anchorchildren dashboardColumn = new Anchorchildren();
-        		dashboardColumn.setAnchor((width-5) + "%" + " 100%");
-        		if (!ClientInfo.isMobile())
-        		{
-        			dashboardColumn.setDroppable("true");
-        			dashboardColumn.addEventListener(Events.ON_DROP, this);
-        		}
-        		dashboardColumn.appendChild(dashboardColumnLayout);
-        		columnList.add(dashboardColumn);
-                dashboardLayout.appendChild(dashboardColumn);
-                ZKUpdateUtil.setWidth(dashboardColumnLayout, "100%");
-            }
-            else if (isShowInDashboard)
-            {
-            	// additional column
-            	dashboardColumnLayout = new Vlayout();
-            	ZKUpdateUtil.setWidth(dashboardColumnLayout, "100%");
+				Anchorchildren dashboardColumn = new Anchorchildren();
+				dashboardColumn.setAnchor((width-5) + "%" + " 100%");
+				if (!ClientInfo.isMobile())
+				{
+					dashboardColumn.setDroppable("true");
+					dashboardColumn.addEventListener(Events.ON_DROP, this);
+				}
+				dashboardColumn.appendChild(dashboardColumnLayout);
+				columnList.add(dashboardColumn);
+				dashboardLayout.appendChild(dashboardColumn);
+				ZKUpdateUtil.setWidth(dashboardColumnLayout, "100%");
+			}
+			else if (isShowInDashboard)
+			{
+				// additional column
+				dashboardColumnLayout = new Vlayout();
+				ZKUpdateUtil.setWidth(dashboardColumnLayout, "100%");
 				dashboardColumnLayout.setAttribute(COLUMN_NO_ATTRIBUTE, currentColumnNo + 1);
 				dashboardColumnLayout.setAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE, isShowInDashboard);
 				dashboardColumnLayout.setAttribute(IS_ADDITIONAL_COLUMN_ATTRIBUTE, true);
-        		Anchorchildren dashboardColumn = new Anchorchildren();
-        		dashboardColumn.setAnchor(extraWidth + "% 100%");
-        		if (!ClientInfo.isMobile())
-        		{
-        			dashboardColumn.setDroppable("true");
-        			dashboardColumn.addEventListener(Events.ON_DROP, this);
-        		}
-        		dashboardColumn.appendChild(dashboardColumnLayout);
-        		columnList.add(dashboardColumn);
-                dashboardLayout.appendChild(dashboardColumn);
-                ZKUpdateUtil.setWidth(dashboardColumnLayout, "100%");
-            }
+				Anchorchildren dashboardColumn = new Anchorchildren();
+				dashboardColumn.setAnchor(extraWidth + "% 100%");
+				if (!ClientInfo.isMobile())
+				{
+					dashboardColumn.setDroppable("true");
+					dashboardColumn.addEventListener(Events.ON_DROP, this);
+				}
+				dashboardColumn.appendChild(dashboardColumnLayout);
+				columnList.add(dashboardColumn);
+				dashboardLayout.appendChild(dashboardColumn);
+				ZKUpdateUtil.setWidth(dashboardColumnLayout, "100%");
+			}
 		}
-        catch (Exception e)
-        {
+		catch (Exception e)
+		{
 			logger.log(Level.WARNING, "Failed to create dashboard content", e);
 		}
-        //
-                
-        if (!update)
-        {
-        	startDashboardRunnable(parent);		
+		//
+
+		if (!update)
+		{
+			startDashboardRunnable(parent);		
 		}
 	}
 
@@ -420,7 +420,7 @@ public class DashboardController implements EventListener<Event> {
 		if(!Util.isEmpty(description, true) || !Util.isEmpty(help, true) ) {
 			renderHelpButton(caption, description, help);
 		}
-		
+
 		panel.setCollapsible(dc.isCollapsible());
 		panel.setOpen(!dc.isCollapsible() || !dp.isCollapsedByDefault());
 		panel.addEventListener(Events.ON_OPEN, this);
@@ -430,10 +430,10 @@ public class DashboardController implements EventListener<Event> {
 			panel.addEventListener(Events.ON_DROP, this);
 		}
 		panel.setBorder("normal");
-	
-			return panel;
+
+		return panel;
 	}
-	
+
 	/**
 	 * Render help button for individual dashboard gadget
 	 * @param caption
@@ -505,7 +505,7 @@ public class DashboardController implements EventListener<Event> {
 			});
 		}		
 	}
-	
+
 	/**
 	 * Start {@link #dashboardRunnable} for pooling refresh of dashboard gadgets (using {@link #dashboardTimer})
 	 * @param parent
@@ -541,112 +541,112 @@ public class DashboardController implements EventListener<Event> {
 		if (!update && isShowInDashboard)
 			((HtmlBasedComponent)parent).setStyle("overflow-x: auto;");
 		dashboardLayout.getChildren().clear();
-        
-        if (!dashboardLayout.getDesktop().isServerPushEnabled())
-        	dashboardLayout.getDesktop().enableServerPush(true);
-        
-        if (!update)
-        	dashboardRunnable = new DashboardRunnable(parent.getDesktop());
-        
-        rowList = new ArrayList<Anchorchildren>();
-        
-        // Dashboard content
-        Hlayout dashboardLineLayout = null;
-        int currentLineNo = 0;
-        int maxPerLine = 0;
-        int width = 100;
-        try
+
+		if (!dashboardLayout.getDesktop().isServerPushEnabled())
+			dashboardLayout.getDesktop().enableServerPush(true);
+
+		if (!update)
+			dashboardRunnable = new DashboardRunnable(parent.getDesktop());
+
+		rowList = new ArrayList<Anchorchildren>();
+
+		// Dashboard content
+		Hlayout dashboardLineLayout = null;
+		int currentLineNo = 0;
+		int maxPerLine = 0;
+		int width = 100;
+		try
 		{
-        	int AD_User_ID = Env.getAD_User_ID(Env.getCtx());
-        	int AD_Role_ID = Env.getAD_Role_ID(Env.getCtx());
-        	
-        	MDashboardPreference[] dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, false);
-        	MDashboardContent [] dcs =  MDashboardContentAccess.get(Env.getCtx(), AD_Role_ID, AD_User_ID, null);
-        	
-        	if(dps.length == 0){
-        	    createDashboardPreference(AD_User_ID, AD_Role_ID);
-        	    dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, false);
-        	}else{
-        		if(updatePreferences(dps, dcs,Env.getCtx())){        			
-        			dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, false);
-        		}
-        	}
-        	
-        	if (ClientInfo.isMobile() && isShowInDashboard) {
-	        	if (ClientInfo.maxWidth(ClientInfo.MEDIUM_WIDTH-1)) {
-	        		if (ClientInfo.maxWidth(ClientInfo.SMALL_WIDTH-1)) {
-	        			maxPerLine = 1;
-	        		} else {
-	        			maxPerLine = 2;
-	        		}
-	        	}
-        	}
-            
-            for (final MDashboardPreference dp : dps)            	
+			int AD_User_ID = Env.getAD_User_ID(Env.getCtx());
+			int AD_Role_ID = Env.getAD_Role_ID(Env.getCtx());
+
+			MDashboardPreference[] dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, false);
+			MDashboardContent [] dcs =  MDashboardContentAccess.get(Env.getCtx(), AD_Role_ID, AD_User_ID, null);
+
+			if(dps.length == 0){
+				createDashboardPreference(AD_User_ID, AD_Role_ID);
+				dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, false);
+			}else{
+				if(updatePreferences(dps, dcs,Env.getCtx())){        			
+					dps = MDashboardPreference.getForSession(AD_User_ID, AD_Role_ID, false);
+				}
+			}
+
+			if (ClientInfo.isMobile() && isShowInDashboard) {
+				if (ClientInfo.maxWidth(ClientInfo.MEDIUM_WIDTH-1)) {
+					if (ClientInfo.maxWidth(ClientInfo.SMALL_WIDTH-1)) {
+						maxPerLine = 1;
+					} else {
+						maxPerLine = 2;
+					}
+				}
+			}
+
+			for (final MDashboardPreference dp : dps)            	
 			{            	            	            	
-            	if(!dp.isActive())
-            		continue;
-            	
-            	if (dp.isShowInDashboard() != isShowInDashboard)
-            		continue;
-            	
-            	MDashboardContent dc = new MDashboardContent(dp.getCtx(), dp.getPA_DashboardContent_ID(), dp.get_TrxName());
-            	
-	        	int lineNo = dp.getLine().intValue();
-	        	
-	        	int flexGrow = (flexGrow = dp.getFlexGrow()) > 0 ? flexGrow : DEFAULT_FLEX_GROW;
-	        	if(dashboardLineLayout == null || currentLineNo != lineNo || (maxPerLine > 0 && dashboardLineLayout.getChildren().size() == maxPerLine))
-	        	{
-	        		dashboardLineLayout = new Hlayout();
+				if(!dp.isActive())
+					continue;
+
+				if (dp.isShowInDashboard() != isShowInDashboard)
+					continue;
+
+				MDashboardContent dc = new MDashboardContent(dp.getCtx(), dp.getPA_DashboardContent_ID(), dp.get_TrxName());
+
+				int lineNo = dp.getLine().intValue();
+
+				int flexGrow = (flexGrow = dp.getFlexGrow()) > 0 ? flexGrow : DEFAULT_FLEX_GROW;
+				if(dashboardLineLayout == null || currentLineNo != lineNo || (maxPerLine > 0 && dashboardLineLayout.getChildren().size() == maxPerLine))
+				{
+					dashboardLineLayout = new Hlayout();
 					dashboardLineLayout.setAttribute(LINE_ATTRIBUTE, lineNo);
 					dashboardLineLayout.setAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE, isShowInDashboard);
 					dashboardLineLayout.setAttribute(IS_ADDITIONAL_ROW_ATTRIBUTE, false);
-	        		dashboardLineLayout.setSclass("dashboard-row");
-	        		Anchorchildren dashboardLine = new Anchorchildren();
-	        		dashboardLine.setAnchor(width + "%");
-	        		ZKUpdateUtil.setHflex(dashboardLine, "min");
-	        		if (!ClientInfo.isMobile())
-	        		{
-		        		dashboardLine.setDroppable("true");
-		        		dashboardLine.addEventListener(Events.ON_DROP, this);
-	        		}
-	        		dashboardLine.appendChild(dashboardLineLayout);
-	        		rowList.add(dashboardLine);
-	                dashboardLayout.appendChild(dashboardLine);
-	                currentLineNo = lineNo;
-	        	}
+					dashboardLineLayout.setSclass("dashboard-row");
+					Anchorchildren dashboardLine = new Anchorchildren();
+					dashboardLine.setAnchor(width + "%");
+					ZKUpdateUtil.setHflex(dashboardLine, "min");
+					if (!ClientInfo.isMobile())
+					{
+						dashboardLine.setDroppable("true");
+						dashboardLine.addEventListener(Events.ON_DROP, this);
+					}
+					dashboardLine.appendChild(dashboardLineLayout);
+					rowList.add(dashboardLine);
+					dashboardLayout.appendChild(dashboardLine);
+					currentLineNo = lineNo;
+				}
 
-	        	Panel panel = null;
-	        	if (update) {
-	        		panel = findPanel(dp.getPA_DashboardContent_ID(), dp.getPA_DashboardPreference_ID());
-	        	} else {
+				Panel panel = null;
+				if (update) {
+					panel = findPanel(dp.getPA_DashboardContent_ID(), dp.getPA_DashboardPreference_ID());
+				} else {
 					panel = newGadgetPanel(dp, dc);
 					panel.setAttribute(FLEX_GROW_ATTRIBUTE, String.valueOf(flexGrow));
-		        	ZKUpdateUtil.setHflex(panel, String.valueOf(flexGrow));
-	        	}
-	        	if (panel != null && panel.getAttribute(PANEL_EMPTY_ATTRIBUTE) == null) {
-	        		dashboardLineLayout.appendChild(panel);
-	        	}
-	        	if (!update) {
-	        		final Panel fp = panel;
-	        		ServerPushTemplate spt = new ServerPushTemplate(dashboardLayout.getDesktop());
-	        		String contextPath = Executions.getCurrent().getContextPath();
-	        		Panelchildren panelChildren = new Panelchildren();
-	        		fp.appendChild(panelChildren);
-	        		BusyDialog busyDialog = new BusyDialog();
-	                busyDialog.setShadow(false);
-	                panelChildren.appendChild(busyDialog);
-	        		//must create zulfile component in foreground UI thread
-	        		Component zComponent = null;
-	        		if (!Util.isEmpty(dc.getZulFilePath(), true)) {
-        	        	try {	        	        		
-        	        		zComponent = Extensions.getDashboardGadget(dc.getZulFilePath(), panelChildren, dc);
-        	        	} catch (Exception e) {
-        	        		throw new AdempiereException(e);
-        	        	}
-	        		}
-	        		final Component zulComponent = zComponent;
-	        		ZkContextRunnable cr = new ZkContextRunnable() {
+					ZKUpdateUtil.setHflex(panel, String.valueOf(flexGrow));
+				}
+				if (panel != null && panel.getAttribute(PANEL_EMPTY_ATTRIBUTE) == null) {
+					dashboardLineLayout.appendChild(panel);
+				}
+				if (!update) {
+					final Panel fp = panel;
+					ServerPushTemplate spt = new ServerPushTemplate(dashboardLayout.getDesktop());
+					String contextPath = Executions.getCurrent().getContextPath();
+					Panelchildren panelChildren = new Panelchildren();
+					fp.appendChild(panelChildren);
+					BusyDialog busyDialog = new BusyDialog();
+					busyDialog.setShadow(false);
+					panelChildren.appendChild(busyDialog);
+					//must create zulfile component in foreground UI thread
+					Component zComponent = null;
+					if (!Util.isEmpty(dc.getZulFilePath(), true)) {
+						try {	        	        		
+							zComponent = Extensions.getDashboardGadget(dc.getZulFilePath(), panelChildren, dc);
+						} catch (Exception e) {
+							throw new AdempiereException(e);
+						}
+					}
+					final Component zulComponent = zComponent;
+					ZkContextRunnable cr = new ZkContextRunnable() {
 						@Override
 						protected void doRun() {
 							try {
@@ -656,64 +656,64 @@ public class DashboardController implements EventListener<Event> {
 							}
 						}
 					};	        		
-	        		Adempiere.getThreadPoolExecutor().submit(new DesktopRunnable(cr, parent.getDesktop()));				
-	        	}
-	        }
-            
-            if (dps.length == 0)
-            {
-            	dashboardLineLayout = new Hlayout();
+					Adempiere.getThreadPoolExecutor().submit(new DesktopRunnable(cr, parent.getDesktop()));				
+				}
+			}
+
+			if (dps.length == 0)
+			{
+				dashboardLineLayout = new Hlayout();
 				dashboardLineLayout.setAttribute(LINE_ATTRIBUTE, "0");
 				dashboardLineLayout.setAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE, isShowInDashboard);
 				dashboardLineLayout.setAttribute(IS_ADDITIONAL_ROW_ATTRIBUTE, true);
-        		dashboardLineLayout.setSclass("dashboard-row");
-        		Anchorchildren dashboardColumn = new Anchorchildren();
-        		dashboardColumn.setAnchor((width-5) + "%" + " 100%");
-        		if (!ClientInfo.isMobile())
-        		{
-        			dashboardColumn.setDroppable("true");
-        			dashboardColumn.addEventListener(Events.ON_DROP, this);
-        		}
-        		dashboardColumn.appendChild(dashboardLineLayout);
-        		rowList.add(dashboardColumn);
-                dashboardLayout.appendChild(dashboardColumn);
-                ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
-            }
-            else if (isShowInDashboard)
-            {
-            	// additional row
-            	dashboardLineLayout = new Hlayout();
-            	ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
+				dashboardLineLayout.setSclass("dashboard-row");
+				Anchorchildren dashboardColumn = new Anchorchildren();
+				dashboardColumn.setAnchor((width-5) + "%" + " 100%");
+				if (!ClientInfo.isMobile())
+				{
+					dashboardColumn.setDroppable("true");
+					dashboardColumn.addEventListener(Events.ON_DROP, this);
+				}
+				dashboardColumn.appendChild(dashboardLineLayout);
+				rowList.add(dashboardColumn);
+				dashboardLayout.appendChild(dashboardColumn);
+				ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
+			}
+			else if (isShowInDashboard)
+			{
+				// additional row
+				dashboardLineLayout = new Hlayout();
+				ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
 				dashboardLineLayout.setAttribute(LINE_ATTRIBUTE, currentLineNo + 1);
 				dashboardLineLayout.setAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE, isShowInDashboard);
 				dashboardLineLayout.setAttribute(IS_ADDITIONAL_ROW_ATTRIBUTE, true);
-        		dashboardLineLayout.setSclass("dashboard-row");
-        		Anchorchildren dashboardLine = new Anchorchildren();
-        		dashboardLine.setAnchor(width + "% 1%");
-        		ZKUpdateUtil.setHflex(dashboardLine, "min");
-        		if (!ClientInfo.isMobile())
-        		{
-        			dashboardLine.setDroppable("true");
-        			dashboardLine.addEventListener(Events.ON_DROP, this);
-        		}
-        		dashboardLine.appendChild(dashboardLineLayout);
-        		rowList.add(dashboardLine);
-                dashboardLayout.appendChild(dashboardLine);
-                ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
-                ZKUpdateUtil.setHflex(dashboardLineLayout, "1");
-            }
+				dashboardLineLayout.setSclass("dashboard-row");
+				Anchorchildren dashboardLine = new Anchorchildren();
+				dashboardLine.setAnchor(width + "% 1%");
+				ZKUpdateUtil.setHflex(dashboardLine, "min");
+				if (!ClientInfo.isMobile())
+				{
+					dashboardLine.setDroppable("true");
+					dashboardLine.addEventListener(Events.ON_DROP, this);
+				}
+				dashboardLine.appendChild(dashboardLineLayout);
+				rowList.add(dashboardLine);
+				dashboardLayout.appendChild(dashboardLine);
+				ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
+				ZKUpdateUtil.setHflex(dashboardLineLayout, "1");
+			}
 		}
-        catch (Exception e)
-        {
+		catch (Exception e)
+		{
 			logger.log(Level.WARNING, "Failed to create dashboard content", e);
 		}
-                
-        if (!update)
-        {
-        	startDashboardRunnable(parent);
+
+		if (!update)
+		{
+			startDashboardRunnable(parent);
 		}
 	}
-	
+
 	/**
 	 * Find dashboard gadget panel by PA_DashboardContent_ID and PA_DashboardPreference_ID
 	 * @param PA_DashboardContent_ID
@@ -748,12 +748,12 @@ public class DashboardController implements EventListener<Event> {
 	private void asyncRenderComponents(MDashboardContent dashboardContent, DashboardRunnable dashboardRunnable, String contextPath, 
 			HtmlBasedComponent parentComponent, List<Component> components, Component zulComponent, ServerPushTemplate spt) throws Exception {
 		// HTML content
-        String htmlContent = dashboardContent.get_ID() > 0 ? dashboardContent.get_Translation(MDashboardContent.COLUMNNAME_HTML) : null;
-        if(!Util.isEmpty(htmlContent))
-        {
-            StringBuilder result = new StringBuilder("<html><head>");
+		String htmlContent = dashboardContent.get_ID() > 0 ? dashboardContent.get_Translation(MDashboardContent.COLUMNNAME_HTML) : null;
+		if(!Util.isEmpty(htmlContent))
+		{
+			StringBuilder result = new StringBuilder("<html><head>");
 
-    		URL url = getClass().getClassLoader().getResource("org/compiere/css/PAPanel.css");
+			URL url = getClass().getClassLoader().getResource("org/compiere/css/PAPanel.css");
 			InputStreamReader ins;
 			BufferedReader bufferedReader = null;
 			try {
@@ -775,20 +775,20 @@ public class DashboardController implements EventListener<Event> {
 				}
 			}
 			result.append("</head><body><div class=\"content\">\n");
-        	result.append(stripHtml(htmlContent, false) + "<br>\n");
-        	result.append("</div>\n</body>\n</html>");
+			result.append(stripHtml(htmlContent, false) + "<br>\n");
+			result.append("</div>\n</body>\n</html>");
 
-            Html html = new Html();
-            html.setContent(result.toString());
-            components.add(html);
-        }
+			Html html = new Html();
+			html.setContent(result.toString());
+			components.add(html);
+		}
 
-    	// Window
-    	int AD_Window_ID = dashboardContent.getAD_Window_ID();
-    	if(AD_Window_ID > 0)
-    	{
-        	int AD_Menu_ID = dashboardContent.getAD_Menu_ID();
-        	Div div = new Div();
+		// Window
+		int AD_Window_ID = dashboardContent.getAD_Window_ID();
+		if(AD_Window_ID > 0)
+		{
+			int AD_Menu_ID = dashboardContent.getAD_Menu_ID();
+			Div div = new Div();
 			ToolBarButton btn = new ToolBarButton(String.valueOf(AD_Menu_ID));
 			I_AD_Menu menu = dashboardContent.getAD_Menu();
 			btn.setLabel(menu.getName());
@@ -796,63 +796,69 @@ public class DashboardController implements EventListener<Event> {
 			btn.addEventListener(Events.ON_CLICK, this);
 			div.appendChild(btn);
 			components.add(div);
-    	}
-    	// Martin for demo 29/8/2025
-    	
-    	if (dashboardContent.get_ID() >= 1000000)
-    	{
-    		/*
-    		int AD_Menu_ID = 1000070;
-        	Div div = new Div();
-        	//div.setStyle("margin-top: 160px;"); 
-        	div.setStyle("margin: 260px 0 0 0ch;");
-			ToolBarButton btn = new ToolBarButton(String.valueOf(AD_Menu_ID));
-			I_AD_Menu menu = dashboardContent.getAD_Menu(AD_Menu_ID);
-			btn.setLabel(menu.getName());
-			btn.setAttribute("AD_Menu_ID", AD_Menu_ID);
-			btn.addEventListener(Events.ON_CLICK, this);
-			//btn.setStyle("color:#fff !important;");
-			btn.setStyle("color:#fff !important; font-size:18px !important; line-height:1.2; padding:6px 12px;");
+		}
+		// Martin for demo 29/8/2025
 
-			div.appendChild(btn);
-			components.add(div);
-			*/
-			components.add(
-				    ZZ_MenuLinksBuilder.fromQuery(
-				        dashboardContent,
-				        this,
-				        "160px 0 0 0"
-				    )
-				);
-    	}
-    	
-    	//Report & Process
-    	int AD_Process_ID = dashboardContent.getAD_Process_ID();
-    	if(AD_Process_ID > 0)
-    	{
-    		boolean systemAccess = false;
-    		MProcess process = MProcess.get(Env.getCtx(), AD_Process_ID);
+		if (dashboardContent.get_ID() >= 1000000)
+		{
+			
+			org.zkoss.zul.Vlayout list = ZZ_MenuLinksBuilder.fromQuery(dashboardContent, this, "0");
+			list.setStyle("max-height:70vh;overflow-y:auto;margin:0;");
+
+			org.zkoss.zul.Div fixed = new org.zkoss.zul.Div();
+			fixed.setSclass("zz-fixedmenu");
+			fixed.appendChild(list);
+
+			// fixed wrapper
+			fixed.setSclass("zz-fixedmenu");
+
+			// let’s keep top in a CSS var so it’s easy to tweak
+			fixed.setStyle("--menuTop:280px;");
+
+			// your list stays scrollable
+			list.setSclass("menu-links");
+			list.setStyle("overflow-y:auto;margin:0;"); // no fixed height here
+
+			// CSS
+			
+			Style css = new Style();
+			css.setContent(
+			    ".zz-fixedmenu{position:fixed; top:var(--menuTop); z-index:2000;}" +
+			    ".zz-fixedmenu .menu-links{max-height:calc(100vh - var(--menuTop) - 12px);}" + // <- auto adjusts on zoom/resize
+			    ".dashboard-widget .z-panelchildren{overflow:visible!important;}" +
+			    ".dashboard-widget.dashboard-widget-max .z-panelchildren{overflow:visible!important;}"
+			);
+			fixed.appendChild(css);
+			components.add(fixed);
+		}
+
+		//Report & Process
+		int AD_Process_ID = dashboardContent.getAD_Process_ID();
+		if(AD_Process_ID > 0)
+		{
+			boolean systemAccess = false;
+			MProcess process = MProcess.get(Env.getCtx(), AD_Process_ID);
 			String accessLevel = process.getAccessLevel();
 			if (   MTable.ACCESSLEVEL_All.equals(accessLevel)
-				|| MTable.ACCESSLEVEL_SystemOnly.equals(accessLevel)
-				|| MTable.ACCESSLEVEL_SystemPlusClient.equals(accessLevel)) {
+					|| MTable.ACCESSLEVEL_SystemOnly.equals(accessLevel)
+					|| MTable.ACCESSLEVEL_SystemPlusClient.equals(accessLevel)) {
 				systemAccess = true;
 			}
-    		int thisClientId = Env.getAD_Client_ID(Env.getCtx());
-    		if((thisClientId == 0 && systemAccess) || thisClientId != 0) {
-	        	String sql = "SELECT AD_Menu_ID FROM AD_Menu WHERE AD_Process_ID=?";
-	        	int AD_Menu_ID = DB.getSQLValueEx(null, sql, AD_Process_ID);
+			int thisClientId = Env.getAD_Client_ID(Env.getCtx());
+			if((thisClientId == 0 && systemAccess) || thisClientId != 0) {
+				String sql = "SELECT AD_Menu_ID FROM AD_Menu WHERE AD_Process_ID=?";
+				int AD_Menu_ID = DB.getSQLValueEx(null, sql, AD_Process_ID);
 				ToolBarButton btn = new ToolBarButton();
 				MMenu menu = new MMenu(Env.getCtx(), AD_Menu_ID, null);					
 				btn.setAttribute("AD_Menu_ID", AD_Menu_ID);
 				btn.addEventListener(Events.ON_CLICK, this);					
-				
+
 				if (dashboardContent.isEmbedReportContent()) 
 				{
-	    			addDrillAcrossEventListener(AD_Process_ID, parentComponent);
+					addDrillAcrossEventListener(AD_Process_ID, parentComponent);
 					String processParameters = dashboardContent.getProcessParameters();
 					ReportData reportData = generateReport(AD_Process_ID, dashboardContent.getAD_PrintFormat_ID(), processParameters, parentComponent, contextPath);
-					
+
 					Div layout = new Div();
 					layout.setHeight("100%");
 					layout.setStyle("display: flex;flex-direction: column;");
@@ -865,13 +871,13 @@ public class DashboardController implements EventListener<Event> {
 						layout.appendChild(iframe);
 					else
 						layout.appendChild(createFillMandatoryLabel(dashboardContent));
-	
+
 					Toolbar toolbar = new Toolbar();
 					LayoutUtils.addSclass("dashboard-report-toolbar", toolbar);
 					layout.appendChild(toolbar);
 					btn.setLabel(Msg.getMsg(Env.getCtx(), "OpenRunDialog"));
 					toolbar.appendChild(btn);
-					
+
 					if(iframe.getContent() != null && reportData.getRowCount() >= 0) {
 						btn = new ToolBarButton();
 						btn.setAttribute("AD_Process_ID", AD_Process_ID);
@@ -889,7 +895,7 @@ public class DashboardController implements EventListener<Event> {
 					}
 					else
 						btn.setImage(ThemeManager.getThemeResource("images/Refresh16.png"));
-					
+
 					toolbar.appendChild(btn);	
 
 					Label rowCountLabel = new Label(Msg.getMsg(Env.getCtx(), "RowCount", new Object[] {reportData.getRowCount()}));
@@ -897,7 +903,7 @@ public class DashboardController implements EventListener<Event> {
 						LayoutUtils.addSclass("rowcount-label", rowCountLabel);
 						toolbar.appendChild(rowCountLabel);
 					}
-					
+
 					btn.addEventListener(Events.ON_CLICK, e -> {
 						ReportData refreshedData = generateReport(AD_Process_ID, dashboardContent.getAD_PrintFormat_ID(), processParameters, parentComponent, contextPath);
 						iframe.setContent(refreshedData.getContent());
@@ -910,120 +916,120 @@ public class DashboardController implements EventListener<Event> {
 					btn.setLabel(menu.getName());
 					components.add(btn);
 				}
-    		}
-    	}
+			}
+		}
 
-    	// Goal
-    	int PA_Goal_ID = dashboardContent.getPA_Goal_ID();
-    	if(PA_Goal_ID > 0)
-    	{
-            String goalDisplay = dashboardContent.getGoalDisplay();
-            MGoal goal = new MGoal(Env.getCtx(), PA_Goal_ID, null);
-            if(MDashboardContent.GOALDISPLAY_GaugeIndicator.equals(goalDisplay)) {
-            	WPerformanceIndicator.Options options = new WPerformanceIndicator.Options();
-            	options.colorMap = new HashMap<String, Color>();
-            	options.colorMap.put(WPerformanceIndicator.DIAL_BACKGROUND, new Color(224, 224, 224, 1));
-            	WPAWidget paWidget = new WPAWidget(goal, options, dashboardContent.isShowTitle());
-            	components.add(paWidget);
-            	spt.executeAsync(() -> LayoutUtils.addSclass("performance-gadget", parentComponent));
-            } else {
-            	//link to open performance detail
-            	Div div = new Div();
-            	Toolbarbutton link = new Toolbarbutton();
-            	if (ThemeManager.isUseFontIconForImage())
-            		link.setIconSclass("z-icon-Zoom");
-            	else
-            		link.setImage(ThemeManager.getThemeResource("images/Zoom16.png"));
-            	link.setAttribute("PA_Goal_ID", PA_Goal_ID);
-            	link.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
-            		public void onEvent(Event event) throws Exception {
-            			int PA_Goal_ID = (Integer)event.getTarget().getAttribute("PA_Goal_ID");
-            			MGoal goal = new MGoal(Env.getCtx(), PA_Goal_ID, null);
-            			new WPerformanceDetail(goal);
-            		}
-            	});
-            	div.appendChild(link);
-            	components.add(div);
-            	
-            	WGraph graph = new WGraph(goal, 55, false, true,
-	            		!(MDashboardContent.GOALDISPLAY_Chart.equals(goalDisplay)),
-	            		MDashboardContent.GOALDISPLAY_Chart.equals(goalDisplay));
-            	components.add(graph);
-            }
-    	}
+		// Goal
+		int PA_Goal_ID = dashboardContent.getPA_Goal_ID();
+		if(PA_Goal_ID > 0)
+		{
+			String goalDisplay = dashboardContent.getGoalDisplay();
+			MGoal goal = new MGoal(Env.getCtx(), PA_Goal_ID, null);
+			if(MDashboardContent.GOALDISPLAY_GaugeIndicator.equals(goalDisplay)) {
+				WPerformanceIndicator.Options options = new WPerformanceIndicator.Options();
+				options.colorMap = new HashMap<String, Color>();
+				options.colorMap.put(WPerformanceIndicator.DIAL_BACKGROUND, new Color(224, 224, 224, 1));
+				WPAWidget paWidget = new WPAWidget(goal, options, dashboardContent.isShowTitle());
+				components.add(paWidget);
+				spt.executeAsync(() -> LayoutUtils.addSclass("performance-gadget", parentComponent));
+			} else {
+				//link to open performance detail
+				Div div = new Div();
+				Toolbarbutton link = new Toolbarbutton();
+				if (ThemeManager.isUseFontIconForImage())
+					link.setIconSclass("z-icon-Zoom");
+				else
+					link.setImage(ThemeManager.getThemeResource("images/Zoom16.png"));
+				link.setAttribute("PA_Goal_ID", PA_Goal_ID);
+				link.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+					public void onEvent(Event event) throws Exception {
+						int PA_Goal_ID = (Integer)event.getTarget().getAttribute("PA_Goal_ID");
+						MGoal goal = new MGoal(Env.getCtx(), PA_Goal_ID, null);
+						new WPerformanceDetail(goal);
+					}
+				});
+				div.appendChild(link);
+				components.add(div);
 
-    	// Component created from ZUL file url
-    	if(zulComponent != null)
-    	{
-        	try {
-            	if (zulComponent instanceof Include)
-            		zulComponent = zulComponent.getFirstChild();
-            	
-            	if (zulComponent instanceof DashboardPanel)
-            	{
-                	DashboardPanel dashboardPanel = (DashboardPanel) zulComponent;
-                	if (!dashboardPanel.getChildren().isEmpty()) {
-                		components.add(dashboardPanel);
-                		addDashboardPanel(dashboardPanel);
-                	}
-            	}
-            	else
-            	{
-            		components.add(zulComponent);
-            	}
+				WGraph graph = new WGraph(goal, 55, false, true,
+						!(MDashboardContent.GOALDISPLAY_Chart.equals(goalDisplay)),
+						MDashboardContent.GOALDISPLAY_Chart.equals(goalDisplay));
+				components.add(graph);
+			}
+		}
+
+		// Component created from ZUL file url
+		if(zulComponent != null)
+		{
+			try {
+				if (zulComponent instanceof Include)
+					zulComponent = zulComponent.getFirstChild();
+
+				if (zulComponent instanceof DashboardPanel)
+				{
+					DashboardPanel dashboardPanel = (DashboardPanel) zulComponent;
+					if (!dashboardPanel.getChildren().isEmpty()) {
+						components.add(dashboardPanel);
+						addDashboardPanel(dashboardPanel);
+					}
+				}
+				else
+				{
+					components.add(zulComponent);
+				}
 			} catch (Exception e) {
 				throw new AdempiereException(e);
 			}
-    	}
-    	
-    	//chart
-    	final int AD_Chart_ID = dashboardContent.getAD_Chart_ID();
-    	if (AD_Chart_ID > 0) {
-    		final Div chartPanel = new Div();	        	
-    		chartPanel.setSclass("chart-gadget");
-    		final MChart chartModel = new MChart(Env.getCtx(), AD_Chart_ID, null);
-    		components.add(chartPanel);
-    		chartPanel.addEventListener(Events.ON_AFTER_SIZE, new EventListener<AfterSizeEvent>() {
+		}
+
+		//chart
+		final int AD_Chart_ID = dashboardContent.getAD_Chart_ID();
+		if (AD_Chart_ID > 0) {
+			final Div chartPanel = new Div();	        	
+			chartPanel.setSclass("chart-gadget");
+			final MChart chartModel = new MChart(Env.getCtx(), AD_Chart_ID, null);
+			components.add(chartPanel);
+			chartPanel.addEventListener(Events.ON_AFTER_SIZE, new EventListener<AfterSizeEvent>() {
 				@Override
 				public void onEvent(AfterSizeEvent event) throws Exception {
-	        		int width = event.getWidth()*90/100;
-	        		int height = event.getHeight();
-	        		//set normal height
-	        		if (height == 0) {
-	        			height = width * 85 / 100;
-	        			chartPanel.setHeight(height+"px");
-	        		}
-	        		chartPanel.getChildren().clear();
-	        		ChartModel model = new ChartModel();
-	        		model.chart = chartModel;
-	        		renderChart(chartPanel, width, height, model, dashboardContent.isShowTitle());
+					int width = event.getWidth()*90/100;
+					int height = event.getHeight();
+					//set normal height
+					if (height == 0) {
+						height = width * 85 / 100;
+						chartPanel.setHeight(height+"px");
+					}
+					chartPanel.getChildren().clear();
+					ChartModel model = new ChartModel();
+					model.chart = chartModel;
+					renderChart(chartPanel, width, height, model, dashboardContent.isShowTitle());
 				}
 			});
-    	}
-    	
-    	// Status Line
-    	final int AD_StatusLine_ID = dashboardContent.getAD_StatusLine_ID();
-    	if(AD_StatusLine_ID > 0) {
-    		MStatusLine sl = new MStatusLine(Env.getCtx(), AD_StatusLine_ID, null);
-    		final Html statusLineHtml = new Html();
-    		statusLineHtml.setContent(sl.parseLine(0));
-    		Div div = new Div();
-    		if (sl.getAD_Style_ID() > 0) {
-	    		MStyle style = MStyle.get(sl.getAD_Style_ID());
+		}
+
+		// Status Line
+		final int AD_StatusLine_ID = dashboardContent.getAD_StatusLine_ID();
+		if(AD_StatusLine_ID > 0) {
+			MStatusLine sl = new MStatusLine(Env.getCtx(), AD_StatusLine_ID, null);
+			final Html statusLineHtml = new Html();
+			statusLineHtml.setContent(sl.parseLine(0));
+			Div div = new Div();
+			if (sl.getAD_Style_ID() > 0) {
+				MStyle style = MStyle.get(sl.getAD_Style_ID());
 				String css = style.buildStyle(ThemeManager.getTheme(), new DefaultEvaluatee(), false);				
 				if (!Util.isEmpty(css, true)) {
 					Style htmlStyle = new Style();
 					htmlStyle.setContent("@scope {\n"+css+"\n}\n");
 					div.appendChild(htmlStyle);
 				}			
-    		}
-    		div.appendChild(statusLineHtml);
-    		div.setSclass("statusline-gadget");
-    		components.add(div);
-    		spt.executeAsync(() -> LayoutUtils.addSclass("statusline-wrapper", ((HtmlBasedComponent) parentComponent.getParent())));
-    	}
+			}
+			div.appendChild(statusLineHtml);
+			div.setSclass("statusline-gadget");
+			components.add(div);
+			spt.executeAsync(() -> LayoutUtils.addSclass("statusline-wrapper", ((HtmlBasedComponent) parentComponent.getParent())));
+		}
 	}
-	
+
 	/**
 	 * Synchronous render of gadget content in foreground UI (Event Listener) thread
 	 * @param content must be an instanceof {@link HtmlBasedComponent}
@@ -1036,11 +1042,11 @@ public class DashboardController implements EventListener<Event> {
 		List<Component> components = new ArrayList<>();
 		Component zulComponent = null;
 		if (!Util.isEmpty(dashboardContent.getZulFilePath(), true)) {
-        	try {	        	        		
-        		zulComponent = Extensions.getDashboardGadget(dashboardContent.getZulFilePath(), content, dashboardContent);
-        	} catch (Exception e) {
-        		throw new AdempiereException(e);
-        	}
+			try {	        	        		
+				zulComponent = Extensions.getDashboardGadget(dashboardContent.getZulFilePath(), content, dashboardContent);
+			} catch (Exception e) {
+				throw new AdempiereException(e);
+			}
 		}
 		ServerPushTemplate spt = new ServerPushTemplate(content.getDesktop());
 		HtmlBasedComponent parentComponent = (HtmlBasedComponent) content;
@@ -1062,10 +1068,10 @@ public class DashboardController implements EventListener<Event> {
 				}
 			}
 		}
-		
-    	return !empty;
+
+		return !empty;
 	}
-	
+
 	/**
 	 * Add onDrillAcross, onZoom and onDrillDown Event Listener to component
 	 * @param processID AD_Process_ID
@@ -1112,7 +1118,7 @@ public class DashboardController implements EventListener<Event> {
 			}
 		});
 	}
-	
+
 	/**
 	 * 	Execute Drill to Query
 	 * 	@param query MQuery
@@ -1132,180 +1138,180 @@ public class DashboardController implements EventListener<Event> {
 	@Override
 	public void onEvent(Event event) throws Exception {
 		Component comp = event.getTarget();
-        String eventName = event.getName();
-        String layoutOrientation = MSysConfig.getValue(MSysConfig.DASHBOARD_LAYOUT_ORIENTATION, Env.getAD_Client_ID(Env.getCtx()));
-        
-        if(!layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS) && !layoutOrientation.equals(DASHBOARD_LAYOUT_COLUMNS))
-        	layoutOrientation = DASHBOARD_LAYOUT_COLUMNS;
-        
+		String eventName = event.getName();
+		String layoutOrientation = MSysConfig.getValue(MSysConfig.DASHBOARD_LAYOUT_ORIENTATION, Env.getAD_Client_ID(Env.getCtx()));
+
+		if(!layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS) && !layoutOrientation.equals(DASHBOARD_LAYOUT_COLUMNS))
+			layoutOrientation = DASHBOARD_LAYOUT_COLUMNS;
+
 		if (event instanceof MaximizeEvent)
 		{
 			MaximizeEvent me = (MaximizeEvent) event;
 			Panel panel = (Panel) event.getTarget();
-	    	if (me.isMaximized()) {
-	    		prevParent = panel.getParent();
-	    		prevNext = panel.getNextSibling();
-	    		panel.detach();
-	    		if(columnList != null) {
-		    		for (Anchorchildren anchorChildren : columnList) {
-		    			anchorChildren.detach();
-		    		}
-	    		}
-	    		else {
-	    			for (Anchorchildren anchorChildren : rowList) {
-		    			anchorChildren.detach();
-		    		}
-	    		}
-	    		dashboardLayout.appendChild(maximizedHolder);
-	    		maximizedHolder.appendChild(panel);
-	    		panel.setSclass("dashboard-widget dashboard-widget-max");
-	    	} else {
-	    		maximizedHolder.detach();
-	    		panel.detach();
-	    		prevParent.insertBefore(panel, prevNext);
-	    		if(columnList != null) {
-		    		for (Anchorchildren anchorChildren : columnList) {
-		    			dashboardLayout.appendChild(anchorChildren);
-		    		}
-	    		}
-	    		else {
-	    			for (Anchorchildren anchorChildren : rowList) {
-		    			dashboardLayout.appendChild(anchorChildren);
-		    		}
-	    		}
-	    		panel.setSclass("dashboard-widget");
-	    		//following 2 line needed for restore to size the panel correctly
+			if (me.isMaximized()) {
+				prevParent = panel.getParent();
+				prevNext = panel.getNextSibling();
+				panel.detach();
+				if(columnList != null) {
+					for (Anchorchildren anchorChildren : columnList) {
+						anchorChildren.detach();
+					}
+				}
+				else {
+					for (Anchorchildren anchorChildren : rowList) {
+						anchorChildren.detach();
+					}
+				}
+				dashboardLayout.appendChild(maximizedHolder);
+				maximizedHolder.appendChild(panel);
+				panel.setSclass("dashboard-widget dashboard-widget-max");
+			} else {
+				maximizedHolder.detach();
+				panel.detach();
+				prevParent.insertBefore(panel, prevNext);
+				if(columnList != null) {
+					for (Anchorchildren anchorChildren : columnList) {
+						dashboardLayout.appendChild(anchorChildren);
+					}
+				}
+				else {
+					for (Anchorchildren anchorChildren : rowList) {
+						dashboardLayout.appendChild(anchorChildren);
+					}
+				}
+				panel.setSclass("dashboard-widget");
+				//following 2 line needed for restore to size the panel correctly
 				ZKUpdateUtil.setHflex(panel, (String)panel.getAttribute(FLEX_GROW_ATTRIBUTE));
 				ZKUpdateUtil.setHeight(panel, "100%");
-				
+
 				//notify panel content component
 				if (panel.getPanelchildren() != null) {
 					panel.getPanelchildren().getChildren().forEach(child -> {
 						Executions.schedule(dashboardLayout.getDesktop(), e -> Events.postEvent(child, event), new Event("onPostRestore"));
 					});
 				}
-	    	}
+			}
 		}
 		else if(eventName.equals(Events.ON_CLICK))
-        {
-            if(comp instanceof ToolBarButton)
-            {
-            	ToolBarButton btn = (ToolBarButton) comp;
-            	
-            	if (btn.getAttribute("AD_Menu_ID") != null)
-            	{
-	            	int menuId = (Integer)btn.getAttribute("AD_Menu_ID");
-	            	if(menuId > 0) SessionManager.getAppDesktop().onMenuSelected(menuId);
-            	}
-            	else if (btn.getAttribute("AD_Process_ID") != null)
-            	{
-            		int processId = (Integer)btn.getAttribute("AD_Process_ID");
-            		String parameters = (String)btn.getAttribute("ProcessParameters");
-            		int printFormatId = (Integer)btn.getAttribute("AD_PrintFormat_ID");
-            		if (processId > 0)
-            			openReportInViewer(processId, printFormatId, parameters);
-            	}
-            }else if(comp instanceof A)
-            {	
+		{
+			if(comp instanceof ToolBarButton)
+			{
+				ToolBarButton btn = (ToolBarButton) comp;
+
+				if (btn.getAttribute("AD_Menu_ID") != null)
+				{
+					int menuId = (Integer)btn.getAttribute("AD_Menu_ID");
+					if(menuId > 0) SessionManager.getAppDesktop().onMenuSelected(menuId);
+				}
+				else if (btn.getAttribute("AD_Process_ID") != null)
+				{
+					int processId = (Integer)btn.getAttribute("AD_Process_ID");
+					String parameters = (String)btn.getAttribute("ProcessParameters");
+					int printFormatId = (Integer)btn.getAttribute("AD_PrintFormat_ID");
+					if (processId > 0)
+						openReportInViewer(processId, printFormatId, parameters);
+				}
+			}else if(comp instanceof A)
+			{	
 				String name = comp.getAttribute("title").toString();
 				String description = comp.getAttribute("description")!=null ? comp.getAttribute("description").toString() : null;
 				String help = comp.getAttribute("help")!=null ? comp.getAttribute("help").toString() : null;
-            	SessionManager.getAppDesktop().updateHelpTooltip(name, description, help, null, null);
-            }
-        }
+				SessionManager.getAppDesktop().updateHelpTooltip(name, description, help, null, null);
+			}
+		}
 		else if (eventName.equals(Events.ON_DROP))
 		{
 			DropEvent de = (DropEvent) event;
-    		Component dragged = de.getDragged();
-        	
-    		if(dragged instanceof Caption)
-    		{
-    			Caption caption = (Caption) dragged;
-       			Panel panel = null;
-       			if (caption.getParent() instanceof Panel)
-       				panel = (Panel) caption.getParent();
+			Component dragged = de.getDragged();
 
-       			if (panel == null)
-    				;
-       			else if(comp instanceof Panel)
-	        	{
-	        		Panel target = (Panel) comp;
-	
-	        		boolean isParentHVlayout = false;
-	        		if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS))
-	        			isParentHVlayout = target.getParent() instanceof Hlayout;
-	        		else
-	        			isParentHVlayout = target.getParent() instanceof Vlayout;
-	        		
-        			if (target.getParent() != null && isParentHVlayout)
-        			{
-        				Component dashboardColumnLayout;
-        				if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS)) {
-        					dashboardColumnLayout = (Hlayout) target.getParent();
-        					List<Component> children = dashboardColumnLayout.getParent().getChildren();
-        					if(children != null && (children.size() >= MAX_NO_OF_PREFS_IN_ROW))
-        						return;
-        				}
-        				else
-        					dashboardColumnLayout = (Vlayout) target.getParent();
-        				Component prevParent = panel.getParent();
-        				dashboardColumnLayout.insertBefore(panel, target);        				
-        				saveDashboardPreference(dashboardColumnLayout, prevParent);
-        			}        			
-	        	}
-	        	else if (comp instanceof Anchorchildren)
-	        	{
-	        		Anchorchildren target = (Anchorchildren) comp; 	
-	        		
-	        		boolean isFirstChildHVlayout = false;
-	        		if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS)) {
-	        			isFirstChildHVlayout = target.getFirstChild() instanceof Hlayout;
-	        			List<Component> children = target.getChildren();
-	        			if(children != null && (children.size() >= MAX_NO_OF_PREFS_IN_ROW))
-    						return;
-	        		}
-	        		else
-	        			isFirstChildHVlayout = target.getFirstChild() instanceof Vlayout;
-	        		
-        			if (target.getFirstChild() != null && isFirstChildHVlayout)
-        			{
-        				Component dashboardColumnLayout;
-        				if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS))
-        					dashboardColumnLayout = (Hlayout) target.getFirstChild();
-        				else
-        					dashboardColumnLayout = (Vlayout) target.getFirstChild();
-        				Component prevParent = panel.getParent();
-        				dashboardColumnLayout.appendChild(panel);
-        				saveDashboardPreference(dashboardColumnLayout, prevParent);
-        			}
-	        	}
-    		}
+			if(dragged instanceof Caption)
+			{
+				Caption caption = (Caption) dragged;
+				Panel panel = null;
+				if (caption.getParent() instanceof Panel)
+					panel = (Panel) caption.getParent();
+
+				if (panel == null)
+					;
+				else if(comp instanceof Panel)
+				{
+					Panel target = (Panel) comp;
+
+					boolean isParentHVlayout = false;
+					if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS))
+						isParentHVlayout = target.getParent() instanceof Hlayout;
+					else
+						isParentHVlayout = target.getParent() instanceof Vlayout;
+
+					if (target.getParent() != null && isParentHVlayout)
+					{
+						Component dashboardColumnLayout;
+						if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS)) {
+							dashboardColumnLayout = (Hlayout) target.getParent();
+							List<Component> children = dashboardColumnLayout.getParent().getChildren();
+							if(children != null && (children.size() >= MAX_NO_OF_PREFS_IN_ROW))
+								return;
+						}
+						else
+							dashboardColumnLayout = (Vlayout) target.getParent();
+						Component prevParent = panel.getParent();
+						dashboardColumnLayout.insertBefore(panel, target);        				
+						saveDashboardPreference(dashboardColumnLayout, prevParent);
+					}        			
+				}
+				else if (comp instanceof Anchorchildren)
+				{
+					Anchorchildren target = (Anchorchildren) comp; 	
+
+					boolean isFirstChildHVlayout = false;
+					if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS)) {
+						isFirstChildHVlayout = target.getFirstChild() instanceof Hlayout;
+						List<Component> children = target.getChildren();
+						if(children != null && (children.size() >= MAX_NO_OF_PREFS_IN_ROW))
+							return;
+					}
+					else
+						isFirstChildHVlayout = target.getFirstChild() instanceof Vlayout;
+
+					if (target.getFirstChild() != null && isFirstChildHVlayout)
+					{
+						Component dashboardColumnLayout;
+						if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS))
+							dashboardColumnLayout = (Hlayout) target.getFirstChild();
+						else
+							dashboardColumnLayout = (Vlayout) target.getFirstChild();
+						Component prevParent = panel.getParent();
+						dashboardColumnLayout.appendChild(panel);
+						saveDashboardPreference(dashboardColumnLayout, prevParent);
+					}
+				}
+			}
 		}
 		else if (eventName.equals(Events.ON_OPEN))
 		{
 			if(comp instanceof Panel)
-    		{
-    			Panel panel = (Panel) comp;
-    			Object value = panel.getAttribute(MDashboardPreference.COLUMNNAME_PA_DashboardPreference_ID);
-    			if (value != null)
-    			{
-    				int PA_DashboardPreference_ID = Integer.parseInt(value.toString());
-    				MDashboardPreference preference = new MDashboardPreference(Env.getCtx(), PA_DashboardPreference_ID, null);
-    				preference.setIsCollapsedByDefault(!panel.isOpen());
+			{
+				Panel panel = (Panel) comp;
+				Object value = panel.getAttribute(MDashboardPreference.COLUMNNAME_PA_DashboardPreference_ID);
+				if (value != null)
+				{
+					int PA_DashboardPreference_ID = Integer.parseInt(value.toString());
+					MDashboardPreference preference = new MDashboardPreference(Env.getCtx(), PA_DashboardPreference_ID, null);
+					preference.setIsCollapsedByDefault(!panel.isOpen());
 					if (!preference.saveCrossTenantSafe())
 						logger.log(Level.SEVERE, "Failed to save dashboard preference " + preference.toString());
-    			}
-    			
-    			//notify panel content component
-    			if (panel.getPanelchildren() != null) {
-    				for(Component c : panel.getPanelchildren().getChildren()) {
-    					Events.postEvent(c, event);
-    				}
-    			}
-    		}
+				}
+
+				//notify panel content component
+				if (panel.getPanelchildren() != null) {
+					for(Component c : panel.getPanelchildren().getChildren()) {
+						Events.postEvent(c, event);
+					}
+				}
+			}
 		}
 	}
-	
+
 	/**
 	 * Create Fill Mandatory Process Parameters error label for the reports in dashboard
 	 * @return Div
@@ -1313,14 +1319,14 @@ public class DashboardController implements EventListener<Event> {
 	private Div createFillMandatoryLabel(MDashboardContent dc) {
 		Div wrapper = new Div();
 		wrapper.setSclass("fill-mandatory-process-para-wrapper");
-		
+
 		Div msgText = new Div();
 		msgText.appendChild(new Text(Msg.getMsg(Env.getCtx(), "FillMandatoryParametersDashboard", new Object[] {dc.getEmptyMandatoryProcessPara()})));
 		LayoutUtils.addSclass("fill-mandatory-process-para-text", msgText);
 		wrapper.appendChild(msgText);
 		return wrapper;
 	}
-	
+
 	/**
 	 * Create and save dashboard preference (MDashboardPreference) to DB.
 	 * @param AD_User_ID
@@ -1340,12 +1346,12 @@ public class DashboardController implements EventListener<Event> {
 			preference.setIsShowInDashboard(dc.isShowInDashboard());
 			preference.setLine(dc.getLine());
 			preference.setPA_DashboardContent_ID(dc.getPA_DashboardContent_ID());
-			
+
 			if (!preference.save())
 				logger.log(Level.SEVERE, "Failed to create dashboard preference " + preference.toString());
 		}
 	}
-	
+
 	/**
 	 * Update dashboard preference (MDashboardPreference) in DB.
 	 * @param dps
@@ -1356,7 +1362,7 @@ public class DashboardController implements EventListener<Event> {
 	private boolean updatePreferences(MDashboardPreference[] dps,MDashboardContent[] dcs, Properties ctx) {
 		boolean change = false;
 		for (int i = 0; i < dcs.length; i++) {
-			
+
 			boolean isNew = true;
 			for (int j = 0; j < dps.length; j++) {
 				if (dps[j].getPA_DashboardContent_ID() == dcs[i].getPA_DashboardContent_ID()) {
@@ -1392,7 +1398,7 @@ public class DashboardController implements EventListener<Event> {
 		}
 		return change;
 	}
-	
+
 	/**
 	 * Save dashboard preference (MDashboardPreference) to DB.
 	 * @param layout
@@ -1406,12 +1412,12 @@ public class DashboardController implements EventListener<Event> {
 			if (value != null)
 			{
 				int columnNo = Integer.parseInt(value.toString());
-				
+
 				value = layout.getAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE);
 				if (value != null)
 				{
 					boolean isShowInDashboard = Boolean.parseBoolean(value.toString());
-							
+
 					List<Component> children = layout.getChildren();
 					int counter = 0;
 					for (Component child : children)
@@ -1420,21 +1426,21 @@ public class DashboardController implements EventListener<Event> {
 						{
 							Panel panel = (Panel) child;
 							value = panel.getAttribute(MDashboardPreference.COLUMNNAME_PA_DashboardPreference_ID);
-			    			if (value != null)
-			    			{
-			    				++counter;
-			    				
-			    				int PA_DashboardPreference_ID = Integer.parseInt(value.toString());
-			    				MDashboardPreference preference = new MDashboardPreference(Env.getCtx(), PA_DashboardPreference_ID, null);
-			    				preference.setColumnNo(columnNo);
-			    				preference.setLine(new BigDecimal(counter * 10));
-			    				preference.setIsShowInDashboard(isShowInDashboard);
-			    				if (!preference.save())
-			    					logger.log(Level.SEVERE, "Failed to save dashboard preference " + preference.toString());
-			    			}
+							if (value != null)
+							{
+								++counter;
+
+								int PA_DashboardPreference_ID = Integer.parseInt(value.toString());
+								MDashboardPreference preference = new MDashboardPreference(Env.getCtx(), PA_DashboardPreference_ID, null);
+								preference.setColumnNo(columnNo);
+								preference.setLine(new BigDecimal(counter * 10));
+								preference.setIsShowInDashboard(isShowInDashboard);
+								if (!preference.save())
+									logger.log(Level.SEVERE, "Failed to save dashboard preference " + preference.toString());
+							}
 						}
 					}
-					
+
 					if (isShowInDashboard)
 					{
 						value = layout.getAttribute(IS_ADDITIONAL_COLUMN_ATTRIBUTE);
@@ -1444,59 +1450,59 @@ public class DashboardController implements EventListener<Event> {
 							if (isAdditionalColumn)
 							{
 								layout.setAttribute(IS_ADDITIONAL_COLUMN_ATTRIBUTE, false);
-								
+
 								int noOfCols = columnList.size(); 
-					        	int dashboardWidth = DEFAULT_DASHBOARD_WIDTH;
-					            int width = noOfCols <= 0 ? dashboardWidth : dashboardWidth / noOfCols;
-					            int extraWidth = 100 - (noOfCols <= 0 ? dashboardWidth : width * noOfCols) - (100 - dashboardWidth - 1);
-								
+								int dashboardWidth = DEFAULT_DASHBOARD_WIDTH;
+								int width = noOfCols <= 0 ? dashboardWidth : dashboardWidth / noOfCols;
+								int extraWidth = 100 - (noOfCols <= 0 ? dashboardWidth : width * noOfCols) - (100 - dashboardWidth - 1);
+
 								for (Anchorchildren column : columnList)
 									column.setAnchor(width + "%" + " 100%");
-	
+
 								// additional column
 								Vlayout dashboardColumnLayout = new Vlayout();
 								dashboardColumnLayout.setAttribute(COLUMN_NO_ATTRIBUTE, columnNo + 1);
 								dashboardColumnLayout.setAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE, isShowInDashboard);
 								dashboardColumnLayout.setAttribute(IS_ADDITIONAL_COLUMN_ATTRIBUTE, true);
-				        		Anchorchildren dashboardColumn = new Anchorchildren();
-				        		dashboardColumn.setAnchor(extraWidth + "% 100%");
-				        		if (!ClientInfo.isMobile()) {
-				        			dashboardColumn.setDroppable("true");
-				        			dashboardColumn.addEventListener(Events.ON_DROP, this);
-				        		}
-				        		dashboardColumn.appendChild(dashboardColumnLayout);
-				        		columnList.add(dashboardColumn);
-				                dashboardLayout.appendChild(dashboardColumn);
-				                ZKUpdateUtil.setWidth(dashboardColumnLayout, "100%");
-				                
-				                dashboardLayout.invalidate();			                
+								Anchorchildren dashboardColumn = new Anchorchildren();
+								dashboardColumn.setAnchor(extraWidth + "% 100%");
+								if (!ClientInfo.isMobile()) {
+									dashboardColumn.setDroppable("true");
+									dashboardColumn.addEventListener(Events.ON_DROP, this);
+								}
+								dashboardColumn.appendChild(dashboardColumnLayout);
+								columnList.add(dashboardColumn);
+								dashboardLayout.appendChild(dashboardColumn);
+								ZKUpdateUtil.setWidth(dashboardColumnLayout, "100%");
+
+								dashboardLayout.invalidate();			                
 							}
 						}
 					}
-					
-	                if (!dashboardRunnable.isEmpty())
-	                	dashboardRunnable.refreshDashboard(false);
+
+					if (!dashboardRunnable.isEmpty())
+						dashboardRunnable.refreshDashboard(false);
 				}
 			}
 		}
 		else {
-			
+
 			// detach row if empty
 			if(prevLayout != null) {
 				if((prevLayout.getChildren() == null) || (prevLayout.getChildren().size() <= 0))
 					prevLayout.getParent().detach();
 			}
-			
+
 			Object value = layout.getAttribute(LINE_ATTRIBUTE);
 			if (value != null)
 			{
 				int lineNo = Integer.parseInt(value.toString());
-				
+
 				value = layout.getAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE);
 				if (value != null)
 				{
 					boolean isShowInDashboard = Boolean.parseBoolean(value.toString());
-							
+
 					List<Component> children = layout.getChildren();
 					int counter = 0;
 					for (Component child : children)
@@ -1505,23 +1511,23 @@ public class DashboardController implements EventListener<Event> {
 						{
 							Panel panel = (Panel) child;
 							value = panel.getAttribute(MDashboardPreference.COLUMNNAME_PA_DashboardPreference_ID);
-			    			if (value != null)
-			    			{
-			    				int PA_DashboardPreference_ID = Integer.parseInt(value.toString());
-			    				MDashboardPreference preference = new MDashboardPreference(Env.getCtx(), PA_DashboardPreference_ID, null);
-			    				preference.setColumnNo(counter++);
-			    				preference.setLine(new BigDecimal(lineNo));
-			    				preference.setIsShowInDashboard(isShowInDashboard);
-			    				if (!preference.save())
-			    					logger.log(Level.SEVERE, "Failed to save dashboard preference " + preference.toString());
-			    				if(layout instanceof Hlayout) {
-			    					int flexGrow = (flexGrow = preference.getFlexGrow()) > 0 ? flexGrow : DEFAULT_FLEX_GROW;
-			    					ZKUpdateUtil.setHflex(panel, String.valueOf(flexGrow));
-			    				}
-			    			}
+							if (value != null)
+							{
+								int PA_DashboardPreference_ID = Integer.parseInt(value.toString());
+								MDashboardPreference preference = new MDashboardPreference(Env.getCtx(), PA_DashboardPreference_ID, null);
+								preference.setColumnNo(counter++);
+								preference.setLine(new BigDecimal(lineNo));
+								preference.setIsShowInDashboard(isShowInDashboard);
+								if (!preference.save())
+									logger.log(Level.SEVERE, "Failed to save dashboard preference " + preference.toString());
+								if(layout instanceof Hlayout) {
+									int flexGrow = (flexGrow = preference.getFlexGrow()) > 0 ? flexGrow : DEFAULT_FLEX_GROW;
+									ZKUpdateUtil.setHflex(panel, String.valueOf(flexGrow));
+								}
+							}
 						}
 					}
-					
+
 					if (isShowInDashboard)
 					{
 						value = layout.getAttribute(IS_ADDITIONAL_ROW_ATTRIBUTE);
@@ -1537,62 +1543,62 @@ public class DashboardController implements EventListener<Event> {
 									anchorCh.detach();
 									anchorCh = new Anchorchildren("100%");
 									ZKUpdateUtil.setHflex(anchorCh, "min");
-					        		if (!ClientInfo.isMobile())
-					        		{
-					        			anchorCh.setDroppable("true");
-					        			anchorCh.addEventListener(Events.ON_DROP, this);
-					        		}
-					        		rowList.add(anchorCh);
+									if (!ClientInfo.isMobile())
+									{
+										anchorCh.setDroppable("true");
+										anchorCh.addEventListener(Events.ON_DROP, this);
+									}
+									rowList.add(anchorCh);
 									anchorCh.appendChild(layout);
 									parent.appendChild(anchorCh);
 								}
 								layout.setAttribute(IS_ADDITIONAL_ROW_ATTRIBUTE, false);
-					            int width = 100;
-					            
+								int width = 100;
+
 								// additional row
 								Hlayout dashboardLineLayout = new Hlayout();
-				            	ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
+								ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
 								dashboardLineLayout.setAttribute(LINE_ATTRIBUTE, lineNo + 1);
 								dashboardLineLayout.setAttribute(IS_SHOW_IN_DASHBOARD_ATTRIBUTE, isShowInDashboard);
 								dashboardLineLayout.setAttribute(IS_ADDITIONAL_ROW_ATTRIBUTE, true);
-				        		dashboardLineLayout.setSclass("dashboard-row");
-				        		Anchorchildren dashboardLine = new Anchorchildren();
-				        		dashboardLine.setAnchor(width + "% 1%");
-				        		ZKUpdateUtil.setHflex(dashboardLine, "min");
-				        		if (!ClientInfo.isMobile())
-				        		{
-				        			dashboardLine.setDroppable("true");
-				        			dashboardLine.addEventListener(Events.ON_DROP, this);
-				        		}
-				        		dashboardLine.appendChild(dashboardLineLayout);
-				        		rowList.add(dashboardLine);
-				                dashboardLayout.appendChild(dashboardLine);
-				                ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
-				                ZKUpdateUtil.setHflex(dashboardLineLayout, "1");
+								dashboardLineLayout.setSclass("dashboard-row");
+								Anchorchildren dashboardLine = new Anchorchildren();
+								dashboardLine.setAnchor(width + "% 1%");
+								ZKUpdateUtil.setHflex(dashboardLine, "min");
+								if (!ClientInfo.isMobile())
+								{
+									dashboardLine.setDroppable("true");
+									dashboardLine.addEventListener(Events.ON_DROP, this);
+								}
+								dashboardLine.appendChild(dashboardLineLayout);
+								rowList.add(dashboardLine);
+								dashboardLayout.appendChild(dashboardLine);
+								ZKUpdateUtil.setWidth(dashboardLineLayout, "100%");
+								ZKUpdateUtil.setHflex(dashboardLineLayout, "1");
 							}
 						}
 					}
-					
-	                if (!dashboardRunnable.isEmpty())
-	                	dashboardRunnable.refreshDashboard(false);
+
+					if (!dashboardRunnable.isEmpty())
+						dashboardRunnable.refreshDashboard(false);
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * @param page
 	 * @param desktop
 	 */
 	public void onSetPage(Page page, Desktop desktop) {
 		if (dashboardTimer != null) {
-			
+
 			DashboardRunnable tmp = dashboardRunnable;			
 			dashboardRunnable = new DashboardRunnable(tmp, desktop);
 			dashboardTimer.setPage(page);
 		}
 	}
-	
+
 	/**
 	 * clean up for logout
 	 */
@@ -1617,7 +1623,7 @@ public class DashboardController implements EventListener<Event> {
 			dashboardRunnable.add(dashboardPanel);
 		}
 	}
-	
+
 	/**
 	 * Strip &lt;html&gt;, &lt;body&gt; and &lt;head&gt; tag
 	 * @param htmlString
@@ -1626,20 +1632,20 @@ public class DashboardController implements EventListener<Event> {
 	 */
 	private String stripHtml(String htmlString, boolean all) {
 		htmlString = htmlString
-		.replace("<html>", "")
-		.replace("</html>", "")
-		.replace("<body>", "")
-		.replace("</body>", "")
-		.replace("<head>", "")
-		.replace("</head>", "");
-		
+				.replace("<html>", "")
+				.replace("</html>", "")
+				.replace("<body>", "")
+				.replace("</body>", "")
+				.replace("<head>", "")
+				.replace("</head>", "");
+
 		if (all)
 			htmlString = htmlString
 			.replace(">", "&gt;")
 			.replace("<", "&lt;");
 		return htmlString;
 	}
-		
+
 	/**
 	 * Run report
 	 * @param AD_Process_ID
@@ -1648,10 +1654,10 @@ public class DashboardController implements EventListener<Event> {
 	 * @return {@link ReportEngine}
 	 */
 	private ReportEngine runReport(int AD_Process_ID, int AD_PrintFormat_ID, String parameters) {
-   		MProcess process = MProcess.get(Env.getCtx(), AD_Process_ID);
+		MProcess process = MProcess.get(Env.getCtx(), AD_Process_ID);
 		if (!process.isReport() || process.getAD_ReportView_ID() == 0)
-			 throw new IllegalArgumentException("Not a Report AD_Process_ID=" + process.getAD_Process_ID()
-				+ " - " + process.getName());
+			throw new IllegalArgumentException("Not a Report AD_Process_ID=" + process.getAD_Process_ID()
+			+ " - " + process.getName());
 		//	Process
 		MPInstance pInstance = new MPInstance(Env.getCtx(), AD_Process_ID, 0, 0, null);
 		if(AD_PrintFormat_ID > 0)
@@ -1668,19 +1674,19 @@ public class DashboardController implements EventListener<Event> {
 			pi.setAD_PInstance_ID(pInstance.getAD_PInstance_ID());		
 			if (!process.processIt(pi, null) && pi.getClassName() != null) 
 				throw new IllegalStateException("Process failed: (" + pi.getClassName() + ") " + pi.getSummary());
-		
+
 			//	Report
 			ReportEngine re = ReportEngine.get(Env.getCtx(), pi);
 			if (re == null)
 				throw new IllegalStateException("Cannot create Report AD_Process_ID=" + process.getAD_Process_ID()
-					+ " - " + process.getName());
+				+ " - " + process.getName());
 			return re;
 		}
 		finally {			
 			pInstance.setIsProcessing(false);
 			pInstance.saveEx();
 		}
-		
+
 	}
 
 	/**
@@ -1700,7 +1706,7 @@ public class DashboardController implements EventListener<Event> {
 			file = runJasperReport(process, parameters, AD_PrintFormat_ID);
 			return new ReportData(new AMedia(process.getName(), "html", "text/html", file, false), -1);
 		}
-			
+
 		ReportEngine re = runReport(AD_Process_ID, AD_PrintFormat_ID, parameters);
 		if(re == null)
 			return null;
@@ -1718,7 +1724,7 @@ public class DashboardController implements EventListener<Event> {
 			if(!fillParameter(pInstance, parameters))
 				return null;
 			//
-				
+
 			ProcessInfo pi = new ProcessInfo (process.getName(), process.getAD_Process_ID(), 0, 0);
 			pi.setExport(true);
 			pi.setExportFileExtension("html");
@@ -1729,10 +1735,10 @@ public class DashboardController implements EventListener<Event> {
 				MPrintFormat format = new MPrintFormat(Env.getCtx(), AD_PrintFormat_ID, null);
 				pi.setTransientObject(format);
 			}
-		
+
 			//	Report
 			ServerProcessCtl.process(pi, null);
-			
+
 			return pi.getExportFile();
 		}catch(Exception ex) {
 			throw new IllegalStateException("Cannot create Report AD_Process_ID=" + process.getAD_Process_ID()
@@ -1746,17 +1752,17 @@ public class DashboardController implements EventListener<Event> {
 	 * @param AD_PrintFormat_ID
 	 * @param parameters
 	 */
-   	protected void openReportInViewer(int AD_Process_ID, int AD_PrintFormat_ID, String parameters) {
-   		ReportEngine re = runReport(AD_Process_ID, AD_PrintFormat_ID, parameters);
-   		new ZkReportViewerProvider().openViewer(re);
-   	}
+	protected void openReportInViewer(int AD_Process_ID, int AD_PrintFormat_ID, String parameters) {
+		ReportEngine re = runReport(AD_Process_ID, AD_PrintFormat_ID, parameters);
+		new ZkReportViewerProvider().openViewer(re);
+	}
 
-   	/**
-   	 * Fill Parameters
-   	 * @param pInstance
-   	 * @param parameters
-   	 * @return true if the parameters were filled successfully 
-   	 */
+	/**
+	 * Fill Parameters
+	 * @param pInstance
+	 * @param parameters
+	 * @return true if the parameters were filled successfully 
+	 */
 	private boolean fillParameter(MPInstance pInstance, String parameters) {	
 		MProcessPara[] processParams = pInstance.getProcessParameters();
 		if (parameters != null && parameters.trim().length() > 0) {
@@ -1766,9 +1772,9 @@ public class DashboardController implements EventListener<Event> {
 				MPInstancePara iPara = new MPInstancePara (pInstance, processParams[pi].getSeqNo());
 				iPara.setParameterName(processParams[pi].getColumnName());
 				iPara.setInfo(processParams[pi].getName());
-				
+
 				MProcessPara sPara = processParams[pi];
-				
+
 				String variable = paramMap.get(iPara.getParameterName());
 
 				if (Util.isEmpty(variable, true)) {
@@ -1782,133 +1788,133 @@ public class DashboardController implements EventListener<Event> {
 
 				for (String paramValue : variable.split(";")) {
 
-					 //				Value - Constant/Variable
-					 Object value = paramValue;
-					 if (paramValue == null
-							 || (paramValue != null && paramValue.length() == 0))
-						 value = null;
-					 else if (paramValue.startsWith(MColumn.VIRTUAL_UI_COLUMN_PREFIX)) {
-						 String sql = paramValue.substring(5);
-						 sql = Env.parseContext(Env.getCtx(), 0, sql, false, false);	//	replace variables
-						 if (!Util.isEmpty(sql)) {
-							 PreparedStatement stmt = null;
-							 ResultSet rs = null;
-							 try {
-								 stmt = DB.prepareStatement(sql, null);
-								 rs = stmt.executeQuery();
-								 if (rs.next()) {
-									 if (   DisplayType.isNumeric(iPara.getDisplayType()) 
-										 || DisplayType.isID(iPara.getDisplayType()))
-										 value = rs.getBigDecimal(1);
-									 else if (DisplayType.isDate(iPara.getDisplayType()))
-										 value = rs.getTimestamp(1);
-									 else
-										 value = rs.getString(1);
-								 } else {
-									 if (logger.isLoggable(Level.INFO))
-										 logger.log(Level.INFO, "(" + iPara.getParameterName() + ") - no Result: " + sql);
-								 }
-							 }
-							 catch (SQLException e) {
-								 logger.log(Level.WARNING, "(" + iPara.getParameterName() + ") " + sql, e);
-							 }
-							 finally{
-								 DB.close(rs, stmt);
-								 rs = null;
-								 stmt = null;
-							 }
-						 }
-					 }	//	SQL Statement
-					 else if (paramValue.indexOf('@') != -1)	//	we have a variable
-					 {
-						 value = Env.parseContext(Env.getCtx(), 0, paramValue, false, false);
-					 }	//	@variable@
+					//				Value - Constant/Variable
+					Object value = paramValue;
+					if (paramValue == null
+							|| (paramValue != null && paramValue.length() == 0))
+						value = null;
+					else if (paramValue.startsWith(MColumn.VIRTUAL_UI_COLUMN_PREFIX)) {
+						String sql = paramValue.substring(5);
+						sql = Env.parseContext(Env.getCtx(), 0, sql, false, false);	//	replace variables
+						if (!Util.isEmpty(sql)) {
+							PreparedStatement stmt = null;
+							ResultSet rs = null;
+							try {
+								stmt = DB.prepareStatement(sql, null);
+								rs = stmt.executeQuery();
+								if (rs.next()) {
+									if (   DisplayType.isNumeric(iPara.getDisplayType()) 
+											|| DisplayType.isID(iPara.getDisplayType()))
+										value = rs.getBigDecimal(1);
+									else if (DisplayType.isDate(iPara.getDisplayType()))
+										value = rs.getTimestamp(1);
+									else
+										value = rs.getString(1);
+								} else {
+									if (logger.isLoggable(Level.INFO))
+										logger.log(Level.INFO, "(" + iPara.getParameterName() + ") - no Result: " + sql);
+								}
+							}
+							catch (SQLException e) {
+								logger.log(Level.WARNING, "(" + iPara.getParameterName() + ") " + sql, e);
+							}
+							finally{
+								DB.close(rs, stmt);
+								rs = null;
+								stmt = null;
+							}
+						}
+					}	//	SQL Statement
+					else if (paramValue.indexOf('@') != -1)	//	we have a variable
+					{
+						value = Env.parseContext(Env.getCtx(), 0, paramValue, false, false);
+					}	//	@variable@
 
-					 //	No Value
-					 if (value == null)
-					 {
-						 if(sPara.isMandatory()) {
-							 return false;	// empty mandatory parameter
-						 }
-						 else {
-							 continue;
-						 }
-					 }
-					 if( DisplayType.isText(iPara.getDisplayType())
-								&& Util.isEmpty(String.valueOf(value))) {
+					//	No Value
+					if (value == null)
+					{
+						if(sPara.isMandatory()) {
+							return false;	// empty mandatory parameter
+						}
+						else {
+							continue;
+						}
+					}
+					if( DisplayType.isText(iPara.getDisplayType())
+							&& Util.isEmpty(String.valueOf(value))) {
 						if (logger.isLoggable(Level.FINE)) logger.fine(iPara.getParameterName() + " - empty string");
-							break;
+						break;
 					}
 
-					 //	Convert to Type				
-					 if (DisplayType.isNumeric(iPara.getDisplayType()))
-					 {
-						 BigDecimal bd = null;
-						 if (value instanceof BigDecimal)
-							 bd = (BigDecimal)value;
-						 else if (value instanceof Integer)
-							 bd = new BigDecimal (((Integer)value).intValue());
-						 else
-							 bd = new BigDecimal (value.toString());
+					//	Convert to Type				
+					if (DisplayType.isNumeric(iPara.getDisplayType()))
+					{
+						BigDecimal bd = null;
+						if (value instanceof BigDecimal)
+							bd = (BigDecimal)value;
+						else if (value instanceof Integer)
+							bd = new BigDecimal (((Integer)value).intValue());
+						else
+							bd = new BigDecimal (value.toString());
 						DecimalFormat decimalFormat = DisplayType.getNumberFormat(iPara.getDisplayType());
 						String info = decimalFormat.format(iPara.getP_Number());
-						 if (isTo) {
-							 iPara.setP_Number_To(bd);
-							 iPara.setInfo_To(info);
-						 }
-						 else {
-							 iPara.setP_Number(bd);
-							 iPara.setInfo(info);
-						 }
-					 }
-					 else if (iPara.getDisplayType() == DisplayType.Search || iPara.getDisplayType() == DisplayType.Table || iPara.getDisplayType() == DisplayType.TableDir) {
-						 int id = new BigDecimal (value.toString()).intValue();
-						 if (isTo) {
-							 iPara.setP_Number_To(new BigDecimal (value.toString()));
-							 iPara.setInfo_To(getDisplay(pInstance, iPara, id));
-						 }
-						 else {
-							 iPara.setP_Number(new BigDecimal (value.toString()));
-							 iPara.setInfo(getDisplay(pInstance, iPara, id));
-						 }
-					 }
-					 else if (DisplayType.isDate(iPara.getDisplayType()))
-					 {
-						 Timestamp ts = null;
-						 if (value instanceof Timestamp)
-							 ts = (Timestamp)value;
-						 else
-							 ts = Timestamp.valueOf(value.toString());
-						 SimpleDateFormat dateFormat = DisplayType.getDateFormat(iPara.getDisplayType());
-						 String info = dateFormat.format(ts);
-						 if (isTo) {
-							 iPara.setP_Date_To(ts);
-							 iPara.setInfo_To(info);
-						 }
-						 else {
-							 iPara.setP_Date(ts);
-							 iPara.setInfo(info);
-						 }
-					 }
-					 else
-					 {
-						 if (isTo) {
-							 iPara.setP_String_To(value.toString());
-							 iPara.setInfo_To(value.toString());
-						 }
-						 else if(DisplayType.isChosenMultipleSelection(iPara.getDisplayType())) {
-							 iPara.setP_String(value.toString());
-							 iPara.setInfo(getMultiSelectionDisplay(pInstance, iPara, value.toString()));
-						 }
-						 else {
-							 iPara.setP_String(value.toString());
-							 iPara.setInfo(value.toString());
-						 }
-					 }
-					 iPara.saveEx();
+						if (isTo) {
+							iPara.setP_Number_To(bd);
+							iPara.setInfo_To(info);
+						}
+						else {
+							iPara.setP_Number(bd);
+							iPara.setInfo(info);
+						}
+					}
+					else if (iPara.getDisplayType() == DisplayType.Search || iPara.getDisplayType() == DisplayType.Table || iPara.getDisplayType() == DisplayType.TableDir) {
+						int id = new BigDecimal (value.toString()).intValue();
+						if (isTo) {
+							iPara.setP_Number_To(new BigDecimal (value.toString()));
+							iPara.setInfo_To(getDisplay(pInstance, iPara, id));
+						}
+						else {
+							iPara.setP_Number(new BigDecimal (value.toString()));
+							iPara.setInfo(getDisplay(pInstance, iPara, id));
+						}
+					}
+					else if (DisplayType.isDate(iPara.getDisplayType()))
+					{
+						Timestamp ts = null;
+						if (value instanceof Timestamp)
+							ts = (Timestamp)value;
+						else
+							ts = Timestamp.valueOf(value.toString());
+						SimpleDateFormat dateFormat = DisplayType.getDateFormat(iPara.getDisplayType());
+						String info = dateFormat.format(ts);
+						if (isTo) {
+							iPara.setP_Date_To(ts);
+							iPara.setInfo_To(info);
+						}
+						else {
+							iPara.setP_Date(ts);
+							iPara.setInfo(info);
+						}
+					}
+					else
+					{
+						if (isTo) {
+							iPara.setP_String_To(value.toString());
+							iPara.setInfo_To(value.toString());
+						}
+						else if(DisplayType.isChosenMultipleSelection(iPara.getDisplayType())) {
+							iPara.setP_String(value.toString());
+							iPara.setInfo(getMultiSelectionDisplay(pInstance, iPara, value.toString()));
+						}
+						else {
+							iPara.setP_String(value.toString());
+							iPara.setInfo(value.toString());
+						}
+					}
+					iPara.saveEx();
 
-					 isTo = true;
-				 }
+					isTo = true;
+				}
 			}
 		}
 		else {
@@ -1938,7 +1944,7 @@ public class DashboardController implements EventListener<Event> {
 		}
 		return returnValue;
 	}
-	
+
 	/**
 	 * Get display text for value
 	 * @param i
@@ -2001,22 +2007,22 @@ public class DashboardController implements EventListener<Event> {
 		if (isShowInDashboard) {
 			if (ClientInfo.isMobile()) {
 				int n = 0;
-	        	if (ClientInfo.maxWidth(ClientInfo.MEDIUM_WIDTH-1)) {	        		
-	        		if (ClientInfo.maxWidth(ClientInfo.SMALL_WIDTH-1)) {
-	        			n = 1;
-	        		} else {
-	        			n = 2;
-	        		}
-	        	}
-	        	if (noOfCols > 0 && n > 0 && noOfCols != n) {
-	        		String layoutOrientation = MSysConfig.getValue(MSysConfig.DASHBOARD_LAYOUT_ORIENTATION, Env.getAD_Client_ID(Env.getCtx()));
-	                if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS))
-	                	renderRows(null, null, true, true);
-	                else
-	                	renderColumns(null, null, true, true);
-	        		dashboardLayout.invalidate();
-	        	}
-        	}
+				if (ClientInfo.maxWidth(ClientInfo.MEDIUM_WIDTH-1)) {	        		
+					if (ClientInfo.maxWidth(ClientInfo.SMALL_WIDTH-1)) {
+						n = 1;
+					} else {
+						n = 2;
+					}
+				}
+				if (noOfCols > 0 && n > 0 && noOfCols != n) {
+					String layoutOrientation = MSysConfig.getValue(MSysConfig.DASHBOARD_LAYOUT_ORIENTATION, Env.getAD_Client_ID(Env.getCtx()));
+					if(layoutOrientation.equals(DASHBOARD_LAYOUT_ROWS))
+						renderRows(null, null, true, true);
+					else
+						renderColumns(null, null, true, true);
+					dashboardLayout.invalidate();
+				}
+			}
 		}			
 	}
 
@@ -2035,7 +2041,7 @@ public class DashboardController implements EventListener<Event> {
 				break;
 		}
 	}
-	
+
 	/**
 	 * Holds information about the report: Report Content, Row Count
 	 */
@@ -2044,7 +2050,7 @@ public class DashboardController implements EventListener<Event> {
 		private AMedia content;
 		/** Report Row Count */
 		private int rowCount = 0;
-		
+
 		/**
 		 * Constructor
 		 * @param content

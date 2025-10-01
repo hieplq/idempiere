@@ -43,29 +43,20 @@ public final class ZZ_MenuLinksBuilder {
     ) {
         Vlayout list = baseList(marginCss);
         
-        // I am keeping comments just so I can quickly see what i did if there are errors.  They will be removed after testing.
-        
-        /*
+
+
         String sql =
-            "SELECT m.AD_Menu_ID " +
-            "FROM AD_Menu m " +
-            "JOIN AD_Form f ON m.AD_Form_ID = f.AD_Form_ID " +
-            "WHERE m.IsActive='Y' AND m.IsSummary='N' " +
-            "  AND f.AD_Form_ID = 1000000 " +
-            "ORDER BY m.Name";
-            */
-        /*
-        String sql =
-        	    "WITH open_apps AS (" +
-        	    "    SELECT DISTINCT TRIM(both ' ' FROM x)::NUMERIC AS zz_program_master_data_id " +
+        	    "WITH open_apps AS ( " +
+        	    "    SELECT DISTINCT oa.ad_org_id, oa.documentno, TRIM(both ' ' FROM x)::NUMERIC AS zz_program_master_data_id " +
         	    "    FROM adempiere.zz_open_application oa " +
-        	    "         CROSS JOIN LATERAL unnest(string_to_array(oa.zz_programs, ',')) AS t(x) " +
+        	    "    CROSS JOIN LATERAL unnest(string_to_array(oa.zz_programs, ',')) AS t(x) " +
         	    "    WHERE oa.isactive = 'Y' " +
         	    "      AND now() BETWEEN oa.startdate AND oa.enddate " +
+        	    "      AND oa.zz_docstatus = 'AP' " +
         	    "      AND oa.zz_programs IS NOT NULL " +
         	    "), " +
         	    "program_uu AS ( " +
-        	    "    SELECT p.zz_program_master_data_uu " +
+        	    "    SELECT p.zz_program_master_data_uu, a.ad_org_id, a.documentno " +
         	    "    FROM adempiere.zz_program_master_data p " +
         	    "    JOIN open_apps a ON a.zz_program_master_data_id = p.zz_program_master_data_id " +
         	    "    WHERE p.isactive = 'Y' " +
@@ -79,133 +70,27 @@ public final class ZZ_MenuLinksBuilder {
         	    "      AND m.issummary = 'N' " +
         	    "      AND f.ad_form_id = 1000000 " +
         	    ") " +
-        	    "SELECT DISTINCT m.ad_menu_id " +
-        	    "FROM menus m " +
-        	    "JOIN program_uu u " +
-        	    "  ON m.predefinedcontextvariables ILIKE ('%' || 'ZZ_Program_Master_Data_UU=' || u.zz_program_master_data_uu || '%') " +
-        	    "ORDER BY m.ad_menu_id";
-        	*/
-        /*
-        String sql =
-                "WITH open_apps AS (" +
-                "    SELECT DISTINCT TRIM(both ' ' FROM x)::NUMERIC AS zz_program_master_data_id " +
-                "    FROM adempiere.zz_open_application oa " +
-                "         CROSS JOIN LATERAL unnest(string_to_array(oa.zz_programs, ',')) AS t(x) " +
-                "    WHERE oa.isactive = 'Y' " +
-                "      AND now() BETWEEN oa.startdate AND oa.enddate " +
-                "      AND oa.zz_programs IS NOT NULL " +
-                "), " +
-                "program_uu AS ( " +
-                "    SELECT p.zz_program_master_data_uu " +
-                "    FROM adempiere.zz_program_master_data p " +
-                "    JOIN open_apps a ON a.zz_program_master_data_id = p.zz_program_master_data_id " +
-                "    WHERE p.isactive = 'Y' " +
-                "      AND p.zz_program_master_data_uu IS NOT NULL " +
-                "), " +
-                "menus AS ( " +
-                "    SELECT m.ad_menu_id, m.name, m.predefinedcontextvariables " +
-                "    FROM adempiere.ad_menu m " +
-                "    JOIN adempiere.ad_form f ON f.ad_form_id = m.ad_form_id " +
-                "    WHERE m.isactive = 'Y' " +
-                "      AND m.issummary = 'N' " +
-                "      AND f.ad_form_id = 1000000 " +
-                ") " +
-                "SELECT ad_menu_id " +
-                "FROM ( " +
-                "    SELECT DISTINCT m.ad_menu_id, " +
-                "           CASE WHEN m.ad_menu_id = 1000072 THEN 0 ELSE 1 END AS sort_key " +
-                "    FROM menus m " +
-                "    JOIN program_uu u " +
-                "      ON m.predefinedcontextvariables ILIKE ('%' || 'ZZ_Program_Master_Data_UU=' || u.zz_program_master_data_uu || '%') " +
-                ") s " +
-                "ORDER BY sort_key, ad_menu_id";
-        
-        */
-        /*
-        String sql =
-                "WITH open_apps AS (" +
-                "    SELECT DISTINCT oa.ad_org_id, oa.documentno, TRIM(both ' ' FROM x)::NUMERIC AS zz_program_master_data_id " +
-                "    FROM adempiere.zz_open_application oa " +
-                "         CROSS JOIN LATERAL unnest(string_to_array(oa.zz_programs, ',')) AS t(x) " +
-                "    WHERE oa.isactive = 'Y' " +
-                "      AND now() BETWEEN oa.startdate AND oa.enddate " +
-                "      AND oa.zz_programs IS NOT NULL " +
-                "), " +
-                "program_uu AS ( " +
-                "    SELECT p.zz_program_master_data_uu, a.ad_org_id, a.documentno " +
-                "    FROM adempiere.zz_program_master_data p " +
-                "    JOIN open_apps a ON a.zz_program_master_data_id = p.zz_program_master_data_id " +
-                "    WHERE p.isactive = 'Y' " +
-                "      AND p.zz_program_master_data_uu IS NOT NULL " +
-                "), " +
-                "menus AS ( " +
-                "    SELECT m.ad_menu_id, m.name, m.predefinedcontextvariables " +
-                "    FROM adempiere.ad_menu m " +
-                "    JOIN adempiere.ad_form f ON f.ad_form_id = m.ad_form_id " +
-                "    WHERE m.isactive = 'Y' " +
-                "      AND m.issummary = 'N' " +
-                "      AND f.ad_form_id = 1000000 " +
-                ") " +
-                "SELECT ad_menu_id " +
-                "FROM ( " +
-                "    SELECT DISTINCT ON (m.ad_menu_id) " +
-                "           m.ad_menu_id, " +
-                "           CASE WHEN m.ad_menu_id = 1000072 THEN 0 ELSE 1 END AS sort_top, " +
-                "           ao.name AS org_name, " +
-                "           u.documentno AS docno " +
-                "    FROM menus m " +
-                "    JOIN program_uu u " +
-                "      ON m.predefinedcontextvariables ILIKE ('%' || 'ZZ_Program_Master_Data_UU=' || u.zz_program_master_data_uu || '%') " +
-                "    LEFT JOIN adempiere.ad_org ao ON ao.ad_org_id = u.ad_org_id " +
-                "    ORDER BY m.ad_menu_id, ao.name, u.documentno DESC " +
-                ") s " +
-                "ORDER BY sort_top, org_name, docno DESC, ad_menu_id";
-        
-        */
-
-        String sql =
-                "WITH open_apps AS (" +
-                "    SELECT DISTINCT oa.ad_org_id, oa.documentno, TRIM(both ' ' FROM x)::NUMERIC AS zz_program_master_data_id " +
-                "    FROM adempiere.zz_open_application oa " +
-                "         CROSS JOIN LATERAL unnest(string_to_array(oa.zz_programs, ',')) AS t(x) " +
-                "    WHERE oa.isactive = 'Y' " +
-                "      AND now() BETWEEN oa.startdate AND oa.enddate AND oa.zz_docstatus = 'AP'" +
-                "      AND oa.zz_programs IS NOT NULL " +
-                "), " +
-                "program_uu AS ( " +
-                "    SELECT p.zz_program_master_data_uu, a.ad_org_id, a.documentno " +
-                "    FROM adempiere.zz_program_master_data p " +
-                "    JOIN open_apps a ON a.zz_program_master_data_id = p.zz_program_master_data_id " +
-                "    WHERE p.isactive = 'Y' " +
-                "      AND p.zz_program_master_data_uu IS NOT NULL " +
-                "), " +
-                "menus AS ( " +
-                "    SELECT m.ad_menu_id, m.name, m.predefinedcontextvariables " +
-                "    FROM adempiere.ad_menu m " +
-                "    JOIN adempiere.ad_form f ON f.ad_form_id = m.ad_form_id " +
-                "    WHERE m.isactive = 'Y' " +
-                "      AND m.issummary = 'N' " +
-                "      AND f.ad_form_id = 1000000 " +
-                ") " +
-                "SELECT ad_menu_id " +
-                "FROM ( " +
-                "    SELECT DISTINCT ON (m.ad_menu_id) " +
-                "           m.ad_menu_id, " +
-                "           CASE WHEN m.ad_menu_id = 1000072 THEN 0 ELSE 1 END AS sort_top, " +
-                "           ao.name AS org_name, " +
-                "           u.documentno AS docno " +
-                "    FROM menus m " +
-                "    LEFT JOIN program_uu u " +
-                "      ON m.predefinedcontextvariables ILIKE ('%' || 'ZZ_Program_Master_Data_UU=' || u.zz_program_master_data_uu || '%') " +
-                "    LEFT JOIN adempiere.ad_org ao ON ao.ad_org_id = u.ad_org_id " +
-                "    WHERE u.zz_program_master_data_uu IS NOT NULL OR m.ad_menu_id = 1000072 " +
-                "    ORDER BY m.ad_menu_id, ao.name, u.documentno DESC NULLS LAST " +
-                ") s " +
-                "ORDER BY sort_top, org_name, docno DESC NULLS LAST, ad_menu_id";
-
-
-
-
+        	    "SELECT ad_menu_id " +
+        	    "FROM ( " +
+        	    "    SELECT DISTINCT ON (m.ad_menu_id) " +
+        	    "           m.ad_menu_id, " +
+        	    "           m.name, " +
+        	    "           CASE WHEN m.ad_menu_id = 1000072 THEN 0 ELSE 1 END AS sort_top, " +
+        	    "           ao.name AS org_name, " +
+        	    "           u.documentno AS docno " +
+        	    "    FROM menus m " +
+        	    "    LEFT JOIN program_uu u " +
+        	    "      ON m.predefinedcontextvariables ILIKE ('%' || 'ZZ_Program_Master_Data_UU=' || u.zz_program_master_data_uu || '%') " +
+        	    "    LEFT JOIN adempiere.ad_org ao ON ao.ad_org_id = u.ad_org_id " +
+        	    "    WHERE u.zz_program_master_data_uu IS NOT NULL " +
+        	    "       OR m.ad_menu_id = 1000072 " +
+        	    "    ORDER BY m.ad_menu_id, ao.name, u.documentno DESC NULLS LAST " +
+        	    ") s " +
+        	    "ORDER BY sort_top, " +
+        	    "         name ASC, " +
+        	    "         org_name ASC, " +
+        	    "         docno DESC NULLS LAST, " +
+        	    "         ad_menu_id";
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -277,7 +162,7 @@ public final class ZZ_MenuLinksBuilder {
     }
 
 
-
+/*
 
     private static ToolBarButton makeButton(int id, String label, EventListener<Event> clickListener) {
         ToolBarButton btn = new ToolBarButton(String.valueOf(id));
@@ -296,6 +181,34 @@ public final class ZZ_MenuLinksBuilder {
         // No hflex — avoid stretching while we compute width later
         return btn;
     }
+    
+    */
+    
+    private static ToolBarButton makeButton(int id, String label, EventListener<Event> clickListener) {
+        ToolBarButton btn = new ToolBarButton(String.valueOf(id));
+        btn.setLabel(label);
+        btn.setAttribute("AD_Menu_ID", id);
+        btn.addEventListener(Events.ON_CLICK, clickListener);
+
+        // default style
+        String style =
+            "display:inline-block;" +
+            "margin:0;" +
+            "padding:2px 8px;" +
+            "text-align:left !important;" +
+            "line-height:1.1;" +
+            "font-size:18px !important;" +
+            "color:#fff !important;";
+
+        // If it's "My Applications", override to orange + bold
+        if ("My Applications".equalsIgnoreCase(label)) {
+        	style += "color:#F27127 !important;font-weight:800;";
+        }
+
+        btn.setStyle(style);
+        return btn;
+    }
+
 
 
 }
