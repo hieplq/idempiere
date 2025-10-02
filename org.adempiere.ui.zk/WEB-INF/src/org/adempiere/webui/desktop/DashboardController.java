@@ -797,40 +797,12 @@ public class DashboardController implements EventListener<Event> {
 			div.appendChild(btn);
 			components.add(div);
 		}
-		// Martin for demo 29/8/2025
-
-		if (dashboardContent.get_ID() >= 1000000)
-		{
-			
-			org.zkoss.zul.Vlayout list = ZZ_MenuLinksBuilder.fromQuery(dashboardContent, this, "0");
-			list.setStyle("max-height:70vh;overflow-y:auto;margin:0;");
-
-			org.zkoss.zul.Div fixed = new org.zkoss.zul.Div();
-			fixed.setSclass("zz-fixedmenu");
-			fixed.appendChild(list);
-
-			// fixed wrapper
-			fixed.setSclass("zz-fixedmenu");
-
-			// let’s keep top in a CSS var so it’s easy to tweak
-			fixed.setStyle("--menuTop:280px;");
-
-			// your list stays scrollable
-			list.setSclass("menu-links");
-			list.setStyle("overflow-y:auto;margin:0;"); // no fixed height here
-
-			// CSS
-			
-			Style css = new Style();
-			css.setContent(
-			    ".zz-fixedmenu{position:fixed; top:var(--menuTop); z-index:2000;}" +
-			    ".zz-fixedmenu .menu-links{max-height:calc(100vh - var(--menuTop) - 12px);}" + // <- auto adjusts on zoom/resize
-			    ".dashboard-widget .z-panelchildren{overflow:visible!important;}" +
-			    ".dashboard-widget.dashboard-widget-max .z-panelchildren{overflow:visible!important;}"
-			);
-			fixed.appendChild(css);
-			components.add(fixed);
+		
+		// Martin 01/10/2025
+		if (dashboardContent.get_ID() >= 1000000) {
+		    ZZ_MenuLinksBuilder.attachHeaderAndMenu(components, dashboardContent, this );
 		}
+
 
 		//Report & Process
 		int AD_Process_ID = dashboardContent.getAD_Process_ID();
