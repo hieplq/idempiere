@@ -1,4 +1,4 @@
-/* keylistener.js
+;/* keylistener.js
 
 {{IS_NOTE
 	Purpose:
@@ -105,12 +105,21 @@ zkforge.keylistener.KeyListener = zk.$extends(zul.Widget, {
 				this.focus();
 				this.tabIndex = 0;
 			}
-
-			evt.preventDefault();
+			
+			if (evt.originalEvent.target.tagName === 'TEXTAREA' && zkcode === 'K'){
+				;							
+			}else{
+				evt.preventDefault();
+			}
+			
 			// _autoBlur = true will let current focus control blur but this event is sent after key event, so haven't valuable
 			if (zk.currentFocus)//just need to raise it when have control got focus, other NPE
 				id.zk.Extend.fakeOnchange (zk.currentFocus);
 			zAu.send(new zk.Event(zk.Widget.$(this), 'onCtrlKey', {keyCode: keycode, ctrlKey: evt.ctrlKey, shiftKey: evt.shiftKey, altKey: evt.altKey}, {toServer: true}));
+			
+			if (evt.originalEvent.target.tagName === 'TEXTAREA' && zkcode === 'K'){
+				return true;
+			}
 			
 			return false;
 		}
