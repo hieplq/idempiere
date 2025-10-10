@@ -55,6 +55,7 @@ import org.compiere.model.ModelValidationEngine;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.model.SystemIDs;
+import org.compiere.model.X_AD_User;
 
 /**
  *	Login Manager
@@ -283,7 +284,7 @@ public class Login
 			return null;
 		}
 
-		if (system.isLDAP())
+		if (system.isLDAP() && isLdapUser(app_user))
 		{
 			authenticated = system.isLDAP(app_user, app_pwd);
 			if (authenticated) {
@@ -1278,6 +1279,15 @@ public class Login
 		return getClients(app_user, app_pwd, roleTypes, null);
 	}
 
+	public static boolean isLdapUser (String userName) {
+		MUser ldapUser = MTable.get(X_AD_User.Table_ID)
+			.createQuery(String.format("%s = ?", X_AD_User.COLUMNNAME_LDAPUser), null)
+				.setOnlyActiveRecords(true)
+				.setParameters(userName)
+				.first();
+		return ldapUser != null;
+	}
+	
 	/**
 	 *  Validate Client Login.<br/>
 	 *  Sets Context with login info.
@@ -1321,7 +1331,7 @@ public class Login
 		loginErrMsg = null;
 		isPasswordExpired = false;
 
-		if (!isSSOLogin && system.isLDAP())
+		if (!isSSOLogin && system.isLDAP() && isLdapUser(app_user))
 		{
 			authenticated = system.isLDAP(app_user, app_pwd);
 			if (authenticated) {
