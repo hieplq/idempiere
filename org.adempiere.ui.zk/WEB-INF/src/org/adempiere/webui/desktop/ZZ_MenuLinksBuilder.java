@@ -62,11 +62,14 @@ public final class ZZ_MenuLinksBuilder {
         
         Style css = new Style();
         css.setContent(
-              ".zz-fixedmenu{position:fixed; top:var(--menuTop, 280px); z-index:2000;}"
-            + ".zz-fixedmenu .menu-links{max-height:calc(100vh - var(--menuTop, 280px) - 12px);}"
-            + ".dashboard-widget .z-panelchildren{overflow:visible!important; padding-top:0!important;}"
-            + ".dashboard-widget.dashboard-widget-max .z-panelchildren{overflow:visible!important; padding-top:0!important;}"
-            + ".zz-headerwrap{position:relative; transform:translateY(-76px);}"); // optional lift
+        	    ".zz-fixedmenu{position:fixed; top:var(--menuTop, 280px); left:60px !important; z-index:2000;}" +
+        	    ".zz-fixedmenu .menu-links{max-height:calc(100vh - var(--menuTop, 280px) - 12px); overflow-y:auto;}" +
+        	    ".dashboard-widget .z-panelchildren{overflow:visible!important; padding-top:0!important;}" +
+        	    ".dashboard-widget.dashboard-widget-max .z-panelchildren{overflow:visible!important; padding-top:0!important;}" +
+        	    ".zz-headerwrap{position:relative; transform:translateY(-76px);}"
+        	);
+
+
         fixed.appendChild(css);
 
 
@@ -127,10 +130,10 @@ public final class ZZ_MenuLinksBuilder {
         v.appendChild(lblTitle);
 
         // Line 3: "1st Window | dd MMMM yyyy - dd MMMM yyyy"
-        String windowLine = "1st Window | —";
+        String windowLine = "5th Window | —";
         if (data.start != null && data.end != null) {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd MMMM uuuu");
-            windowLine = "1st Window | " + fmt.format(data.start) + " - " + fmt.format(data.end);
+            windowLine = "5th Window | " + fmt.format(data.start) + " - " + fmt.format(data.end);
         }
         Label lblWindow = new Label(windowLine);
         //lblWindow.setStyle("display:block;font-size:18px;font-weight:500;opacity:0.9;letter-spacing:0.3px;margin:0;");
@@ -350,40 +353,59 @@ public final class ZZ_MenuLinksBuilder {
     private static void installMenuTopAutoCalc(org.zkoss.zul.Div hook) {
         final String INIT_JS =
             "(function(){"
-          + "  if(!window.__zzSetMenuTop){"
-          + "    window.__zzSetMenuTop=function(){"
-          + "      var h=document.getElementById('zzHeaderPanel');"
-          + "      var top=280;"
-          + "      if(h){var r=h.getBoundingClientRect(); top=r.bottom+12;}"
-          + "      document.documentElement.style.setProperty('--menuTop', top+'px');"
-          + "    };"
+          + "  function alignMenu(){"
+          + "    var header = document.getElementById('zzHeaderPanel');"
+          + "    var fixed  = document.querySelector('.zz-fixedmenu');"
+          + "    if(!fixed) return;"
+          + "    var top = 280;"
+          + "    var desiredLeft = 0;"
+          + "    if(header){"
+          + "      var hr = header.getBoundingClientRect();"
+          + "      top = hr.bottom + 12;"
+          + "      // header text left: first label inside the header"
+          + "      var firstHeaderLabel = header.querySelector('.z-label');"
+          + "      var headerTextLeft = firstHeaderLabel ? firstHeaderLabel.getBoundingClientRect().left : hr.left;"
+          + "      // menu text left: first menu button inner content"
+          + "      var firstBtnContent = fixed.querySelector('.z-toolbarbutton .z-toolbarbutton-content');"
+          + "      var innerOffset = 0;"
+          + "      if(firstBtnContent){"
+          + "        // measure how far the inner text is from the fixed wrapper's left"
+          + "        var fr = fixed.getBoundingClientRect();"
+          + "        var br = firstBtnContent.getBoundingClientRect();"
+          + "        innerOffset = br.left - fr.left;"
+          + "      }"
+          + "      // optional small gutter to move slightly more right (adjust as needed)"
+          + "      var tweak = 6;  /* try 6–12 if you want more */"
+          + "      desiredLeft = Math.max(0, Math.round(headerTextLeft - innerOffset + tweak));"
+          + "    }"
+          + "    fixed.style.setProperty('--menuTop', top + 'px');"
+          + "    fixed.style.left = desiredLeft + 'px';"
           + "  }"
-          + "  if(!window.__zzMenuTopInstalled){"
-          + "    window.__zzMenuTopInstalled=true;"
-          + "    window.addEventListener('resize', window.__zzSetMenuTop, {passive:true});"
+          + "  if(!window.__zzMenuAlignInstalled){"
+          + "    window.__zzMenuAlignInstalled = true;"
+          + "    window.addEventListener('resize', alignMenu, {passive:true});"
+          + "    window.addEventListener('scroll', alignMenu, {passive:true});"
           + "  }"
-          + "  window.__zzSetMenuTop();"
+          + "  alignMenu();"
           + "})();";
 
-        // Fire when the component is attached to the desktop (UI thread)
-        hook.addEventListener(org.zkoss.zk.ui.event.Events.ON_CREATE, ev ->
-            org.zkoss.zk.ui.util.Clients.evalJavaScript(INIT_JS)
-        );
+        hook.addEventListener(org.zkoss.zk.ui.event.Events.ON_CREATE,
+            ev -> org.zkoss.zk.ui.util.Clients.evalJavaScript(INIT_JS));
 
-        // On size changes, just invoke it if present; no hard dependency
-        hook.addEventListener(org.zkoss.zk.ui.event.Events.ON_AFTER_SIZE, ev ->
-            org.zkoss.zk.ui.util.Clients.evalJavaScript(
-                "if(window.__zzSetMenuTop){window.__zzSetMenuTop();}"
-            )
-        );
+        hook.addEventListener(org.zkoss.zk.ui.event.Events.ON_AFTER_SIZE,
+            ev -> org.zkoss.zk.ui.util.Clients.evalJavaScript(
+                "(function(){ if(window.__zzMenuAlignInstalled){ var e=new Event('resize'); window.dispatchEvent(e);} })();"
+            ));
 
-        // If we were called from a background thread, schedule once on UI thread
         if (org.zkoss.zk.ui.Executions.getCurrent() == null && hook.getDesktop() != null) {
-            org.zkoss.zk.ui.Executions.schedule(hook.getDesktop(),
+            org.zkoss.zk.ui.Executions.schedule(
+                hook.getDesktop(),
                 e -> org.zkoss.zk.ui.util.Clients.evalJavaScript(INIT_JS),
-                new org.zkoss.zk.ui.event.Event("onCreate", hook));
+                new org.zkoss.zk.ui.event.Event("onCreate", hook)
+            );
         }
     }
+
 
 
 }
