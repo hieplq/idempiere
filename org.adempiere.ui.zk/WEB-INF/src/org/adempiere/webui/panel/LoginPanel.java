@@ -432,10 +432,12 @@ public class LoginPanel extends Window implements EventListener<Event>
     	okBtn.addSclass(ITheme.LOGIN_BUTTON_CLASS);
 
     	// Help button
+    	/*
     	Button helpButton = pnlButtons.createButton(ConfirmPanel.A_HELP);
     	helpButton.addEventListener(Events.ON_CLICK, this);
     	helpButton.addSclass(ITheme.LOGIN_BUTTON_CLASS);
     	pnlButtons.addComponentsRight(helpButton);
+    	*/
 
     	div.appendChild(pnlButtons);
 
@@ -645,7 +647,7 @@ public class LoginPanel extends Window implements EventListener<Event>
     	btnResetPassword.setLabel(Msg.getMsg(language, "ForgotMyPassword"));
     	lblLogin.setValue(Msg.getMsg(language, "LoginHeader"));
     	pnlButtons.getButton(ConfirmPanel.A_OK).setLabel(Util.cleanAmp(Msg.getMsg(language, ConfirmPanel.A_OK)));
-    	pnlButtons.getButton(ConfirmPanel.A_HELP).setLabel(Util.cleanAmp(Msg.getMsg(language, ConfirmPanel.A_HELP)));
+    	//pnlButtons.getButton(ConfirmPanel.A_HELP).setLabel(Util.cleanAmp(Msg.getMsg(language, ConfirmPanel.A_HELP)));
     }
 
     /**

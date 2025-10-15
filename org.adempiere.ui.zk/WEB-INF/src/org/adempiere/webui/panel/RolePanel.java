@@ -369,10 +369,12 @@ public class RolePanel extends Window implements EventListener<Event>, Deferrabl
         okBtn.setWidgetListener("onClick", "zAu.cmd0.showBusy(null)");
         okBtn.addCallback(ComponentCtrl.AFTER_PAGE_DETACHED, t -> ((AbstractComponent)t).setWidgetListener("onClick", null));
 
+        /*  Removed for MQA 15/10/2025
         Button helpButton = pnlButtons.createButton(ConfirmPanel.A_HELP);
 		helpButton.addEventListener(Events.ON_CLICK, this);
 		helpButton.addSclass(ITheme.LOGIN_BUTTON_CLASS);
 		pnlButtons.addComponentsRight(helpButton);
+		*/
 
         LayoutUtils.addSclass(ITheme.LOGIN_BOX_FOOTER_PANEL_CLASS, pnlButtons);
         ZKUpdateUtil.setWidth(pnlButtons, null);
@@ -645,8 +647,10 @@ public class RolePanel extends Window implements EventListener<Event>, Deferrabl
 		lblDate.setValue(Msg.getMsg(language, "Date"));
 		if (pnlButtons != null) {
 			pnlButtons.getButton(ConfirmPanel.A_OK).setLabel(Util.cleanAmp(Msg.getMsg(language, ConfirmPanel.A_OK)));
+			/*  MQA does not want the help button
 			pnlButtons.getButton(ConfirmPanel.A_HELP)
 					.setLabel(Util.cleanAmp(Msg.getMsg(language, ConfirmPanel.A_HELP)));
+					*/
 			pnlButtons.getButton(ConfirmPanel.A_CANCEL)
 					.setLabel(Util.cleanAmp(Msg.getMsg(language, ConfirmPanel.A_CANCEL)));
 		}
