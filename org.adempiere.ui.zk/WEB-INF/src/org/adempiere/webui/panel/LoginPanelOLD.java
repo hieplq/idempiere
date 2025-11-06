@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.adempiere.util.LogAuthFailure;
@@ -48,6 +49,7 @@ import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.util.BrowserToken;
 import org.adempiere.webui.util.UserPreference;
 import org.adempiere.webui.window.Dialog;
+import org.adempiere.webui.window.FDialog;
 import org.adempiere.webui.window.LoginWindow;
 import org.compiere.Adempiere;
 import org.compiere.model.MClient;
@@ -55,10 +57,12 @@ import org.compiere.model.MSession;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MSystem;
 import org.compiere.model.MUser;
+import org.compiere.model.MUserRoles;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
+import org.compiere.util.EMail;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
 import org.compiere.util.Language;
@@ -90,6 +94,8 @@ import org.zkoss.zul.A;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Image;
+import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Vbox;
 
 /**
  * Login panel of {@link LoginWindow}
@@ -129,9 +135,6 @@ public class LoginPanel extends Window implements EventListener<Event>
     protected String validLstLanguage = null;
     // Martin 12/08/2025
     protected A btnRegister = null;
- // NEW: Additional link shown below "Register User"
-    protected A btnRegisterSdf = null;
-
 
 	/* Number of failures to calculate an incremental delay on every trial */
 	private int failures = 0;
@@ -407,26 +410,10 @@ public class LoginPanel extends Window implements EventListener<Event>
         	tr.appendChild(td);
         	td.appendChild(btnRegister);
         	btnRegister.addEventListener(Events.ON_CLICK, this);
-        	
-        	// NEW: Register SDF User link (placed directly below the legacy Register link)
-        	tr = new Tr();
-        	tr.setId("rowRegisterUserSdf");
-        	table.appendChild(tr);
-        	td = new Td();
-        	tr.appendChild(td);
-        	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-        	td.appendChild(new Label(""));
-        	if (isLabelAboveInput()) {
-        	    tr = new Tr();
-        	    table.appendChild(tr);
-        	}
-        	td = new Td();
-        	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-        	tr.appendChild(td);
-        	td.appendChild(btnRegisterSdf);
-        	btnRegisterSdf.addEventListener(Events.ON_CLICK, this);
-
-        	
+        	// --- Add Register button as a new row below OK + Help ---
+        	//btnRegister.setLabel("Register User");
+        	//btnRegister.addEventListener(Events.ON_CLICK, this);
+        	//btnRegister.addSclass(ITheme.LOGIN_BUTTON_CLASS);
     	}
  
   
@@ -529,11 +516,6 @@ public class LoginPanel extends Window implements EventListener<Event>
         // Martin 12/08/2025
         btnRegister = new A("Register User");
         btnRegister.setId("btnRegister");
-        
-     // NEW: "Register SDF User" link (opens separate SDFRegistrationWindow)
-        btnRegisterSdf = new A("Register SDF User");
-        btnRegisterSdf.setId("btnRegisterSdf");
-
         lstLanguage.setVisible(false);
 
         
@@ -575,11 +557,6 @@ public class LoginPanel extends Window implements EventListener<Event>
         else if (event.getTarget() == btnRegister) {
         	 RegistrationWindow.show(this);
         }
-     // NEW: open SDF-specific registration window (no changes to original RegistrationWindow)
-        else if (event.getTarget() == btnRegisterSdf) {
-            SDFRegistrationWindow.show(this);
-        }
-
         else if (event.getName().equals(ON_LOAD_TOKEN)) 
         {
         	BrowserToken.load(txtUserId);
