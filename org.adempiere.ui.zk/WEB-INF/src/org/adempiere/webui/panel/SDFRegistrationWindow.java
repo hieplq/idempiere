@@ -326,9 +326,17 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
         String email = nvl(txtEmail.getValue());
         boolean emailLooksOk = isEmailValid();
         boolean emailExists = emailLooksOk && isEmailRegistered(email);
+     // NEW: lock/unlock OTP field based on whether the email already exists
+        if (emailExists) {
+            txtOtp.setReadonly(true);
+            txtOtp.setValue("");           // optional: clear any stray code
+        } else {
+            txtOtp.setReadonly(false);
+        }
         btnSendOtp.setDisabled(!coreValid || emailExists);
         boolean allowRegister = coreValid && (emailExists || isOtpEntered());
         btnRegisterUser.setDisabled(!allowRegister);
+        
     }
 
     private void validateCellNo() {
