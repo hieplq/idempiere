@@ -24,6 +24,7 @@
 package org.adempiere.webui.panel;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -68,6 +69,7 @@ import org.compiere.util.Util;
 import org.compiere.util.WebUtil;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.web.Attributes;
 import org.zkoss.zhtml.Div;
 import org.zkoss.zhtml.Form;
@@ -89,6 +91,8 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Image;
 
 /**
@@ -131,6 +135,13 @@ public class LoginPanel extends Window implements EventListener<Event>
     protected A btnRegister = null;
  // NEW: Additional link shown below "Register User"
     protected A btnRegisterSdf = null;
+    
+ // MQA Terms & Conditions controls
+    protected Checkbox chkAcceptTerms;
+    protected Checkbox chkDeclineTerms;
+    protected A lnkTerms;
+    protected A lnkTermsDecl;
+
 
 
 	/* Number of failures to calculate an incremental delay on every trial */
@@ -257,218 +268,288 @@ public class LoginPanel extends Window implements EventListener<Event>
      */
 	protected void createUI() {
 
-		Form form = new Form();
+	    Form form = new Form();
 
-		Div div = new Div();
-    	div.setSclass(ITheme.LOGIN_BOX_HEADER_CLASS);
-    	lblLogin = new Label(Msg.getMsg(Env.getCtx(), "LoginHeader"));
-    	lblLogin.setSclass(ITheme.LOGIN_BOX_HEADER_TXT_CLASS);
-    	div.appendChild(lblLogin);
-    	form.appendChild(div);
+	    // Header
+	    Div div = new Div();
+	    div.setSclass(ITheme.LOGIN_BOX_HEADER_CLASS);
+	    lblLogin = new Label(Msg.getMsg(Env.getCtx(), "LoginHeader"));
+	    lblLogin.setSclass(ITheme.LOGIN_BOX_HEADER_TXT_CLASS);
+	    div.appendChild(lblLogin);
+	    form.appendChild(div);
 
-    	Table table = new Table();
-    	table.setId("grdLogin");
-    	table.setDynamicProperty("cellpadding", "0");
-    	table.setDynamicProperty("cellspacing", "5");
-    	table.setSclass(ITheme.LOGIN_BOX_BODY_CLASS);
+	    // Body table
+	    Table table = new Table();
+	    table.setId("grdLogin");
+	    table.setDynamicProperty("cellpadding", "0");
+	    table.setDynamicProperty("cellspacing", "5");
+	    table.setSclass(ITheme.LOGIN_BOX_BODY_CLASS);
+	    form.appendChild(table);
 
-    	form.appendChild(table);
+	    // Logo row
+	    Tr tr = new Tr();
+	    table.appendChild(tr);
+	    Td td = new Td();
+	    td.setSclass(ITheme.LOGIN_BOX_HEADER_LOGO_CLASS);
+	    tr.appendChild(td);
+	    td.setDynamicProperty("colspan", "2");
+	    Image image = new Image();
+	    image.setSrc(ThemeManager.getLargeLogo());
+	    td.appendChild(image);
 
-    	Tr tr = new Tr();
-    	table.appendChild(tr);
-    	Td td = new Td();
-    	td.setSclass(ITheme.LOGIN_BOX_HEADER_LOGO_CLASS);
-    	tr.appendChild(td);
-    	td.setDynamicProperty("colspan", "2");
-    	Image image = new Image();
-        image.setSrc(ThemeManager.getLargeLogo());
-        td.appendChild(image);
+	    // User row
+	    tr = new Tr();
+	    tr.setId("rowUser");
+	    table.appendChild(tr);
+	    td = new Td();
+	    tr.appendChild(td);
+	    td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	    td.appendChild(lblUserId);
+	    if (isLabelAboveInput()) {
+	        tr = new Tr();
+	        table.appendChild(tr);
+	        td.setSclass(td.getSclass() + " form-label-above-input");
+	    }
+	    td = new Td();
+	    td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	    tr.appendChild(td);
+	    td.appendChild(txtUserId);
 
-        tr = new Tr();
-        tr.setId("rowUser");
-        table.appendChild(tr);
-    	td = new Td();
-    	tr.appendChild(td);
-    	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-    	td.appendChild(lblUserId);
-		if (isLabelAboveInput()) {
-			tr = new Tr();
-			table.appendChild(tr);
-			td.setSclass(td.getSclass() + " form-label-above-input");
-		}
-    	td = new Td();
-    	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-    	tr.appendChild(td);
-    	td.appendChild(txtUserId);
+	    // Password row
+	    tr = new Tr();
+	    tr.setId("rowPassword");
+	    table.appendChild(tr);
+	    td = new Td();
+	    tr.appendChild(td);
+	    td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	    td.appendChild(lblPassword);
+	    if (isLabelAboveInput()) {
+	        tr = new Tr();
+	        table.appendChild(tr);
+	        td.setSclass(td.getSclass() + " form-label-above-input");
+	    }
+	    td = new Td();
+	    td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	    tr.appendChild(td);
+	    td.appendChild(txtPassword);
 
-    	tr = new Tr();
-        tr.setId("rowPassword");
-        table.appendChild(tr);
-    	td = new Td();
-    	tr.appendChild(td);
-    	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-    	td.appendChild(lblPassword);
-		if (isLabelAboveInput()) {
-			tr = new Tr();
-			table.appendChild(tr);
-			td.setSclass(td.getSclass() + " form-label-above-input");
-		}
-    	td = new Td();
-    	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-    	tr.appendChild(td);
-    	td.appendChild(txtPassword);
+	    // (Language row skipped per your comment)
 
-    	// Martin 19/08/2025 MQA does not need language
-    	/*
-    	tr = new Tr();
-        tr.setId("rowLanguage");
-        table.appendChild(tr);
-    	td = new Td();
-    	tr.appendChild(td);
-    	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-    	td.appendChild(lblLanguage);
-		if (isLabelAboveInput()) {
-			tr = new Tr();
-			table.appendChild(tr);
-			td.setSclass(td.getSclass() + " form-label-above-input");
-		}
-    	td = new Td();
-    	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-    	tr.appendChild(td);
-    	td.appendChild(lstLanguage);
-    	*/
-    	
-    	tr = new Tr();
-        tr.setId("rowSelectRole");
-        table.appendChild(tr);
-        td = new Td();
-    	tr.appendChild(td);
-    	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-    	td.appendChild(new Label(""));
-		if (isLabelAboveInput()) {
-			tr = new Tr();
-			table.appendChild(tr);
-		}
-    	td = new Td();
-    	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-    	tr.appendChild(td);
-    	td.appendChild(chkSelectRole);
+	    // Select Role row
+	    tr = new Tr();
+	    tr.setId("rowSelectRole");
+	    table.appendChild(tr);
+	    td = new Td();
+	    tr.appendChild(td);
+	    td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	    td.appendChild(new Label(""));
+	    if (isLabelAboveInput()) {
+	        tr = new Tr();
+	        table.appendChild(tr);
+	    }
+	    td = new Td();
+	    td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	    tr.appendChild(td);
+	    td.appendChild(chkSelectRole);
 
-    	if (MSystem.isZKRememberUserAllowed()) {
-        	tr = new Tr();
-            tr.setId("rowRememberMe");
-            table.appendChild(tr);
-        	td = new Td();
-        	tr.appendChild(td);
-        	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-        	td.appendChild(new Label(""));
-			if (isLabelAboveInput()) {
-				tr = new Tr();
-				table.appendChild(tr);
-			}
-        	td = new Td();
-        	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-        	tr.appendChild(td);
-        	td.appendChild(chkRememberMe);
-    	}
+	    // Remember Me row
+	    if (MSystem.isZKRememberUserAllowed()) {
+	        tr = new Tr();
+	        tr.setId("rowRememberMe");
+	        table.appendChild(tr);
+	        td = new Td();
+	        tr.appendChild(td);
+	        td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	        td.appendChild(new Label(""));
+	        if (isLabelAboveInput()) {
+	            tr = new Tr();
+	            table.appendChild(tr);
+	        }
+	        td = new Td();
+	        td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	        tr.appendChild(td);
+	        td.appendChild(chkRememberMe);
+	    }
 
-    	if (MSysConfig.getBooleanValue(MSysConfig.LOGIN_SHOW_RESETPASSWORD, true)) {
-        	tr = new Tr();
-            tr.setId("rowResetPassword");
-            table.appendChild(tr);
-        	td = new Td();
-        	tr.appendChild(td);
-        	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-        	td.appendChild(new Label(""));
-			if (isLabelAboveInput()) {
-				tr = new Tr();
-				table.appendChild(tr);
-			}
-        	td = new Td();
-        	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-        	tr.appendChild(td);
-        	td.appendChild(btnResetPassword);
-        	btnResetPassword.addEventListener(Events.ON_CLICK, this);
-        	
-        	// Martin 18/8/2025  - Register User Button
-        	tr = new Tr();
-            tr.setId("rowRegisterUser");
-            table.appendChild(tr);
-        	td = new Td();
-        	tr.appendChild(td);
-        	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-        	td.appendChild(new Label(""));
-			if (isLabelAboveInput()) {
-				tr = new Tr();
-				table.appendChild(tr);
-			}
-        	td = new Td();
-        	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-        	tr.appendChild(td);
-        	td.appendChild(btnRegister);
-        	btnRegister.addEventListener(Events.ON_CLICK, this);
-        	
-        	// NEW: Register SDF User link (placed directly below the legacy Register link)
-        	tr = new Tr();
-        	tr.setId("rowRegisterUserSdf");
-        	table.appendChild(tr);
-        	td = new Td();
-        	tr.appendChild(td);
-        	td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-        	td.appendChild(new Label(""));
-        	if (isLabelAboveInput()) {
-        	    tr = new Tr();
-        	    table.appendChild(tr);
-        	}
-        	td = new Td();
-        	td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-        	tr.appendChild(td);
-        	td.appendChild(btnRegisterSdf);
-        	btnRegisterSdf.addEventListener(Events.ON_CLICK, this);
+	    // Reset Password row (+ Register links)
+	    if (MSysConfig.getBooleanValue(MSysConfig.LOGIN_SHOW_RESETPASSWORD, true)) {
+	        tr = new Tr();
+	        tr.setId("rowResetPassword");
+	        table.appendChild(tr);
+	        td = new Td();
+	        tr.appendChild(td);
+	        td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	        td.appendChild(new Label(""));
+	        if (isLabelAboveInput()) {
+	            tr = new Tr();
+	            table.appendChild(tr);
+	        }
+	        td = new Td();
+	        td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	        tr.appendChild(td);
+	        td.appendChild(btnResetPassword);
+	        btnResetPassword.addEventListener(Events.ON_CLICK, this);
 
-        	
-    	}
- 
-  
+	        // Register User
+	        tr = new Tr();
+	        tr.setId("rowRegisterUser");
+	        table.appendChild(tr);
+	        td = new Td();
+	        tr.appendChild(td);
+	        td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	        td.appendChild(new Label(""));
+	        if (isLabelAboveInput()) {
+	            tr = new Tr();
+	            table.appendChild(tr);
+	        }
+	        td = new Td();
+	        td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	        tr.appendChild(td);
+	        td.appendChild(btnRegister);
+	        btnRegister.addEventListener(Events.ON_CLICK, this);
 
-    	div = new Div();
-    	div.setSclass(ITheme.LOGIN_BOX_FOOTER_CLASS);
+	        // Register SDF User
+	        tr = new Tr();
+	        tr.setId("rowRegisterUserSdf");
+	        table.appendChild(tr);
+	        td = new Td();
+	        tr.appendChild(td);
+	        td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	        td.appendChild(new Label(""));
+	        if (isLabelAboveInput()) {
+	            tr = new Tr();
+	            table.appendChild(tr);
+	        }
+	        td = new Td();
+	        td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	        tr.appendChild(td);
+	        td.appendChild(btnRegisterSdf);
+	        btnRegisterSdf.addEventListener(Events.ON_CLICK, this);
+	    }
 
-    	pnlButtons = new ConfirmPanel(false, false, false, false, false, false, true);
-    	pnlButtons.addActionListener(this);
+	    // ===== Footer (ConfirmPanel) FIRST so okBtn exists =====
+	    Div footerDiv = new Div();
+	    footerDiv.setSclass(ITheme.LOGIN_BOX_FOOTER_CLASS);
 
-    	// OK button
-    	Button okBtn = pnlButtons.getButton(ConfirmPanel.A_OK);
-    	okBtn.setWidgetListener("onClick", "zAu.cmd0.showBusy(null)");
-    	okBtn.addCallback(ComponentCtrl.AFTER_PAGE_DETACHED,
-    	    t -> ((AbstractComponent) t).setWidgetListener("onClick", null));
-    	okBtn.addSclass(ITheme.LOGIN_BUTTON_CLASS);
+	    pnlButtons = new ConfirmPanel(false, false, false, false, false, false, true);
+	    pnlButtons.addActionListener(this);
 
-    	// Help button
-    	/*
-    	Button helpButton = pnlButtons.createButton(ConfirmPanel.A_HELP);
-    	helpButton.addEventListener(Events.ON_CLICK, this);
-    	helpButton.addSclass(ITheme.LOGIN_BUTTON_CLASS);
-    	pnlButtons.addComponentsRight(helpButton);
-    	*/
+	    Button okBtn = pnlButtons.getButton(ConfirmPanel.A_OK);
+	    okBtn.setWidgetListener("onClick", "zAu.cmd0.showBusy(null)");
+	    okBtn.addCallback(ComponentCtrl.AFTER_PAGE_DETACHED,
+	            t -> ((AbstractComponent) t).setWidgetListener("onClick", null));
+	    okBtn.addSclass(ITheme.LOGIN_BUTTON_CLASS);
 
-    	div.appendChild(pnlButtons);
+	    // ===== Terms & Conditions (Checkboxes) =====
 
+	    // Accept row
+	    tr = new Tr();
+	    tr.setId("rowTermsAccept");
+	    table.appendChild(tr);
 
-    	// Wrap in a Div to align with the left side of OK
-    	//Div registerRow = new Div();
-    	//registerRow.setStyle("margin-top:6px; text-align:left;"); // adjust alignment as needed
-    	//registerRow.appendChild(btnRegister);
+	    Td tdAcceptLbl = new Td();
+	    tr.appendChild(tdAcceptLbl);
+	    tdAcceptLbl.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	    tdAcceptLbl.appendChild(new Label(""));
 
-    	//div.appendChild(registerRow);
-    	form.appendChild(div);
-    	this.appendChild(form);
+	    if (isLabelAboveInput()) {
+	        tr = new Tr();
+	        table.appendChild(tr);
+	    }
 
-        
-     
-   
+	    Td tdAccept = new Td();
+	    tdAccept.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	    tr.appendChild(tdAccept);
 
+	    Hbox acceptLine = new Hbox();
+	    acceptLine.setSpacing("6px");
+	    acceptLine.appendChild(chkAcceptTerms);
+	    acceptLine.appendChild(new Label("I accept MQA"));
+	    acceptLine.appendChild(lnkTerms);        // hyperlink on accept line
+	    tdAccept.appendChild(acceptLine);
+
+	    // Decline row
+	    tr = new Tr();
+	    tr.setId("rowTermsDecline");
+	    table.appendChild(tr);
+
+	    Td tdDeclLbl = new Td();
+	    tr.appendChild(tdDeclLbl);
+	    tdDeclLbl.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	    tdDeclLbl.appendChild(new Label(""));
+
+	    if (isLabelAboveInput()) {
+	        tr = new Tr();
+	        table.appendChild(tr);
+	    }
+
+	    Td tdDecl = new Td();
+	    tdDecl.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	    tr.appendChild(tdDecl);
+
+	    Hbox declineLine = new Hbox();
+	    declineLine.setSpacing("6px");
+	    declineLine.appendChild(chkDeclineTerms);
+	    declineLine.appendChild(new Label("I DO NOT accept MQA"));
+	    declineLine.appendChild(lnkTermsDecl);   // hyperlink on decline line
+	    tdDecl.appendChild(declineLine);
+
+	    // Initial state: OK disabled until Accept is checked
+	    okBtn.setDisabled(true);
+
+	    // Mutually exclusive + enable/disable OK
+	    EventListener<Event> termsListener = ev -> {
+	        Object src = ev.getTarget();
+	        if (src == chkAcceptTerms && chkAcceptTerms.isChecked()) {
+	            chkDeclineTerms.setChecked(false);
+	        } else if (src == chkDeclineTerms && chkDeclineTerms.isChecked()) {
+	            chkAcceptTerms.setChecked(false);
+	        }
+	        updateOkButtonState();
+	    };
+	    chkAcceptTerms.addEventListener(Events.ON_CHECK, termsListener);
+	    chkDeclineTerms.addEventListener(Events.ON_CHECK, termsListener);
+
+	    // Link opens Terms (both lines)
+	    lnkTerms.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
+	    lnkTermsDecl.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
+
+	    // Footer
+	    footerDiv.appendChild(pnlButtons);
+	    form.appendChild(footerDiv);
+
+	    // Append the form ONCE
+	    this.appendChild(form);
 	}
+
+	
+	private void updateOkButtonState() {
+	    Button okBtn = pnlButtons.getButton(ConfirmPanel.A_OK);
+	    boolean enable = chkAcceptTerms.isChecked();
+	    okBtn.setDisabled(!enable);
+	}
+
+	
+	private void openTermsAndConditions() {
+	    final String path = "/WEB-INF/mqa/MQA-Funding-Policy-2025-2026-Signed.pdf";
+	    try {
+	        InputStream is = Executions.getCurrent()
+	                .getDesktop().getWebApp().getResourceAsStream(path);
+	        if (is == null) {
+	            Dialog.warn(0, "URLnotValid", "Terms file not found: " + path, null);
+	            return;
+	        }
+	        AMedia media = new AMedia("MQA-Funding-Policy-2025-2026-Signed",
+	                                  "pdf", "application/pdf", is);
+	        Filedownload.save(media);   // ZK will close the stream afterwards
+	        // <-- do NOT close 'is' here
+	    } catch (Exception e) {
+	        Dialog.warn(0, "URLnotValid", e.getMessage(), null);
+	    }
+	}
+
+
+
 
 	/**
 	 * Create components
@@ -539,7 +620,28 @@ public class LoginPanel extends Window implements EventListener<Event>
         
         if (lstLanguage.getItems().size() > 0){
         	validLstLanguage = (String)lstLanguage.getItems().get(0).getLabel();
-        }                 
+        }           
+        
+     // --- MQA Terms & Conditions
+     // --- MQA Terms & Conditions (checkbox version)
+        chkAcceptTerms = new Checkbox();      // label shown in layout with a separate Label
+        chkAcceptTerms.setId("chkAcceptTerms");
+        chkAcceptTerms.setChecked(false);
+
+        chkDeclineTerms = new Checkbox();
+        chkDeclineTerms.setId("chkDeclineTerms");
+        chkDeclineTerms.setChecked(false);
+
+        // Underlined hyperlink word "Terms and Conditions"
+        lnkTerms = new A("Terms and Conditions");
+        lnkTerms.setId("lnkTerms");
+        lnkTerms.setStyle("text-decoration: underline; cursor: pointer;");
+        
+        lnkTermsDecl = new A("Terms and Conditions");
+        lnkTermsDecl.setId("lnkTermsDecl");
+        lnkTermsDecl.setStyle("text-decoration: underline; cursor: pointer;");
+
+
     }
 
     @Override
@@ -704,6 +806,14 @@ public class LoginPanel extends Window implements EventListener<Event>
     public void validateLogin()
     {
         Login login = new Login(ctx);
+     // Enforce Terms acceptance per spec
+     // Enforce Terms acceptance per spec
+        if (!chkAcceptTerms.isChecked()) {
+            Clients.clearBusy();
+            throw new WrongValueException("Please accept the MQA Terms and Conditions to continue.");
+        }
+
+
         String userId = txtUserId.getValue();
         String userPassword = txtPassword.getValue();
 
