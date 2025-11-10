@@ -1,5 +1,6 @@
 package org.adempiere.webui.desktop;
 
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
@@ -10,15 +11,18 @@ import java.util.List;
 import org.adempiere.webui.component.ToolBarButton;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.MDashboardContent;
-import org.compiere.util.DB;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Style;
 import org.zkoss.zul.Vlayout;
@@ -84,6 +88,29 @@ public final class ZZ_MenuLinksBuilder {
 
         // Install the auto top calculation safely
         installMenuTopAutoCalc(header); // or install on 'fixed' — either works since both are on the page
+        
+     // --- Bottom-right "Funding Policy" link ---
+        Div policyFooter = new Div();
+        policyFooter.setId("zzPolicyFooter");
+        
+        policyFooter.setStyle(
+        	    "position:fixed; right:72px; bottom:24px; z-index:2000;" + // was right:24px
+        	    "display:flex; align-items:center; gap:8px;"
+        	);
+
+
+        // Optional caption to match the spec
+        policyFooter.appendChild(new Label("Terms and conditions will apply in accordance with:"));
+
+        // The hyperlink
+        A fundingLink = new A("Funding Policy");
+        fundingLink.setStyle("text-decoration: underline; cursor: pointer; font-weight:600;");
+        fundingLink.addEventListener(Events.ON_CLICK, ev -> downloadFundingPolicy());
+
+        // Compose and add to the page
+        policyFooter.appendChild(fundingLink);
+        components.add(policyFooter);
+
 
     }
 
@@ -403,6 +430,28 @@ public final class ZZ_MenuLinksBuilder {
                 e -> org.zkoss.zk.ui.util.Clients.evalJavaScript(INIT_JS),
                 new org.zkoss.zk.ui.event.Event("onCreate", hook)
             );
+        }
+    }
+
+    
+    private static void downloadFundingPolicy() {
+        final String path = "/WEB-INF/mqa/MQA-Funding-Policy-2025-2026-Signed.pdf"; // adjust name if needed
+        try (InputStream is = Executions.getCurrent()
+                .getDesktop().getWebApp().getResourceAsStream(path)) {
+
+            if (is == null) {
+                Clients.showNotification("Funding Policy file not found.", "warning", null, "top_center", 3000);
+                return;
+            }
+
+            // Buffer to memory so ZK can serve after the event returns
+            byte[] bytes = is.readAllBytes(); // Java 9+
+            AMedia media = new AMedia("Funding-Policy-2025-2026", "pdf", "application/pdf", bytes);
+            Filedownload.save(media);
+
+        } catch (Exception e) {
+            Clients.showNotification("Unable to open Funding Policy: " + e.getMessage(), "error",
+                    null, "top_center", 3500);
         }
     }
 
