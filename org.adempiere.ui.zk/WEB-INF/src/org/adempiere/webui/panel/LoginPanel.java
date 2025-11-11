@@ -141,6 +141,8 @@ public class LoginPanel extends Window implements EventListener<Event>
     protected Checkbox chkDeclineTerms;
     protected A lnkTerms;
     protected A lnkTermsDecl;
+    
+    
 
 
 
@@ -531,7 +533,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 
 	
 	private void openTermsAndConditions() {
-	    final String path = "/WEB-INF/mqa/MQA-Funding-Policy-2025-2026-Signed.pdf";
+	    final String path = "/WEB-INF/mqa/TERMS AND CONDITIONS MQA_DG APPLICATION PLATFORM.pdf";
 	    try {
 	        InputStream is = Executions.getCurrent()
 	                .getDesktop().getWebApp().getResourceAsStream(path);
@@ -539,7 +541,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	            Dialog.warn(0, "URLnotValid", "Terms file not found: " + path, null);
 	            return;
 	        }
-	        AMedia media = new AMedia("MQA-Funding-Policy-2025-2026-Signed",
+	        AMedia media = new AMedia("TERMS AND CONDITIONS MQA_DG APPLICATION PLATFORM.pdf",
 	                                  "pdf", "application/pdf", is);
 	        Filedownload.save(media);   // ZK will close the stream afterwards
 	        // <-- do NOT close 'is' here
@@ -614,6 +616,18 @@ public class LoginPanel extends Window implements EventListener<Event>
      // NEW: "Register SDF User" link (opens separate SDFRegistrationWindow)
         btnRegisterSdf = new A("Register SDF User");
         btnRegisterSdf.setId("btnRegisterSdf");
+        
+     // Same color for all action buttons
+        final String PRIMARY = "#2d2c72";
+        final String BTN_STYLE =
+            "background-color:" + PRIMARY + ";"
+          + "border:1px solid " + PRIMARY + ";"
+          + "color:#fff; font-weight:600; text-transform: none;";
+
+        btnResetPassword.setStyle(BTN_STYLE);
+        btnRegister.setStyle(BTN_STYLE);
+        btnRegisterSdf.setStyle(BTN_STYLE);
+
 
         lstLanguage.setVisible(false);
 
@@ -633,13 +647,14 @@ public class LoginPanel extends Window implements EventListener<Event>
         chkDeclineTerms.setChecked(false);
 
         // Underlined hyperlink word "Terms and Conditions"
+    
         lnkTerms = new A("Terms and Conditions");
         lnkTerms.setId("lnkTerms");
-        lnkTerms.setStyle("text-decoration: underline; cursor: pointer;");
-        
+        lnkTerms.setStyle("text-decoration: underline; cursor: pointer; color: #2d2c72;");
+
         lnkTermsDecl = new A("Terms and Conditions");
         lnkTermsDecl.setId("lnkTermsDecl");
-        lnkTermsDecl.setStyle("text-decoration: underline; cursor: pointer;");
+        lnkTermsDecl.setStyle("text-decoration: underline; cursor: pointer; color: #2d2c72;");
 
 
     }
@@ -675,11 +690,11 @@ public class LoginPanel extends Window implements EventListener<Event>
         }
         // Martin 18/8/2025
         else if (event.getTarget() == btnRegister) {
-        	 RegistrationWindow.show(this);
+        	GeneralRegistrationWindow.show(this,1000023);  // agent role
         }
      // NEW: open SDF-specific registration window (no changes to original RegistrationWindow)
         else if (event.getTarget() == btnRegisterSdf) {
-            SDFRegistrationWindow.show(this);
+        	GeneralRegistrationWindow.show(this,1000042);  // SDF Role
         }
 
         else if (event.getName().equals(ON_LOAD_TOKEN)) 

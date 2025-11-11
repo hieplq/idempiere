@@ -26,19 +26,21 @@ import org.zkoss.zul.Vbox;
 import org.zkoss.zul.Window;
 
 /**
- * SDFRegistrationWindow
- * ----------------------
- * A separate, self-contained registration window that assigns the SDF role.
- * It DOES NOT modify or depend on the original RegistrationWindow code.
+ * GeneralRegistrationWindow
+ * -------------------------
+ * Self-contained registration window that assigns a GIVEN role (AD_Role_ID).
  *
  * Logic:
- *  - If email exists: assign SDF role to existing user (no OTP).
- *  - If email is new: OTP -> create user -> assign SDF role.
+ *  - If email exists: assign the role to existing user (no OTP).
+ *  - If email is new: OTP -> create user -> assign the role.
+ *
+ * Call as:
+ *   GeneralRegistrationWindow.show(this, <AD_Role_ID>);
  */
-public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.event.EventListener<Event> {
+public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui.event.EventListener<Event> {
 
     private static final long serialVersionUID = 1L;
-    private static final CLogger log = CLogger.getCLogger(SDFRegistrationWindow.class);
+    private static final CLogger log = CLogger.getCLogger(GeneralRegistrationWindow.class);
 
     // Mail templates (R_MailText.Name)
     private static final String OTP_MAIL_TEXT_NAME     = "REGISTRATION_OTP";
@@ -46,7 +48,10 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
 
     // Configure for your instance
     private static final int DEFAULT_CLIENT_ID = 1000000; // <-- your AD_Client_ID
-    private static final int SDF_ROLE_ID       = 1000042; // <-- your SDF AD_Role_ID
+
+    // Role context
+    private final int roleId;
+    private final String roleName; // Resolved from AD_Role for UI/messages
 
     // UI
     private Textbox txtName;
@@ -58,19 +63,22 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
     private Button  btnSendOtp;
     private Button  btnRegisterUser;
 
-    public SDFRegistrationWindow() {
-        setTitle("Register SDF User");
+    // ---------- Construction & Launch ----------
+    private GeneralRegistrationWindow(int roleId) {
+        this.roleId = roleId;
+        this.roleName = resolveRoleName(roleId);
+        setTitle("Register User for " + roleName);
         setWidth("700px");
         setClosable(true);
         setSizable(false);
         setBorder("normal");
-        setId("sdfRegistrationWindow");
+        setId("generalRegistrationWindow_" + roleId);
         buildUI();
         wireEvents();
     }
 
-    public static void show(Component attachTo) {
-        SDFRegistrationWindow w = new SDFRegistrationWindow();
+    public static void show(Component attachTo, int roleId) {
+        GeneralRegistrationWindow w = new GeneralRegistrationWindow(roleId);
         if (attachTo != null && attachTo.getPage() != null) {
             attachTo.appendChild(w);
             w.setMode(Window.MODAL);
@@ -81,6 +89,14 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
         }
     }
 
+    private String resolveRoleName(int roleId) {
+        String n = DB.getSQLValueString(null,
+            "SELECT Name FROM AD_Role WHERE AD_Role_ID=?",
+            roleId);
+        return n != null && !n.trim().isEmpty() ? n.trim() : ("Role ID " + roleId);
+    }
+
+    // ---------- UI ----------
     private void buildUI() {
         Vbox form = new Vbox();
         form.setSpacing("8px");
@@ -158,7 +174,7 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
         }
     }
 
-    // ---------------- OTP SEND ----------------
+    // ---------- OTP SEND ----------
     private void onSendOtp() {
         String email = nvl(txtEmail.getValue());
         if (email.isEmpty())
@@ -168,7 +184,7 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
             throw new IllegalArgumentException("Please complete all required fields before requesting an OTP.");
 
         if (isEmailRegistered(email))
-            throw new IllegalArgumentException("This email already exists. Use Register to assign the SDF role.");
+            throw new IllegalArgumentException("This email already exists. Use Register to assign the " + roleName + " role.");
 
         String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
         Executions.getCurrent().getSession().setAttribute("OTP_CODE", otp);
@@ -185,7 +201,7 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
         FDialog.info(0, this, Msg.getMsg(Env.getCtx(), "OtpSent", new Object[]{ email }));
     }
 
-    // --------------- REGISTER -----------------
+    // ---------- REGISTER ----------
     private void onRegister() {
         String name       = nvl(txtName.getValue());
         String idNo       = nvl(txtIDNo.getValue());
@@ -199,28 +215,25 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
 
         boolean exists = isEmailRegistered(email);
 
-        
         if (exists) {
-            // Existing user path: check if SDF role already present
+            // Existing user path: check if role already present
             int adUserId = getUserIdByEmail(email);
             if (adUserId <= 0) {
                 throw new IllegalArgumentException("Unable to find existing user.");
             }
 
-            if (hasRole(adUserId, SDF_ROLE_ID)) {
-                // Already has SDF role → just inform the user, no changes.
-                FDialog.info(0, this, "SDF role already exists for this user.");
+            if (hasRole(adUserId, roleId)) {
+                FDialog.info(0, this, "Role '" + roleName + "' already exists for this user.");
                 detach();
                 return;
             }
 
-            // Does not have SDF role yet → assign role (and update optional fields)
-            assignSdfToExistingUser(email, cellNo, idNo, passportNo);
-            FDialog.info(0, this, Msg.getMsg(Env.getCtx(), "SDFRoleAssigned"));
+            // Does not have role yet → assign role (and update optional fields)
+            assignRoleToExistingUser(email, roleId, cellNo, idNo, passportNo);
+            FDialog.info(0, this, roleName + " role assigned.");
             detach();
             return;
         }
-
 
         // New user -> OTP path
         if (name.isEmpty() || cellNo.isEmpty() || otp.isEmpty())
@@ -248,10 +261,10 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
         user.setIsExpired(true);
         user.saveEx();
 
-        // Assign SDF role
+        // Assign role
         MUserRoles ur = new MUserRoles(Env.getCtx(), 0, null);
         ur.setAD_User_ID(user.getAD_User_ID());
-        ur.setAD_Role_ID(SDF_ROLE_ID);
+        ur.setAD_Role_ID(roleId);
         ur.setIsActive(true);
         ur.set_ValueNoCheck(MUserRoles.COLUMNNAME_AD_Client_ID, DEFAULT_CLIENT_ID);
         ur.saveEx();
@@ -267,8 +280,8 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
         detach();
     }
 
-    // --------------- Helpers ------------------
-    private void assignSdfToExistingUser(String email, String cellNo, String idNo, String passportNo) {
+    // ---------- Helpers ----------
+    private void assignRoleToExistingUser(String email, int roleId, String cellNo, String idNo, String passportNo) {
         int adUserId = DB.getSQLValue(null,
             "SELECT AD_User_ID FROM AD_User WHERE IsActive='Y' AND AD_Client_ID=? AND UPPER(TRIM(EMail))=UPPER(TRIM(?))",
             DEFAULT_CLIENT_ID, email);
@@ -277,11 +290,11 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
 
         int has = DB.getSQLValue(null,
             "SELECT COUNT(*) FROM AD_User_Roles WHERE AD_User_ID=? AND AD_Role_ID=? AND IsActive='Y'",
-            adUserId, SDF_ROLE_ID);
+            adUserId, roleId);
         if (has == 0) {
             MUserRoles ur = new MUserRoles(Env.getCtx(), 0, null);
             ur.setAD_User_ID(adUserId);
-            ur.setAD_Role_ID(SDF_ROLE_ID);
+            ur.setAD_Role_ID(roleId);
             ur.setIsActive(true);
             ur.set_ValueNoCheck(MUserRoles.COLUMNNAME_AD_Client_ID, DEFAULT_CLIENT_ID);
             ur.saveEx();
@@ -341,17 +354,17 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
         String email = nvl(txtEmail.getValue());
         boolean emailLooksOk = isEmailValid();
         boolean emailExists = emailLooksOk && isEmailRegistered(email);
-     // NEW: lock/unlock OTP field based on whether the email already exists
+
+        // Lock/unlock OTP field based on whether the email already exists
         if (emailExists) {
             txtOtp.setReadonly(true);
-            txtOtp.setValue("");           // optional: clear any stray code
+            txtOtp.setValue(""); // clear any stray code
         } else {
             txtOtp.setReadonly(false);
         }
         btnSendOtp.setDisabled(!coreValid || emailExists);
         boolean allowRegister = coreValid && (emailExists || isOtpEntered());
         btnRegisterUser.setDisabled(!allowRegister);
-        
     }
 
     private void validateCellNo() {
@@ -384,7 +397,7 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
         for (int i = 0; i < len; i++) sb.append(chars.charAt(r.nextInt(chars.length())));
         return sb.toString();
     }
-    
+
     private int getUserIdByEmail(String emailRaw) {
         String email = nvl(emailRaw);
         if (email.isEmpty()) return 0;
@@ -401,5 +414,5 @@ public class SDFRegistrationWindow extends Window implements org.zkoss.zk.ui.eve
             adUserId, roleId);
         return cnt > 0;
     }
-
 }
+

@@ -44,7 +44,7 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
 
     // ---- Defaults: change to your IDs ----
     private static final int DEFAULT_CLIENT_ID = 1000000; // <-- set your AD_Client_ID
-    private static final int DEFAULT_ROLE_ID   = 1000042; // <-- set a default AD_Role_ID
+    private static final int DEFAULT_ROLE_ID   = 1000023; // <-- set a default AD_Role_ID
 
     // ---- UI ----
     private Textbox txtName;

@@ -104,7 +104,8 @@ public final class ZZ_MenuLinksBuilder {
 
         // The hyperlink
         A fundingLink = new A("Funding Policy");
-        fundingLink.setStyle("text-decoration: underline; cursor: pointer; font-weight:600;");
+        fundingLink.setStyle("text-decoration: underline; cursor: pointer; font-weight:600; color: #2d2c72;");
+
         fundingLink.addEventListener(Events.ON_CLICK, ev -> downloadFundingPolicy());
 
         // Compose and add to the page
@@ -435,7 +436,7 @@ public final class ZZ_MenuLinksBuilder {
 
     
     private static void downloadFundingPolicy() {
-        final String path = "/WEB-INF/mqa/MQA-Funding-Policy-2025-2026-Signed.pdf"; // adjust name if needed
+        final String path = "/WEB-INF/mqa/Approved Funding Policy - 2025-2026.pdf"; // adjust name if needed
         try (InputStream is = Executions.getCurrent()
                 .getDesktop().getWebApp().getResourceAsStream(path)) {
 
@@ -446,7 +447,7 @@ public final class ZZ_MenuLinksBuilder {
 
             // Buffer to memory so ZK can serve after the event returns
             byte[] bytes = is.readAllBytes(); // Java 9+
-            AMedia media = new AMedia("Funding-Policy-2025-2026", "pdf", "application/pdf", bytes);
+            AMedia media = new AMedia("Approved Funding Policy - 2025-2026.pdf", "pdf", "application/pdf", bytes);
             Filedownload.save(media);
 
         } catch (Exception e) {
