@@ -268,6 +268,11 @@ public class LoginPanel extends Window implements EventListener<Event>
     /**
      * Layout panel
      */
+	
+	
+	
+	
+	
 	protected void createUI() {
 
 	    Form form = new Form();
@@ -335,8 +340,6 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    tr.appendChild(td);
 	    td.appendChild(txtPassword);
 
-	    // (Language row skipped per your comment)
-
 	    // Select Role row
 	    tr = new Tr();
 	    tr.setId("rowSelectRole");
@@ -373,7 +376,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	        td.appendChild(chkRememberMe);
 	    }
 
-	    // Reset Password row (+ Register links)
+	    // Reset Password + Register links
 	    if (MSysConfig.getBooleanValue(MSysConfig.LOGIN_SHOW_RESETPASSWORD, true)) {
 	        tr = new Tr();
 	        tr.setId("rowResetPassword");
@@ -392,7 +395,6 @@ public class LoginPanel extends Window implements EventListener<Event>
 	        td.appendChild(btnResetPassword);
 	        btnResetPassword.addEventListener(Events.ON_CLICK, this);
 
-	        // Register User
 	        tr = new Tr();
 	        tr.setId("rowRegisterUser");
 	        table.appendChild(tr);
@@ -410,7 +412,6 @@ public class LoginPanel extends Window implements EventListener<Event>
 	        td.appendChild(btnRegister);
 	        btnRegister.addEventListener(Events.ON_CLICK, this);
 
-	        // Register SDF User
 	        tr = new Tr();
 	        tr.setId("rowRegisterUserSdf");
 	        table.appendChild(tr);
@@ -429,22 +430,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	        btnRegisterSdf.addEventListener(Events.ON_CLICK, this);
 	    }
 
-	    // ===== Footer (ConfirmPanel) FIRST so okBtn exists =====
-	    Div footerDiv = new Div();
-	    footerDiv.setSclass(ITheme.LOGIN_BOX_FOOTER_CLASS);
-
-	    pnlButtons = new ConfirmPanel(false, false, false, false, false, false, true);
-	    pnlButtons.addActionListener(this);
-
-	    Button okBtn = pnlButtons.getButton(ConfirmPanel.A_OK);
-	    okBtn.setWidgetListener("onClick", "zAu.cmd0.showBusy(null)");
-	    okBtn.addCallback(ComponentCtrl.AFTER_PAGE_DETACHED,
-	            t -> ((AbstractComponent) t).setWidgetListener("onClick", null));
-	    okBtn.addSclass(ITheme.LOGIN_BUTTON_CLASS);
-
-	    // ===== Terms & Conditions (Checkboxes) =====
-
-	    // Accept row
+	    // ===== Terms & Conditions (Accept + link) =====
 	    tr = new Tr();
 	    tr.setId("rowTermsAccept");
 	    table.appendChild(tr);
@@ -467,70 +453,83 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    acceptLine.setSpacing("6px");
 	    acceptLine.appendChild(chkAcceptTerms);
 	    acceptLine.appendChild(new Label("I accept MQA"));
-	    acceptLine.appendChild(lnkTerms);        // hyperlink on accept line
+	    acceptLine.appendChild(lnkTerms);
 	    tdAccept.appendChild(acceptLine);
 
-	    // Decline row
+	    // Wire the Terms link + OK enable/disable
+	    lnkTerms.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
+
+	    // ===== OK + Tagline in the same (right-aligned) field cell =====
+	    // Create a new row whose field cell is right-aligned
 	    tr = new Tr();
-	    tr.setId("rowTermsDecline");
+	    tr.setId("rowOkAndTag");
 	    table.appendChild(tr);
 
-	    Td tdDeclLbl = new Td();
-	    tr.appendChild(tdDeclLbl);
-	    tdDeclLbl.setSclass(ITheme.LOGIN_LABEL_CLASS);
-	    tdDeclLbl.appendChild(new Label(""));
+	    // Label spacer keeps alignment with form's two-column grid
+	    td = new Td();
+	    td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	    td.appendChild(new Label(""));
+	    tr.appendChild(td);
 
-	    if (isLabelAboveInput()) {
-	        tr = new Tr();
-	        table.appendChild(tr);
-	    }
+	    // Field cell (right-aligned)
+	    Td tdField = new Td();
+	    tdField.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	    tdField.setDynamicProperty("align", "right"); // HTML align
+	    tdField.setStyle("text-align:right;");        // CSS fallback
+	    tr.appendChild(tdField);
 
-	    Td tdDecl = new Td();
-	    tdDecl.setSclass(ITheme.LOGIN_FIELD_CLASS);
-	    tr.appendChild(tdDecl);
-	 
+	    // Inside that right-aligned cell, left-align a small block so OK & tagline share left edge
+	    org.zkoss.zul.Vbox stack = new org.zkoss.zul.Vbox();
+	    stack.setSpacing("6px");
+	    stack.setAlign("start");                                  // left inside the cell
+	    stack.setStyle("display:inline-block; margin-right:16px;");
 
-	    // Initial state: OK disabled until Accept is checked
-	    okBtn.setDisabled(true);
+	    // ConfirmPanel / OK button
+	    pnlButtons = new ConfirmPanel(false, false, false, false, false, false, true);
+	    pnlButtons.addActionListener(this);
 
-	    // Mutually exclusive + enable/disable OK
-	    EventListener<Event> termsListener = ev -> {
-	        Object src = ev.getTarget();
-	        if (src == chkAcceptTerms && chkAcceptTerms.isChecked()) {
-	            chkDeclineTerms.setChecked(false);
-	        } else if (src == chkDeclineTerms && chkDeclineTerms.isChecked()) {
-	            chkAcceptTerms.setChecked(false);
-	        }
-	        updateOkButtonState();
-	    };
-	    chkAcceptTerms.addEventListener(Events.ON_CHECK, termsListener);
-	    chkDeclineTerms.addEventListener(Events.ON_CHECK, termsListener);
+	    Button okBtn = pnlButtons.getButton(ConfirmPanel.A_OK);
+	    okBtn.setWidgetListener("onClick", "zAu.cmd0.showBusy(null)");
+	    okBtn.addCallback(ComponentCtrl.AFTER_PAGE_DETACHED,
+	            t -> ((AbstractComponent) t).setWidgetListener("onClick", null));
+	    okBtn.addSclass(ITheme.LOGIN_BUTTON_CLASS);
 
-	    // Link opens Terms (both lines)
-	    lnkTerms.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
-	    
-	    
-	 
-
-	 // --- Bottom-right tagline (stacked under OK) ---
-	    Vbox rightStack = new Vbox();
-	    rightStack.setSpacing("4px");
-	    rightStack.setAlign("end");              // right-align children
-
-	    rightStack.appendChild(pnlButtons);      // OK button(s) first
+	    stack.appendChild(pnlButtons);
 
 	    Label tagline = new Label("Mining Future Skills");
-	    tagline.setStyle("color: inherit;");     // normal text color
-	    rightStack.appendChild(tagline);
+	    tagline.setStyle(
+	        "display:inline-block;" +
+	        "white-space:nowrap;" +   // one line
+	        "margin-top:12px;" +      // blank line above
+	        "font-weight:700;" +      // bold
+	        "font-size:110%;" +       // +1 size
+	        "color:inherit;"
+	    );
+	    stack.appendChild(tagline);
 
-	    footerDiv.appendChild(rightStack);
-	    form.appendChild(footerDiv);
+	    tdField.appendChild(stack);
 
-
+	    // Disable OK until terms accepted + keep state updated
+	    okBtn.setDisabled(true);
+	    chkAcceptTerms.addEventListener(Events.ON_CHECK, ev -> updateOkButtonState());
+	    if (chkDeclineTerms != null) {
+	        chkDeclineTerms.addEventListener(Events.ON_CHECK, ev -> {
+	            if (chkDeclineTerms.isChecked()) chkAcceptTerms.setChecked(false);
+	            updateOkButtonState();
+	        });
+	    }
+	    updateOkButtonState();
 
 	    // Append the form ONCE
 	    this.appendChild(form);
 	}
+
+
+
+
+
+
+
 
 	
 	private void updateOkButtonState() {
