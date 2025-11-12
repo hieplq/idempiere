@@ -94,6 +94,7 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Image;
+import org.zkoss.zul.Vbox;
 
 /**
  * Login panel of {@link LoginWindow}
@@ -140,7 +141,6 @@ public class LoginPanel extends Window implements EventListener<Event>
     protected Checkbox chkAcceptTerms;
     protected Checkbox chkDeclineTerms;
     protected A lnkTerms;
-    protected A lnkTermsDecl;
     
     
 
@@ -488,13 +488,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    Td tdDecl = new Td();
 	    tdDecl.setSclass(ITheme.LOGIN_FIELD_CLASS);
 	    tr.appendChild(tdDecl);
-
-	    Hbox declineLine = new Hbox();
-	    declineLine.setSpacing("6px");
-	    declineLine.appendChild(chkDeclineTerms);
-	    declineLine.appendChild(new Label("I DO NOT accept MQA"));
-	    declineLine.appendChild(lnkTermsDecl);   // hyperlink on decline line
-	    tdDecl.appendChild(declineLine);
+	 
 
 	    // Initial state: OK disabled until Accept is checked
 	    okBtn.setDisabled(true);
@@ -514,11 +508,25 @@ public class LoginPanel extends Window implements EventListener<Event>
 
 	    // Link opens Terms (both lines)
 	    lnkTerms.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
-	    lnkTermsDecl.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
+	    
+	    
+	 
 
-	    // Footer
-	    footerDiv.appendChild(pnlButtons);
+	 // --- Bottom-right tagline (stacked under OK) ---
+	    Vbox rightStack = new Vbox();
+	    rightStack.setSpacing("4px");
+	    rightStack.setAlign("end");              // right-align children
+
+	    rightStack.appendChild(pnlButtons);      // OK button(s) first
+
+	    Label tagline = new Label("Mining Future Skills");
+	    tagline.setStyle("color: inherit;");     // normal text color
+	    rightStack.appendChild(tagline);
+
+	    footerDiv.appendChild(rightStack);
 	    form.appendChild(footerDiv);
+
+
 
 	    // Append the form ONCE
 	    this.appendChild(form);
@@ -618,11 +626,15 @@ public class LoginPanel extends Window implements EventListener<Event>
         btnRegisterSdf.setId("btnRegisterSdf");
         
      // Same color for all action buttons
+     // Same text color for all action buttons
         final String PRIMARY = "#2d2c72";
         final String BTN_STYLE =
-            "background-color:" + PRIMARY + ";"
-          + "border:1px solid " + PRIMARY + ";"
-          + "color:#fff; font-weight:600; text-transform: none;";
+            "background: none; " +            // no background
+            "border: none; " +                // optional — remove border if desired
+            "color: " + PRIMARY + "; " +      // text color only
+            "font-weight: 600; " +
+            "text-transform: none; " +
+            "cursor: pointer;";
 
         btnResetPassword.setStyle(BTN_STYLE);
         btnRegister.setStyle(BTN_STYLE);
@@ -651,11 +663,6 @@ public class LoginPanel extends Window implements EventListener<Event>
         lnkTerms = new A("Terms and Conditions");
         lnkTerms.setId("lnkTerms");
         lnkTerms.setStyle("text-decoration: underline; cursor: pointer; color: #2d2c72;");
-
-        lnkTermsDecl = new A("Terms and Conditions");
-        lnkTermsDecl.setId("lnkTermsDecl");
-        lnkTermsDecl.setStyle("text-decoration: underline; cursor: pointer; color: #2d2c72;");
-
 
     }
 
