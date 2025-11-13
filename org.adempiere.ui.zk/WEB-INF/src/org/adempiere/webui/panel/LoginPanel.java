@@ -269,10 +269,6 @@ public class LoginPanel extends Window implements EventListener<Event>
      * Layout panel
      */
 	
-	
-	
-	
-	
 	protected void createUI() {
 
 	    Form form = new Form();
@@ -456,16 +452,14 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    acceptLine.appendChild(lnkTerms);
 	    tdAccept.appendChild(acceptLine);
 
-	    // Wire the Terms link + OK enable/disable
 	    lnkTerms.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
 
 	    // ===== OK + Tagline in the same (right-aligned) field cell =====
-	    // Create a new row whose field cell is right-aligned
 	    tr = new Tr();
 	    tr.setId("rowOkAndTag");
 	    table.appendChild(tr);
 
-	    // Label spacer keeps alignment with form's two-column grid
+	    // Label spacer keeps two-column alignment
 	    td = new Td();
 	    td.setSclass(ITheme.LOGIN_LABEL_CLASS);
 	    td.appendChild(new Label(""));
@@ -478,10 +472,10 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    tdField.setStyle("text-align:right;");        // CSS fallback
 	    tr.appendChild(tdField);
 
-	    // Inside that right-aligned cell, left-align a small block so OK & tagline share left edge
-	    org.zkoss.zul.Vbox stack = new org.zkoss.zul.Vbox();
+	    // Inside that cell, left-align a small block so OK & tagline share left edge
+	    Vbox stack = new Vbox();
 	    stack.setSpacing("6px");
-	    stack.setAlign("start");                                  // left inside the cell
+	    stack.setAlign("start");
 	    stack.setStyle("display:inline-block; margin-right:16px;");
 
 	    // ConfirmPanel / OK button
@@ -494,18 +488,14 @@ public class LoginPanel extends Window implements EventListener<Event>
 	            t -> ((AbstractComponent) t).setWidgetListener("onClick", null));
 	    okBtn.addSclass(ITheme.LOGIN_BUTTON_CLASS);
 
-	    stack.appendChild(pnlButtons);
+	    // SHIFT JUST THE BUTTON a bit left (theme margins can be stubborn)
+	    Div okWrap = new Div();
+	    okWrap.setStyle("display:inline-block; position:relative; left:-8px;"); // tweak -8px as needed
+	    okWrap.appendChild(pnlButtons);
+	    stack.appendChild(okWrap);
 
-	    Label tagline = new Label("Mining Future Skills");
-	    tagline.setStyle(
-	        "display:inline-block;" +
-	        "white-space:nowrap;" +   // one line
-	        "margin-top:12px;" +      // blank line above
-	        "font-weight:700;" +      // bold
-	        "font-size:110%;" +       // +1 size
-	        "color:inherit;"
-	    );
-	    stack.appendChild(tagline);
+	   
+	    stack.appendChild(createTagline());
 
 	    tdField.appendChild(stack);
 
@@ -523,9 +513,37 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    // Append the form ONCE
 	    this.appendChild(form);
 	}
+	
+	// Builds "Mining Future Skills" tagline with brand colours, all bold, slightly bigger
+	private Hbox createTagline() {
 
+	    // Brand palette
+	    final String BLUE   = "#2d2c72"; // Mining (dark blue)
+	    final String ORANGE = "#e87839"; // Future (rich orange)
+	    final String GREEN  = "#3d7a45"; // Skills (organic green)
 
+	    Hbox tagline = new Hbox();
+	    tagline.setSpacing("6px");
+	    tagline.setStyle("margin-top:12px;"); // just spacing here
 
+	    // Common style: bold + bigger font
+	    final String BASE = "font-weight:700; font-size:120%;";
+
+	    Label w1 = new Label("Mining");
+	    w1.setStyle(BASE + "color:" + BLUE + ";");
+
+	    Label w2 = new Label("Future");
+	    w2.setStyle(BASE + "color:" + ORANGE + ";");
+
+	    Label w3 = new Label("Skills");
+	    w3.setStyle(BASE + "color:" + GREEN + ";");
+
+	    tagline.appendChild(w1);
+	    tagline.appendChild(w2);
+	    tagline.appendChild(w3);
+
+	    return tagline;
+	}
 
 
 

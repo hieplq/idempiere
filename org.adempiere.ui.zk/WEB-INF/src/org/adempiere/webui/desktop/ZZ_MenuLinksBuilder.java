@@ -100,7 +100,6 @@ public final class ZZ_MenuLinksBuilder {
 
 
         // Optional caption to match the spec
-        policyFooter.appendChild(new Label("Terms and conditions will apply in accordance with:"));
 
         // The hyperlink
         A fundingLink = new A("Funding Policy");
