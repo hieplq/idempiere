@@ -146,6 +146,7 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
     }
 
     private void wireEvents() {
+    	/*
         txtIDNo.addEventListener(Events.ON_CHANGING, ev -> {
             String v = nvl(((InputEvent)ev).getValue());
             txtPassportNo.setDisabled(!v.isEmpty());
@@ -163,6 +164,77 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
 
         btnSendOtp.addEventListener(Events.ON_CLICK, this);
         btnRegisterUser.addEventListener(Events.ON_CLICK, this);
+        */
+    	// ---- Live mutual exclusion while typing (instant toggle) ----
+    	txtIDNo.addEventListener(Events.ON_CHANGING, ev -> {
+    	    InputEvent iev = (InputEvent) ev;
+    	    String v = nvl(iev.getValue());
+    	    boolean hasText = !v.isEmpty();
+    	    txtPassportNo.setDisabled(hasText);
+    	    // Optional: clearWrongValue(txtPassportNo);
+    	    updateButtonsState();
+    	});
+
+    	txtPassportNo.addEventListener(Events.ON_CHANGING, ev -> {
+    	    InputEvent iev = (InputEvent) ev;
+    	    String v = nvl(iev.getValue());
+    	    boolean hasText = !v.isEmpty();
+    	    txtIDNo.setDisabled(hasText);
+    	    // Optional: clearWrongValue(txtIDNo);
+    	    updateButtonsState();
+    	});
+
+        // Mutually exclusive ID/Passport UX
+            
+        txtIDNo.addEventListener(Events.ON_CHANGE, ev -> {
+        	try {
+                String v = nvl(txtIDNo.getValue());
+                if (!v.isEmpty()) {
+                    validateIdNo();                 // throws WrongValueException if invalid
+                    txtPassportNo.setDisabled(true);
+                } else {
+                    txtPassportNo.setDisabled(false);
+                }
+            } finally {
+                updateButtonsState();
+            }
+        });
+
+	    txtPassportNo.addEventListener(Events.ON_CHANGE, ev -> {
+	    	try {
+	            if (!txtPassportNo.getValue().trim().isEmpty()) {
+	                txtIDNo.setDisabled(true);
+	            } else {
+	                txtIDNo.setDisabled(false);
+	            }
+	        } finally {
+	            updateButtonsState();
+	        }
+	    });
+	    
+	    txtName.addEventListener(Events.ON_CHANGE, ev -> updateButtonsState());
+	    
+	 
+	 // Mobile number – validate on blur
+	    txtCellNo.addEventListener(Events.ON_CHANGE, ev -> {
+	        try {
+	            validateCellNo();                   // throws if invalid
+	        } finally {
+	            updateButtonsState();
+	        }
+	    });
+
+	    txtEmail.addEventListener(Events.ON_CHANGE, ev -> {
+	        try {
+	            validateEmailOnBlur();              // throws if invalid or duplicate
+	        } finally {
+	            updateButtonsState();
+	        }
+	    });
+	 // OTP – just presence/format (6 digits) for enabling Register
+	    txtOtp.addEventListener(Events.ON_CHANGE, ev -> updateButtonsState());
+        btnSendOtp.addEventListener(Events.ON_CLICK, this);
+        btnRegisterUser.addEventListener(Events.ON_CLICK, this);
     }
 
     @Override
@@ -173,6 +245,8 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
             onRegister();
         }
     }
+    
+    
 
     // ---------- OTP SEND ----------
     private void onSendOtp() {
@@ -180,8 +254,12 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
         if (email.isEmpty())
             throw new IllegalArgumentException(Msg.getMsg(Env.getCtx(), "FillEmailFirst"));
 
-        if (!isCoreFieldsValid())
-            throw new IllegalArgumentException("Please complete all required fields before requesting an OTP.");
+        if (!isCoreFieldsValid()) {
+        	 String msg = Msg.getMsg(Env.getCtx(), "CompleteFieldsBeforeOTP");
+             if (msg == null || "CompleteFieldsBeforeOTP".equals(msg)) {
+                 msg = "Please complete all required fields (Name, ID/Passport, Mobile, valid Email) before requesting an OTP.";
+             }
+        }
 
         if (isEmailRegistered(email))
             throw new IllegalArgumentException("This email already exists. Use Register to assign the " + roleName + " role.");
@@ -257,7 +335,8 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
         user.set_ValueNoCheck(MUser.COLUMNNAME_AD_Client_ID, DEFAULT_CLIENT_ID);
         user.set_ValueOfColumn("ZZ_ID_Passport_No", idNo);
         user.set_ValueOfColumn("ZZ_Passport_No",   passportNo);
-        user.setPassword(generatePassword(8));
+        String tempPwd = PasswordGenerator.generatePassword(8);
+        user.setPassword(tempPwd);
         user.setIsExpired(true);
         user.saveEx();
 
@@ -337,11 +416,18 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
     private boolean isCellValid() { return nvl(txtCellNo.getValue()).matches("\\d{10}"); }
     private boolean isEmailValid(){ return nvl(txtEmail.getValue()).matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"); }
     private boolean isIdOrPassportValid() {
-        String id = nvl(txtIDNo.getValue());
+    	String id = nvl(txtIDNo.getValue());
         String pass = nvl(txtPassportNo.getValue());
-        if (id.isEmpty() && pass.isEmpty()) return false;
-        if (!id.isEmpty() && !pass.isEmpty()) return false;
-        if (!id.isEmpty() && !id.matches("\\d{13}")) return false;
+
+        if (id.isEmpty() && pass.isEmpty()) return false;   // need one
+        if (!id.isEmpty() && !pass.isEmpty()) return false; // only one allowed
+
+        if (!id.isEmpty()) {
+            if (!id.matches("\\d{13}")) return false;
+            ZZ_SA_IDNumber sa = new ZZ_SA_IDNumber(id);
+            return sa.getIDNumber() != null && sa.isIDNumberValid();
+        }
+        // Passport provided (no extra format rules here)
         return true;
     }
     private boolean isOtpEntered() { return nvl(txtOtp.getValue()).matches("\\d{6}"); }
@@ -368,16 +454,51 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
     }
 
     private void validateCellNo() {
-        String cell = nvl(txtCellNo.getValue());
-        if (!cell.matches("\\d{10}"))
-            throw new WrongValueException(txtCellNo, "Mobile number must be exactly 10 digits.");
+    	String cell = nvl(txtCellNo.getValue());
+        // exactly 10 digits, no spaces, no symbols
+        if (!cell.matches("\\d{10}")) {
+            // AD_Message key recommended: "CellMustBe10Digits"
+            String msg = Msg.getMsg(Env.getCtx(), "CellMustBe10Digits", new Object[0]);
+            if (msg == null || msg.equals("CellMustBe10Digits")) {
+                msg = "Mobile number must be exactly 10 digits (digits only).";
+            }
+            throw new WrongValueException(txtCellNo, msg);
+        }        
     }
 
     private void validateEmailOnBlur() {
         String email = nvl(txtEmail.getValue());
         if (email.isEmpty()) return;
-        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"))
-            throw new WrongValueException(txtEmail, "Please enter a valid email address.");
+        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            String msg = Msg.getMsg(Env.getCtx(), "InvalidEMail");
+            if (msg == null || "InvalidEMail".equals(msg)) msg = "Please enter a valid email address.";
+            throw new WrongValueException(txtEmail, msg);
+        }
+    }
+    
+    private void validateIdNo() {
+        String id = nvl(txtIDNo.getValue());
+
+        // Fast guard for length/digits so we can give an immediate, clear message
+        if (!id.matches("\\d{13}")) {
+            // AD_Message key suggested: "InvalidIdNumber"
+            String msg = Msg.getMsg(Env.getCtx(), "InvalidIdNumber");
+            if (msg == null || "InvalidIdNumber".equals(msg)) {
+                msg = "ID number must be exactly 13 digits.";
+            }
+            throw new WrongValueException(txtIDNo, msg);
+        }
+
+        ZZ_SA_IDNumber sa = new ZZ_SA_IDNumber(id);
+        // Constructor leaves ID null if basic format fails; also do full CDV/DOB validation
+        boolean ok = sa.getIDNumber() != null && sa.isIDNumberValid();
+        if (!ok) {
+            String msg = Msg.getMsg(Env.getCtx(), "InvalidIdNumber");
+            if (msg == null || "InvalidIdNumber".equals(msg)) {
+                msg = "Invalid South African ID number (date/check digit failed).";
+            }
+            throw new WrongValueException(txtIDNo, msg);
+        }
     }
 
     private boolean isEmailRegistered(String emailRaw) {
@@ -390,14 +511,7 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
 
     private static String nvl(String s) { return s == null ? "" : s.trim(); }
 
-    private static String generatePassword(int len) {
-        final String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789@#$%";
-        StringBuilder sb = new StringBuilder(len);
-        java.util.concurrent.ThreadLocalRandom r = java.util.concurrent.ThreadLocalRandom.current();
-        for (int i = 0; i < len; i++) sb.append(chars.charAt(r.nextInt(chars.length())));
-        return sb.toString();
-    }
-
+   
     private int getUserIdByEmail(String emailRaw) {
         String email = nvl(emailRaw);
         if (email.isEmpty()) return 0;

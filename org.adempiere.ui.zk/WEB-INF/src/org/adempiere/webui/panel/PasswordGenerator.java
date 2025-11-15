@@ -44,10 +44,6 @@ public class PasswordGenerator {
 
     public static void main(String[] args) {
         String tempPwd = generatePassword(8);
-        //System.out.println(tempPwd);
-        for( int i = 1; i <= 50; i++) {
-	        String tempPwd2 = UUID.randomUUID().toString().substring(0, 8);
-	        System.out.println(tempPwd2);
-        }
+        System.out.println(tempPwd);
     }
 }
