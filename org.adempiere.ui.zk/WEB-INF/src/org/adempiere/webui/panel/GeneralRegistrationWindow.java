@@ -337,6 +337,7 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
         user.set_ValueOfColumn("ZZ_Passport_No",   passportNo);
         String tempPwd = PasswordGenerator.generatePassword(8);
         user.setPassword(tempPwd);
+        user.setNotificationType(user.NOTIFICATIONTYPE_EMailPlusNotice);
         user.setIsExpired(true);
         user.saveEx();
 
