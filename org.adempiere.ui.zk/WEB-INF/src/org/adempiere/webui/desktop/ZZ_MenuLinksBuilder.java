@@ -157,10 +157,10 @@ public final class ZZ_MenuLinksBuilder {
         v.appendChild(lblTitle);
 
         // Line 3: "1st Window | dd MMMM yyyy - dd MMMM yyyy"
-        String windowLine = "5th Window | —";
+        String windowLine = data.window + " Window | —";
         if (data.start != null && data.end != null) {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd MMMM uuuu");
-            windowLine = "5th Window | " + fmt.format(data.start) + " - " + fmt.format(data.end);
+            windowLine = data.window + " Window | " + fmt.format(data.start) + " - " + fmt.format(data.end);
         }
         Label lblWindow = new Label(windowLine);
         //lblWindow.setStyle("display:block;font-size:18px;font-weight:500;opacity:0.9;letter-spacing:0.3px;margin:0;");
@@ -175,6 +175,7 @@ public final class ZZ_MenuLinksBuilder {
     }
 
     private static class HeaderData {
+    	String window;  // 1st ,2nd , 3rd ...
         String yearText;
         String menuTitle;
         LocalDate start;
@@ -187,7 +188,8 @@ public final class ZZ_MenuLinksBuilder {
               "SELECT y.description AS year_desc, "
             + "       oa.zz_menu_title, "
             + "       oa.startdate::date AS start_date, "
-            + "       oa.enddate::date   AS end_date "
+            + "       oa.enddate::date   AS end_date ,"
+            + "       oa.ZZ_Window "
             + "FROM adempiere.zz_open_application oa "
             + "JOIN adempiere.c_year y ON y.c_year_id = oa.c_year_id "
             + "WHERE oa.isactive = 'Y' "
@@ -204,6 +206,7 @@ public final class ZZ_MenuLinksBuilder {
                 java.sql.Date ed = rs.getDate("end_date");
                 if (sd != null) h.start = sd.toLocalDate();
                 if (ed != null) h.end   = ed.toLocalDate();
+                h.window = rs.getString("ZZ_Window");
             }
         } catch (Exception e) {
             log.warning("Failed to load header data: " + e.getMessage());
