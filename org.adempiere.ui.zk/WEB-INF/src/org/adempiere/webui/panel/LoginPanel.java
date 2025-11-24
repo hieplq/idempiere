@@ -419,11 +419,13 @@ public class LoginPanel extends Window implements EventListener<Event>
 	            tr = new Tr();
 	            table.appendChild(tr);
 	        }
+	        /*
 	        td = new Td();
 	        td.setSclass(ITheme.LOGIN_FIELD_CLASS);
 	        tr.appendChild(td);
 	        td.appendChild(btnRegisterSdf);
 	        btnRegisterSdf.addEventListener(Events.ON_CLICK, this);
+	        */
 	    }
 
 	    // ===== Terms & Conditions (Accept + link) =====
@@ -635,7 +637,7 @@ public class LoginPanel extends Window implements EventListener<Event>
         btnResetPassword.setId("btnResetPassword");
         
         // Martin 12/08/2025
-        btnRegister = new A("Register User");
+        btnRegister = new A("Register DG User");
         btnRegister.setId("btnRegister");
         
      // NEW: "Register SDF User" link (opens separate SDFRegistrationWindow)

@@ -146,25 +146,7 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
     }
 
     private void wireEvents() {
-    	/*
-        txtIDNo.addEventListener(Events.ON_CHANGING, ev -> {
-            String v = nvl(((InputEvent)ev).getValue());
-            txtPassportNo.setDisabled(!v.isEmpty());
-            updateButtonsState();
-        });
-        txtPassportNo.addEventListener(Events.ON_CHANGING, ev -> {
-            String v = nvl(((InputEvent)ev).getValue());
-            txtIDNo.setDisabled(!v.isEmpty());
-            updateButtonsState();
-        });
-        txtName.addEventListener(Events.ON_CHANGE, ev -> updateButtonsState());
-        txtCellNo.addEventListener(Events.ON_CHANGE, ev -> { try { validateCellNo(); } finally { updateButtonsState(); } });
-        txtEmail.addEventListener(Events.ON_CHANGE, ev -> { try { validateEmailOnBlur(); } finally { updateButtonsState(); } });
-        txtOtp.addEventListener(Events.ON_CHANGE, ev -> updateButtonsState());
-
-        btnSendOtp.addEventListener(Events.ON_CLICK, this);
-        btnRegisterUser.addEventListener(Events.ON_CLICK, this);
-        */
+    	
     	// ---- Live mutual exclusion while typing (instant toggle) ----
     	txtIDNo.addEventListener(Events.ON_CHANGING, ev -> {
     	    InputEvent iev = (InputEvent) ev;
@@ -292,7 +274,15 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
             throw new IllegalArgumentException(Msg.getMsg(Env.getCtx(), "FillEmailFirst"));
 
         boolean exists = isEmailRegistered(email);
+        if (exists) {
+            String msg = Msg.getMsg(Env.getCtx(), "EmailAlreadyRegistered");
+            if (msg == null || "EmailAlreadyRegistered".equals(msg)) {
+                msg = "This email is already registered. Please sign in or use Forgot Password.";
+            }
+            throw new IllegalArgumentException(msg);
+        }
 
+        /*
         if (exists) {
             // Existing user path: check if role already present
             int adUserId = getUserIdByEmail(email);
@@ -312,6 +302,7 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
             detach();
             return;
         }
+        */
 
         // New user -> OTP path
         if (name.isEmpty() || cellNo.isEmpty() || otp.isEmpty())
