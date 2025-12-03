@@ -493,10 +493,7 @@ public final class ZZ_MenuLinksBuilder {
 
         byte[] data = entry.getData();
         String fileName = entry.getName();
-     // Remove first and last character if present (e.g. squiggles / quotes)
-        if (fileName != null && fileName.length() > 2) {
-            fileName = fileName.substring(1, fileName.length() - 1);
-        }
+     
         if (fileName == null || fileName.isBlank()) {
             fileName = "FundingPolicy.pdf";
         }
