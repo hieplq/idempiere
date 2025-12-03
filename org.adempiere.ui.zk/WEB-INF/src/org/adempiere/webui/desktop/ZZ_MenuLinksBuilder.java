@@ -1,6 +1,5 @@
 package org.adempiere.webui.desktop;
 
-import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
@@ -10,9 +9,12 @@ import java.util.List;
 
 import org.adempiere.webui.component.ToolBarButton;
 import org.compiere.model.I_AD_Menu;
+import org.compiere.model.MAttachment;
+import org.compiere.model.MAttachmentEntry;
 import org.compiere.model.MDashboardContent;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
+import org.compiere.util.Env;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -26,6 +28,8 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Style;
 import org.zkoss.zul.Vlayout;
+
+import za.ntier.models.X_ZZ_Funding_Policy;
 
 public final class ZZ_MenuLinksBuilder {
 
@@ -438,25 +442,108 @@ public final class ZZ_MenuLinksBuilder {
 
     
     private static void downloadFundingPolicy() {
-        final String path = "/WEB-INF/mqa/Approved Funding Policy - 2025-2026.pdf"; // adjust name if needed
-        try (InputStream is = Executions.getCurrent()
-                .getDesktop().getWebApp().getResourceAsStream(path)) {
 
-            if (is == null) {
-                Clients.showNotification("Funding Policy file not found.", "warning", null, "top_center", 3000);
-                return;
-            }
-
-            // Buffer to memory so ZK can serve after the event returns
-            byte[] bytes = is.readAllBytes(); // Java 9+
-            AMedia media = new AMedia("Approved Funding Policy - 2025-2026.pdf", "pdf", "application/pdf", bytes);
-            Filedownload.save(media);
-
-        } catch (Exception e) {
-            Clients.showNotification("Unable to open Funding Policy: " + e.getMessage(), "error",
-                    null, "top_center", 3500);
+        // 1) Find the active policy record by date range
+        int policyId = getCurrentFundingPolicyId();
+        if (policyId <= 0) {
+            Clients.showNotification(
+                "No active Funding Policy is defined for the current date.",
+                "warning",
+                null,
+                "top_center",
+                3500
+            );
+            return;
         }
+
+        // 2) Load the PO (mostly so we have the proper table context)
+        X_ZZ_Funding_Policy policy =
+            new X_ZZ_Funding_Policy(Env.getCtx(), policyId, null);
+
+        // 3) Load the attachment for this record
+        MAttachment attachment =
+            MAttachment.get(Env.getCtx(), policy.get_Table_ID(), policy.get_ID());
+
+        if (attachment == null || attachment.getEntryCount() == 0) {
+            Clients.showNotification(
+                "The current Funding Policy has no document attached.",
+                "warning",
+                null,
+                "top_center",
+                3500
+            );
+            return;
+        }
+
+        // 4) Decide which attachment entry to use
+        //    (here: most recent / last one)
+        int entryIndex = attachment.getEntryCount() - 1;
+        MAttachmentEntry entry = attachment.getEntry(entryIndex);
+
+        if (entry == null || entry.getData() == null) {
+            Clients.showNotification(
+                "The Funding Policy attachment is empty.",
+                "warning",
+                null,
+                "top_center",
+                3500
+            );
+            return;
+        }
+
+        byte[] data = entry.getData();
+        String fileName = entry.getName();
+        if (fileName == null || fileName.isBlank()) {
+            fileName = "FundingPolicy.pdf";
+        }
+
+        // Extract extension
+        String ext = "pdf";
+        int dot = fileName.lastIndexOf('.');
+        if (dot >= 0 && dot < fileName.length() - 1) {
+            ext = fileName.substring(dot + 1).toLowerCase();
+        }
+
+        // Very simple content-type mapping
+        String contentType;
+        switch (ext) {
+            case "pdf":
+                contentType = "application/pdf";
+                break;
+            case "doc":
+                contentType = "application/msword";
+                break;
+            case "docx":
+                contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                break;
+            default:
+                contentType = "application/octet-stream";
+                break;
+        }
+
+        // 5) Serve via ZK
+        AMedia media = new AMedia(fileName, ext, contentType, data);
+        Filedownload.save(media);
     }
+
+    
+    /**
+     * Returns the ZZ_Funding_Policy_ID for the most recent policy
+     * whose date range contains now(). Returns 0 if none.
+     */
+    private static int getCurrentFundingPolicyId() {
+        final String sql =
+            "SELECT ZZ_Funding_Policy_ID " +
+            "FROM adempiere.zz_funding_policy " +
+            "WHERE IsActive = 'Y' " +
+            "  AND now() BETWEEN StartDate AND EndDate "
+            + " AND ZZ_DocStatus = 'AP' " +
+            " ORDER BY StartDate DESC, EndDate DESC, ZZ_Funding_Policy_ID DESC " +
+            "LIMIT 1";
+
+        return DB.getSQLValue(null, sql);
+    }
+
 
 
 
