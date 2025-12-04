@@ -523,32 +523,49 @@ public class RegistrationWindow extends Window implements org.zkoss.zk.ui.event.
         return cnt > 0;
     }
     
+    
+    
     private void validateEmailOnBlur() {
         String email = safeTrim(txtEmail.getValue());
 
+        // Empty: clear error + disable buttons via normal logic
         if (email.isEmpty()) {
             clearWrongValue(txtEmail);
-            updateButtonsState();
+            updateButtonsState();   // will disable Register because email is not valid
             return;
         }
 
+        // Invalid format
         if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             String msg = Msg.getMsg(Env.getCtx(), "InvalidEMail");
-            if (msg == null || "InvalidEMail".equals(msg)) msg = "Please enter a valid email address.";
+            if (msg == null || "InvalidEMail".equals(msg)) {
+                msg = "Please enter a valid email address.";
+            }
+
+            // explicitly disable actions before we throw
+            btnSendOtp.setDisabled(true);
+            btnRegisterUser.setDisabled(true);
             throw new WrongValueException(txtEmail, msg);
         }
 
+        // Email already registered
         if (isEmailRegistered(email)) {
             String msg = Msg.getMsg(Env.getCtx(), "EmailAlreadyRegistered");
             if (msg == null || "EmailAlreadyRegistered".equals(msg)) {
                 msg = "This email is already registered. Please sign in or use Forgot Password.";
             }
+
+            // IMPORTANT: disable Register and Send OTP BEFORE raising the error
+            btnSendOtp.setDisabled(true);
+            btnRegisterUser.setDisabled(true);
             throw new WrongValueException(txtEmail, msg);
         }
 
+        // Valid and not registered
         clearWrongValue(txtEmail);
         updateButtonsState();
     }
+
 
 
     // Utility: clear prior WrongValue state (if any)

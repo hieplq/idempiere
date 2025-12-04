@@ -241,6 +241,7 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
              if (msg == null || "CompleteFieldsBeforeOTP".equals(msg)) {
                  msg = "Please complete all required fields (Name, ID/Passport, Mobile, valid Email) before requesting an OTP.";
              }
+             throw new IllegalArgumentException(msg);
         }
 
         if (isEmailRegistered(email))
@@ -406,7 +407,15 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
 
     private boolean isNameValid() { return !nvl(txtName.getValue()).isEmpty(); }
     private boolean isCellValid() { return nvl(txtCellNo.getValue()).matches("\\d{10}"); }
-    private boolean isEmailValid(){ return nvl(txtEmail.getValue()).matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"); }
+    private boolean isEmailValid() {
+        String email = nvl(txtEmail.getValue());
+        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            return false;
+        }
+        // Treat already-registered emails as invalid for self-registration
+        return !isEmailRegistered(email);
+    }
+
     private boolean isIdOrPassportValid() {
     	String id = nvl(txtIDNo.getValue());
         String pass = nvl(txtPassportNo.getValue());
@@ -458,15 +467,32 @@ public class GeneralRegistrationWindow extends Window implements org.zkoss.zk.ui
         }        
     }
 
+ 
+    
     private void validateEmailOnBlur() {
         String email = nvl(txtEmail.getValue());
-        if (email.isEmpty()) return;
+        if (email.isEmpty())
+            return;
+
+        // 1) Basic format check
         if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             String msg = Msg.getMsg(Env.getCtx(), "InvalidEMail");
-            if (msg == null || "InvalidEMail".equals(msg)) msg = "Please enter a valid email address.";
+            if (msg == null || "InvalidEMail".equals(msg)) {
+                msg = "Please enter a valid email address.";
+            }
+            throw new WrongValueException(txtEmail, msg);
+        }
+
+        // 2) Already registered?
+        if (isEmailRegistered(email)) {
+            String msg = Msg.getMsg(Env.getCtx(), "EmailAlreadyRegistered");
+            if (msg == null || "EmailAlreadyRegistered".equals(msg)) {
+                msg = "This email is already registered. Please sign in or use Forgot Password.";
+            }
             throw new WrongValueException(txtEmail, msg);
         }
     }
+
     
     private void validateIdNo() {
         String id = nvl(txtIDNo.getValue());
