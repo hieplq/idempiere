@@ -41,6 +41,7 @@ import org.compiere.model.MQuery;
 import org.compiere.model.MTask;
 import org.compiere.model.SystemProperties;
 import org.compiere.util.Env;
+import org.compiere.util.Msg;
 import org.compiere.wf.MWorkflow;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
@@ -57,6 +58,11 @@ import org.zkoss.zul.Tabpanels;
 public abstract class TabbedDesktop extends AbstractDesktop {
 	/** Controller for open desktop windows. */
 	protected WindowContainer windowContainer;
+	
+	   // --- NEW: home tab support ---
+    protected Tab homeTab;
+    protected DesktopTabpanel homeTabPanel;
+    protected DashboardController homeDashboard;
 
 	/**
 	 * Default constructor
@@ -445,5 +451,47 @@ public abstract class TabbedDesktop extends AbstractDesktop {
 	public void setTabTitle(String title, int windowNo) {
 		windowContainer.setTabTitle(title, windowNo);		
 	}
+	
+    /** Martin 11/12/2025
+     * Create the Home tab (dashboard) once, if not already created.
+     * Home lives as a normal tab in the WindowContainer, so the tab strip
+     * stays visible even when you're on Home.
+     */
+    protected void initHomeTab() {
+        if (homeTab != null) {
+            return; // already initialized
+        }
+
+        // Create the panel that will host the dashboard
+        homeTabPanel = new DesktopTabpanel();
+
+        // Create and render the dashboard into this tabpanel
+        homeDashboard = new DashboardController();
+        // isShowInDashboard = true
+        homeDashboard.render(homeTabPanel, this, true);
+
+        // Add as a non-closable tab
+        // (call preOpenNewTab() to keep behaviour consistent with other tabs)
+        preOpenNewTab();
+        DecorateInfo deco = new DecorateInfo(Icon.TAB); // or Icon.TAB if HOME doesn’t exist
+        homeTab = windowContainer.addWindow(homeTabPanel,
+                Msg.getMsg(Env.getCtx(), "Home"),  // title
+                false,                             // closeable
+                deco);
+
+        homeTab.setClosable(false);   // extra safety
+        homeTab.setSclass("home-tab"); // optional styling hook
+    }
+    
+    // Martin 11/12/2025
+    @Override
+    public void renderHomeTab() {
+        initHomeTab();          // ensure the Home tab exists
+        if (homeTab != null) {
+            homeTab.setSelected(true);  // switch to Home
+        }
+    }
+
+
 
 }

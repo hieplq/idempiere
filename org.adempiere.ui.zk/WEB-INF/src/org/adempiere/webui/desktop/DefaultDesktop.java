@@ -384,7 +384,7 @@ public class DefaultDesktop extends TabbedDesktop implements MenuListener, Seria
         }
 
         Center windowArea = layout.getCenter();
-
+        windowArea.setStyle("padding:0; margin:0;");  // Martin 11/12/2025
         windowContainer.createPart(windowArea);
 
         homeTab = new Tabpanel();

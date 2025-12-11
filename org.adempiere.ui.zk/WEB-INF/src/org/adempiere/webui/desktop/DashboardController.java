@@ -51,6 +51,7 @@ import org.adempiere.webui.component.Anchorchildren;
 import org.adempiere.webui.component.Anchorlayout;
 import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.ToolBarButton;
+import org.adempiere.webui.component.Window;
 import org.adempiere.webui.dashboard.DashboardPanel;
 import org.adempiere.webui.dashboard.DashboardRunnable;
 import org.adempiere.webui.event.DrillEvent;
@@ -176,6 +177,9 @@ public class DashboardController implements EventListener<Event> {
 	private final static int MAX_NO_OF_PREFS_IN_ROW = 10;
 	/** Default horizontal flex grow for dashboard gadget. For row oriented layout. */
 	private final static int DEFAULT_FLEX_GROW = 1;
+	// Map of AD_Menu_ID -> windowNo (per dashboard instance)
+	private final Map<Integer, Integer> menuWindowMap = new HashMap<>();
+
 
 	/**
 	 * default constructor
@@ -1166,30 +1170,77 @@ public class DashboardController implements EventListener<Event> {
 		}
 		else if(eventName.equals(Events.ON_CLICK))
 		{
-			if(comp instanceof ToolBarButton)
-			{
-				ToolBarButton btn = (ToolBarButton) comp;
+		    if (comp instanceof ToolBarButton)
+		    {
 
-				if (btn.getAttribute("AD_Menu_ID") != null)
-				{
-					int menuId = (Integer)btn.getAttribute("AD_Menu_ID");
-					if(menuId > 0) SessionManager.getAppDesktop().onMenuSelected(menuId);
-				}
-				else if (btn.getAttribute("AD_Process_ID") != null)
-				{
-					int processId = (Integer)btn.getAttribute("AD_Process_ID");
-					String parameters = (String)btn.getAttribute("ProcessParameters");
-					int printFormatId = (Integer)btn.getAttribute("AD_PrintFormat_ID");
-					if (processId > 0)
-						openReportInViewer(processId, printFormatId, parameters);
-				}
-			}else if(comp instanceof A)
-			{	
-				String name = comp.getAttribute("title").toString();
-				String description = comp.getAttribute("description")!=null ? comp.getAttribute("description").toString() : null;
-				String help = comp.getAttribute("help")!=null ? comp.getAttribute("help").toString() : null;
-				SessionManager.getAppDesktop().updateHelpTooltip(name, description, help, null, null);
-			}
+		        ToolBarButton btn = (ToolBarButton) comp;
+
+		        // Handle menu buttons coming from dashboard gadgets
+		        if (btn.getAttribute("AD_Menu_ID") != null)
+		        {
+		            int menuId = (Integer) btn.getAttribute("AD_Menu_ID");
+		            if (menuId > 0)
+		            {
+		                IDesktop desktop = SessionManager.getAppDesktop();
+		                if (desktop == null)
+		                    return;
+
+		                // 1) If we already know a window for this menu, and it's still open,
+		                //    DO NOT call onMenuSelected again (that second call is what
+		                //    seems to break Home / open duplicates).
+		                Integer winNoObj = menuWindowMap.get(menuId);
+		                if (winNoObj != null)
+		                {
+		                    int winNo = winNoObj.intValue();
+		                    Object winObj = desktop.findWindow(winNo);
+
+		                    if (winObj instanceof Window)
+		                    {
+		                        // Window exists -> do nothing; avoid a second onMenuSelected(menuId)
+		                        return;
+		                    }
+		                    else
+		                    {
+		                        // Mapping is stale, drop it and fall through to open a new one
+		                        menuWindowMap.remove(menuId);
+		                    }
+		                }
+
+		                // 2) No existing window (or stale) -> open via the normal menu mechanism
+		                desktop.onMenuSelected(menuId);
+
+		                // 3) After opening, record which windowNo we just got (for the next clicks)
+		                Component activeWin = desktop.getActiveWindow();
+		                if (activeWin != null)
+		                {
+		                    Object winNoAttr = activeWin.getAttribute(IDesktop.WINDOWNO_ATTRIBUTE);
+		                    if (winNoAttr instanceof Integer)
+		                    {
+		                        int newWinNo = (Integer) winNoAttr;
+		                        menuWindowMap.put(menuId, newWinNo);
+		                    }
+		                }
+
+		                return;
+		            }
+		        }
+		        // Existing process handling stays as-is
+		        else if (btn.getAttribute("AD_Process_ID") != null)
+		        {
+		            int processId = (Integer) btn.getAttribute("AD_Process_ID");
+		            String parameters = (String)btn.getAttribute("ProcessParameters");
+		            int printFormatId = (Integer)btn.getAttribute("AD_PrintFormat_ID");
+		            if (processId > 0)
+		                openReportInViewer(processId, printFormatId, parameters);
+		        }
+		    }
+		    else if (comp instanceof A)
+		    {
+		        String name = comp.getAttribute("title").toString();
+		        String description = comp.getAttribute("description")!=null ? comp.getAttribute("description").toString() : null;
+		        String help = comp.getAttribute("help")!=null ? comp.getAttribute("help").toString() : null;
+		        SessionManager.getAppDesktop().updateHelpTooltip(name, description, help, null, null);
+		    }
 		}
 		else if (eventName.equals(Events.ON_DROP))
 		{

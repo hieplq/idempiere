@@ -576,6 +576,80 @@ public class LoginPanel extends Window implements EventListener<Event>
 	        Dialog.warn(0, "URLnotValid", e.getMessage(), null);
 	    }
 	}
+	
+	/*
+	private void openTermsAndConditions() {
+	    // AD_Client record to read the attachment from
+	    final int AD_CLIENT_ID = 1000000;  // or Env.getAD_Client_ID(Env.getCtx())
+	    final String EXPECTED_FILENAME = "TERMS AND CONDITIONS MQA_DG APPLICATION PLATFORM.pdf";
+
+	    try {
+	        // Get attachment on AD_Client
+	        MAttachment attachment = MAttachment.get(
+	                Env.getCtx(),
+	                MClient.Table_ID,   // table = AD_Client
+	                AD_CLIENT_ID        // record = 1000000
+	        );
+
+	        if (attachment == null || attachment.getEntryCount() == 0) {
+	            Dialog.warn(0, "URLnotValid",
+	                    "No attachment found on AD_Client_ID=" + AD_CLIENT_ID, null);
+	            return;
+	        }
+
+	        // Find the desired entry (by name, or fall back to first PDF)
+	        int entryIndex = -1;
+	        for (int i = 0; i < attachment.getEntryCount(); i++) {
+	            String name = attachment.getEntryName(i);
+	            if (EXPECTED_FILENAME.equalsIgnoreCase(name)) {
+	                entryIndex = i;
+	                break;
+	            }
+	        }
+
+	        // If not found by exact name, optionally take the first .pdf
+	        if (entryIndex == -1) {
+	            for (int i = 0; i < attachment.getEntryCount(); i++) {
+	                String name = attachment.getEntryName(i);
+	                if (name != null && name.toLowerCase().endsWith(".pdf")) {
+	                    entryIndex = i;
+	                    break;
+	                }
+	            }
+	        }
+
+	        if (entryIndex == -1) {
+	            Dialog.warn(0, "URLnotValid",
+	                    "No PDF attachment found on AD_Client_ID=" + AD_CLIENT_ID, null);
+	            return;
+	        }
+
+	        String fileName = attachment.getEntryName(entryIndex);
+	        byte[] data = attachment.getEntryData(entryIndex);
+	        if (data == null || data.length == 0) {
+	            Dialog.warn(0, "URLnotValid",
+	                    "Attachment data is empty for: " + fileName, null);
+	            return;
+	        }
+
+	        InputStream is = new ByteArrayInputStream(data);
+
+	        AMedia media = new AMedia(
+	                fileName,
+	                "pdf",
+	                "application/pdf",
+	                is
+	        );
+
+	        Filedownload.save(media); // ZK will handle the stream
+	        // Do not close 'is' here – ZK/AMedia handles it.
+
+	    } catch (Exception e) {
+	        Dialog.warn(0, "URLnotValid", e.getMessage(), null);
+	    }
+	}
+	
+	*/
 
 
 
