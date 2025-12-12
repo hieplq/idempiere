@@ -41,7 +41,7 @@ public final class ZZ_MenuLinksBuilder {
 	 * Creates and adds the header panel (year/title/date range) and the fixed,
 	 * scrollable menu to the provided components list. Minimal controller code.
 	 */
-	
+
 	public static void attachHeaderAndMenu(List<Component> components,
 			MDashboardContent dashboardContent,
 			EventListener<Event> clickListener) {
@@ -64,69 +64,42 @@ public final class ZZ_MenuLinksBuilder {
 		fixed.appendChild(list);
 		fixed.setId("zzFixedMenu");
 
-	
+
 		Style css = new Style();
+
+
 		css.setContent(
-				
-				// remove any padding and border on the nested panel bodies
-				".desktop-home-tabpanel .z-panel-body, .desktop-home-tabpanel .z-panelchildren {" +
-				"  padding: 0 !important;" +
-				"  border: 0 !important;" +
-				"  margin: 0 !important;" +
-				"}" +
-				".desktop-home-tabpanel .z-tabpanel {" +
-				"  padding: 0 !important;" +
-				"  border: 0 !important;" +
-				"  margin: 0 !important;" +
-				"}" +
-
-				  "/* Remove the tabbox border under the Home tab */\n" +
-						    ".z-tabbox-top > .z-tabpanels{border-top:0!important;}\n" +
-						    ".desktop-home-tabpanel{border:0!important;}\n" +
-						    ".desktop-home-tabpanel .z-tabpanel{border:0!important;}\n" +
-						    ".desktop-home-tabpanel .z-tabpanel > .z-panel{border:0!important;box-shadow:none!important;}\n" +
-						    "\n" +
-		    // 🔹 remove the top white strip (padding/border of the home tab + panel)
-		    ".desktop-home-tabpanel{" +
-		        "padding:0 !important;" +
-		        "margin:0 !important;" +
-		        "background-color:transparent !important;" +
-		    "}" +
-		    ".desktop-home-tabpanel .z-panel{" +
-		        "margin:0 !important;" +
-		        "border:0 !important;" +
-		    "}" +
-
-		    // 🔹 existing rules
-		    ".zz-fixedmenu{position:fixed; top:var(--menuTop, 280px); left:60px !important; z-index:2000;}" +
-		    ".zz-fixedmenu .menu-links{max-height:calc(100vh - var(--menuTop, 280px) - 12px); overflow-y:auto;}" +
+				".zz-headerwrap{ left:35px!important; padding-left:0!important; }" +
+				// 🔹 existing rules
+				".zz-fixedmenu{position:fixed; top:var(--menuTop, 280px); left:60px !important; z-index:2000;}" +
+				".zz-fixedmenu .menu-links{max-height:calc(100vh - var(--menuTop, 280px) - 12px); overflow-y:auto;}" +
 
 		    ".dashboard-widget .z-panelchildren{" +
-		        "overflow:hidden !important;" +
-		        "padding:0 !important;" +
-		        "margin:0 !important;" +
-		        "min-height:100vh;" +
-		        "background-image:url('https://i.ibb.co/bR22DSsS/Whats-App-Image-2025-10-01-at-12-21-57.jpg');" +
-		        "background-repeat:no-repeat;" +
-		        "background-size:cover;" +
-		        "background-position:center top;" +
+		    "overflow:hidden !important;" +
+		    "padding:0 !important;" +
+		    "margin:0 !important;" +
+		    "min-height:100vh;" +
+		    "background-image:url('https://i.ibb.co/bR22DSsS/Whats-App-Image-2025-10-01-at-12-21-57.jpg');" +
+		    "background-repeat:no-repeat;" +
+		    "background-size:cover;" +
+		    "background-position:center top;" +
 		    "}" +
 		    ".dashboard-widget.dashboard-widget-max .z-panelchildren{" +
-		        "overflow:hidden !important;" +
-		        "padding:0 !important;" +
-		        "margin:0 !important;" +
-		        "min-height:100vh;" +
-		        "background-image:url('https://i.ibb.co/bR22DSsS/Whats-App-Image-2025-10-01-at-12-21-57.jpg');" +
-		        "background-repeat:no-repeat;" +
-		        "background-size:cover;" +
-		        "background-position:center top;" +
+		    "overflow:hidden !important;" +
+		    "padding:0 !important;" +
+		    "margin:0 !important;" +
+		    "min-height:100vh;" +
+		    "background-image:url('https://i.ibb.co/bR22DSsS/Whats-App-Image-2025-10-01-at-12-21-57.jpg');" +
+		    "background-repeat:no-repeat;" +
+		    "background-size:cover;" +
+		    "background-position:center top;" +
 		    "}" +
 		    ".zz-headerwrap{" +
-		        "position:absolute;" +
-		        "top:32px;" +
-		        "left:48px;" +
-		        "z-index:2100;" +
-		        "background:transparent;" +
+		    "position:absolute;" +
+		    "top:32px;" +
+		    "left:48px;" +
+		    "z-index:2100;" +
+		    "background:transparent;" +
 		    "}" +
 		    ".dashboard-widget .z-panel-header{display:none!important;}" +
 		    "/* Remove header bar + underline for dashboard widgets on Home tab */" +
@@ -142,15 +115,15 @@ public final class ZZ_MenuLinksBuilder {
 		    ".desktop-home-tabpanel .dashboard-widget {" +
 		    "  margin-top: -37px !important;" +
 		    "}"  
-		  
-		   
-		    
 
-		);
+
+
+
+				);
 		fixed.appendChild(css);
 
 
-		
+
 
 
 		// only once:
@@ -172,9 +145,9 @@ public final class ZZ_MenuLinksBuilder {
 		components.add(policyFooter);
 	}
 
-	 
 
-	
+
+
 
 
 
@@ -192,7 +165,7 @@ public final class ZZ_MenuLinksBuilder {
 		wrapper.setId("zzHeaderPanel");  
 		wrapper.setSclass("zz-headerwrap");  
 
-
+/*
 		wrapper.setStyle(
 				"background: transparent;" +          // was the dark gradient
 						"padding:24px 28px;" +                // keep your spacing
@@ -202,6 +175,16 @@ public final class ZZ_MenuLinksBuilder {
 						"color:#fff;"
 				);
 
+		*/
+		
+		wrapper.setStyle(
+			    "background: transparent;" +
+			    "padding:24px 0;" +      // remove extra left padding
+			    "border-radius:16px;" +
+			    "margin:0 0 16px 0;" +
+			    "box-shadow:none;" +
+			    "color:#fff;"
+			);
 
 		Vlayout v = new Vlayout();
 		v.setSpacing("2px");
