@@ -1269,6 +1269,13 @@ public class DashboardController implements EventListener<Event> {
 		                        if (winComp.getDesktop() != null && winComp.getPage() != null)
 		                        {
 		                            // Window is still open -> do NOT open another one
+		                        	Clients.showNotification(
+		                        	        "This form is already open in another tab.",
+		                        	        Clients.NOTIFICATION_TYPE_WARNING,
+		                        	        null,   // owner (null = page)
+		                        	        "top_center", // position
+		                        	        3000 // duration in milliseconds
+		                        	    );
 		                            return;
 		                        }
 
