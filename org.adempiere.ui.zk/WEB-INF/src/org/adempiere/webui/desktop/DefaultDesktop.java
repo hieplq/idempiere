@@ -187,6 +187,9 @@ public class DefaultDesktop extends TabbedDesktop implements MenuListener, Seria
 
     /** True if Right side Quick info is visible */
     private boolean    isQuickInfoOpen    = true;
+    
+    /** menuId -> windowNo for single-instance menus */
+    private final ConcurrentMap<Integer, Integer> singleInstanceMenus = new ConcurrentHashMap<>();
 
     /**
      * Default constructor
@@ -1125,6 +1128,7 @@ public class DefaultDesktop extends TabbedDesktop implements MenuListener, Seria
         return false;
     }
 
+	/*
 	@Override
 	public void onMenuSelected(int menuId) {
 		super.onMenuSelected(menuId);
@@ -1135,6 +1139,45 @@ public class DefaultDesktop extends TabbedDesktop implements MenuListener, Seria
 			Clients.response(new AuScript(script));
 		} 
 	}
+	*/
+	@Override
+	public void onMenuSelected(int menuId) {
+	    // 1) Block re-open only if that specific window is really still open
+	   // if (isSingleInstanceMenu(menuId) && isMenuWindowOpen(menuId)) {
+	   //     return;  // already open → don't open another
+	  //  }
+
+	    // 2) How many windows before?
+	    int beforeCount = 0;
+	    List<Object> windowsBefore = getWindows();
+	    if (windowsBefore != null) {
+	        beforeCount = windowsBefore.size();
+	    }
+
+	    // 3) Open as usual
+	    super.onMenuSelected(menuId);
+
+	    // 4) If a new window was opened, register its windowNo
+	    List<Object> windowsAfter = getWindows();
+	    int afterCount = (windowsAfter != null ? windowsAfter.size() : 0);
+	    if (afterCount > beforeCount && isSingleInstanceMenu(menuId)) {
+	        Component activeWin = getActiveWindow();  // TabbedDesktop API
+	        if (activeWin != null) {
+	            Object winNoAttr = activeWin.getAttribute(IDesktop.WINDOWNO_ATTRIBUTE);
+	            if (winNoAttr instanceof Integer) {
+	                singleInstanceMenus.put(menuId, (Integer) winNoAttr);
+	            }
+	        }
+	    }
+
+	    // Your existing header-popup closing logic etc. can stay:
+	    if (showHeader != null && showHeader.isVisible()) {
+	        String script = "(function(){let w=zk.Widget.$('#" + layout.getUuid()+"'); " +
+	                "zWatch.fire('onFloatUp', w);})()";
+	        Clients.response(new org.zkoss.zk.au.out.AuScript(script));
+	    }
+	}
+
 
 	/**
 	 * @return Menu tree ID for login role
@@ -1245,5 +1288,42 @@ public class DefaultDesktop extends TabbedDesktop implements MenuListener, Seria
     	}
 		return ! Util.isEmpty(action);
     }
+    
+    /** Only some menus should be single-instance */
+    private boolean isSingleInstanceMenu(int menuId) {
+        // adjust as needed (hard code list, or a column on AD_Menu, etc.)
+        return true; // or (menuId == 1000072) etc.
+    }
+    
+    /**
+     * Returns true if the window for this menu is still open.
+     * If the tab was closed, cleans up the map and returns false.
+     */
+    private boolean isMenuWindowOpen(int menuId) {
+        Integer winNo = singleInstanceMenus.get(menuId);
+        if (winNo == null) {
+            return false;
+        }
+
+        Object win = findWindow(winNo);  // TabbedDesktop API
+        if (win == null) {
+            // Tab was closed, remove stale mapping
+            singleInstanceMenus.remove(menuId);
+            return false;
+        }
+
+        // Optionally: just notify instead of opening another one
+        Clients.showNotification(
+                "This screen is already open in another tab.",
+                Clients.NOTIFICATION_TYPE_INFO,
+                null,
+                "top_center",
+                3000
+        );
+
+        // If you ever find a proper "focus tab by winNo" API, call it here.
+        return true;
+    }
+
 
 }

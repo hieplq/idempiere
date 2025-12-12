@@ -41,28 +41,29 @@ public final class ZZ_MenuLinksBuilder {
 	 * Creates and adds the header panel (year/title/date range) and the fixed,
 	 * scrollable menu to the provided components list. Minimal controller code.
 	 */
+	
 	public static void attachHeaderAndMenu(List<Component> components,
 			MDashboardContent dashboardContent,
 			EventListener<Event> clickListener) {
-	
+
 		// 1) Header first
 		Div header = buildHeaderPanel();
-	
+
 		// ⬇⬇⬇ CHANGE THIS ⬇⬇⬇
 		// components.add(header);           // old – appends at bottom
 		components.add(0, header);          // new – put header before iframe
 		// ⬆⬆⬆
-	
+
 		// 2) Menu list
 		Vlayout list = fromQuery(dashboardContent, clickListener, "0");
 		list.setSclass("menu-links");
 		list.setStyle("overflow-y:auto;margin:0;");
-	
+
 		Div fixed = new Div();
 		fixed.setSclass("zz-fixedmenu");
 		fixed.appendChild(list);
 		fixed.setId("zzFixedMenu");
-	
+
 		Style css = new Style();
 		css.setContent(
 		    // 🔹 remove the top white strip (padding/border of the home tab + panel)
@@ -75,11 +76,11 @@ public final class ZZ_MenuLinksBuilder {
 		        "margin:0 !important;" +
 		        "border:0 !important;" +
 		    "}" +
-	
+
 		    // 🔹 existing rules
 		    ".zz-fixedmenu{position:fixed; top:var(--menuTop, 280px); left:60px !important; z-index:2000;}" +
 		    ".zz-fixedmenu .menu-links{max-height:calc(100vh - var(--menuTop, 280px) - 12px); overflow-y:auto;}" +
-	
+
 		    ".dashboard-widget .z-panelchildren{" +
 		        "overflow:hidden !important;" +
 		        "padding:0 !important;" +
@@ -107,18 +108,29 @@ public final class ZZ_MenuLinksBuilder {
 		        "z-index:2100;" +
 		        "background:transparent;" +
 		    "}" +
-		    ".dashboard-widget .z-panel-header{display:none!important;}"
+		    ".dashboard-widget .z-panel-header{display:none!important;}" +
+		    "/* Remove header bar + underline for dashboard widgets on Home tab */" +
+		    ".desktop-home-tabpanel .dashboard-widget > .z-panel-head," +
+		    ".desktop-home-tabpanel .dashboard-widget > .z-panel-head > .z-panel-header{" +
+		    "  display:none!important;" +
+		    "  height:0!important;" +
+		    "  min-height:0!important;" +
+		    "  padding:0!important;" +
+		    "  margin:0!important;" +
+		    "  border:0!important;" +
+		    "}"
 		);
 		fixed.appendChild(css);
-	
-	
-	
-	
+
+
+		
+
+
 		// only once:
 		components.add(fixed);
-	
+
 		installMenuTopAutoCalc(header);
-	
+
 		// policy footer…
 		Div policyFooter = new Div();
 		policyFooter.setId("zzPolicyFooter");
@@ -132,6 +144,15 @@ public final class ZZ_MenuLinksBuilder {
 		policyFooter.appendChild(fundingLink);
 		components.add(policyFooter);
 	}
+
+	 
+
+	
+
+
+
+
+
 
 
 	// ============================================================

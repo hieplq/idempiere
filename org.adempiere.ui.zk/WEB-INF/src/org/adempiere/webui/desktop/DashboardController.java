@@ -406,9 +406,10 @@ public class DashboardController implements EventListener<Event> {
 	 * @param dc
 	 * @return {@link Panel}
 	 */
+	/*
 	private Panel newGadgetPanel(MDashboardPreference dp, MDashboardContent dc) {
 		Panel panel;
-		panel = new Panel();
+		panel = new Panel();    
 		String dcName = dc.get_Translation(MDashboardContent.COLUMNNAME_Name);
 		Caption caption = new Caption(dcName);
 		panel.appendChild(caption);
@@ -434,9 +435,68 @@ public class DashboardController implements EventListener<Event> {
 			panel.addEventListener(Events.ON_DROP, this);
 		}
 		panel.setBorder("normal");
+		// Martin 11 Dec 2025
+		panel.setTitle(null);                            // or just clear it
+		panel.setBorder(null);
 
 		return panel;
 	}
+*/
+	
+	private Panel newGadgetPanel(MDashboardPreference dp, MDashboardContent dc) {
+	    Panel panel = new Panel();
+	    String dcName = dc.get_Translation(MDashboardContent.COLUMNNAME_Name);
+
+	    boolean isHeroDashboard = dc.get_ID() >= 1000000;  // your hero condition
+
+	    Caption caption = null;
+	    if (!isHeroDashboard) {
+	        caption = new Caption(dcName);
+	        panel.appendChild(caption);
+	    }
+
+	    panel.setAttribute(MDashboardPreference.COLUMNNAME_PA_DashboardContent_ID,
+	                       dp.getPA_DashboardContent_ID());
+	    panel.setAttribute(MDashboardPreference.COLUMNNAME_PA_DashboardPreference_ID,
+	                       dp.getPA_DashboardPreference_ID());
+	    panelList.add(panel);
+
+	    panel.addEventListener(Events.ON_MAXIMIZE, this);
+	    panel.setSclass(isHeroDashboard
+	            ? "dashboard-widget hero-dashboard"
+	            : "dashboard-widget");
+	    panel.setMaximizable(dc.isMaximizable());
+
+	    String description = dc.get_Translation(MDashboardContent.COLUMNNAME_Description);
+	    String help = dc.get_Translation(MDashboardContent.COLUMNNAME_Help);
+	    if (!isHeroDashboard &&
+	        (!Util.isEmpty(description, true) || !Util.isEmpty(help, true))) {
+	        renderHelpButton(caption, description, help);
+	    }
+
+	    panel.setCollapsible(dc.isCollapsible());
+	    panel.setOpen(!dc.isCollapsible() || !dp.isCollapsedByDefault());
+	    panel.addEventListener(Events.ON_OPEN, this);
+
+	    if (!ClientInfo.isMobile()) {
+	        panel.setDroppable("true");
+	        if (caption != null) {
+	            caption.setDraggable("true");
+	        }
+	        panel.addEventListener(Events.ON_DROP, this);
+	    }
+
+	    if (!isHeroDashboard) {
+	        panel.setBorder("normal");
+	    } else {
+	        panel.setBorder("none");
+	        panel.setStyle("border:none;margin:0;padding:0;");
+	       // panel.setVisible(false);
+	    }
+
+	    return panel;
+	}
+
 
 	/**
 	 * Render help button for individual dashboard gadget
@@ -1178,39 +1238,46 @@ public class DashboardController implements EventListener<Event> {
 		        // Handle menu buttons coming from dashboard gadgets
 		        if (btn.getAttribute("AD_Menu_ID") != null)
 		        {
-		            int menuId = (Integer) btn.getAttribute("AD_Menu_ID");
+		        	int menuId = (Integer) btn.getAttribute("AD_Menu_ID");
 		            if (menuId > 0)
 		            {
 		                IDesktop desktop = SessionManager.getAppDesktop();
 		                if (desktop == null)
 		                    return;
 
-		                // 1) If we already know a window for this menu, and it's still open,
-		                //    DO NOT call onMenuSelected again (that second call is what
-		                //    seems to break Home / open duplicates).
+		                // 1) Check if we already have a window registered for this menu
 		                Integer winNoObj = menuWindowMap.get(menuId);
 		                if (winNoObj != null)
 		                {
 		                    int winNo = winNoObj.intValue();
 		                    Object winObj = desktop.findWindow(winNo);
 
-		                    if (winObj instanceof Window)
+		                    if (winObj instanceof org.zkoss.zk.ui.Component)
 		                    {
-		                        // Window exists -> do nothing; avoid a second onMenuSelected(menuId)
-		                        return;
+		                        org.zkoss.zk.ui.Component winComp = (org.zkoss.zk.ui.Component) winObj;
+
+		                        // If still attached to a desktop/page -> consider it OPEN
+		                        if (winComp.getDesktop() != null && winComp.getPage() != null)
+		                        {
+		                            // Window is still open -> do NOT open another one
+		                            return;
+		                        }
+
+		                        // Component is detached -> stale entry
+		                        menuWindowMap.remove(menuId);
 		                    }
 		                    else
 		                    {
-		                        // Mapping is stale, drop it and fall through to open a new one
+		                        // findWindow returned null or non-component -> stale entry
 		                        menuWindowMap.remove(menuId);
 		                    }
 		                }
 
-		                // 2) No existing window (or stale) -> open via the normal menu mechanism
+		                // 2) No active window for this menu → open a new one
 		                desktop.onMenuSelected(menuId);
 
-		                // 3) After opening, record which windowNo we just got (for the next clicks)
-		                Component activeWin = desktop.getActiveWindow();
+		                // 3) After open, record the windowNo for this menu
+		                org.zkoss.zk.ui.Component activeWin = desktop.getActiveWindow();
 		                if (activeWin != null)
 		                {
 		                    Object winNoAttr = activeWin.getAttribute(IDesktop.WINDOWNO_ATTRIBUTE);
@@ -1218,6 +1285,11 @@ public class DashboardController implements EventListener<Event> {
 		                    {
 		                        int newWinNo = (Integer) winNoAttr;
 		                        menuWindowMap.put(menuId, newWinNo);
+
+		                        // OPTIONAL: clean up mapping automatically when the window is detached
+		                        activeWin.addEventListener("onDetach", evt -> {
+		                            menuWindowMap.remove(menuId);
+		                        });
 		                    }
 		                }
 
@@ -1334,6 +1406,9 @@ public class DashboardController implements EventListener<Event> {
 			}
 		}
 	}
+	
+	
+
 
 	/**
 	 * Create Fill Mandatory Process Parameters error label for the reports in dashboard
