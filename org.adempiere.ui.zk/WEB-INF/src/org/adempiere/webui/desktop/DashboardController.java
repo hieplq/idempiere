@@ -51,7 +51,6 @@ import org.adempiere.webui.component.Anchorchildren;
 import org.adempiere.webui.component.Anchorlayout;
 import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.ToolBarButton;
-import org.adempiere.webui.component.Window;
 import org.adempiere.webui.dashboard.DashboardPanel;
 import org.adempiere.webui.dashboard.DashboardRunnable;
 import org.adempiere.webui.event.DrillEvent;
@@ -87,6 +86,8 @@ import org.compiere.model.MStatusLine;
 import org.compiere.model.MStyle;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MTable;
+import org.compiere.model.Query;
+import org.compiere.model.X_AD_Menu;
 import org.compiere.print.MPrintFormat;
 import org.compiere.print.ReportEngine;
 import org.compiere.process.ProcessInfo;
@@ -129,6 +130,9 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Vlayout;
+
+import za.co.ntier.api.model.X_ZZ_Application_Form;
+import za.co.ntier.api.model.X_ZZ_Program_Master_Data;
 
 /**
  * Dashboard renderer and controller
@@ -179,6 +183,7 @@ public class DashboardController implements EventListener<Event> {
 	private final static int DEFAULT_FLEX_GROW = 1;
 	// Map of AD_Menu_ID -> windowNo (per dashboard instance)
 	private final Map<Integer, Integer> menuWindowMap = new HashMap<>();
+	private static final int MY_APPLICATIONS_MENU_ID = 1000072; // <-- your AD_Menu_ID
 
 
 	/**
@@ -1241,6 +1246,10 @@ public class DashboardController implements EventListener<Event> {
 		        	int menuId = (Integer) btn.getAttribute("AD_Menu_ID");
 		            if (menuId > 0)
 		            {
+		            	if (!beforeOpenMenu(menuId)) {
+		            		return;
+		            	}
+		            	
 		                IDesktop desktop = SessionManager.getAppDesktop();
 		                if (desktop == null)
 		                    return;
@@ -1406,6 +1415,123 @@ public class DashboardController implements EventListener<Event> {
 			}
 		}
 	}
+	
+	private Map<String, String> parsePredefinedContext(String s) {
+	    Map<String, String> map = new HashMap<>();
+	    if (s == null || s.trim().isEmpty())
+	        return map;
+
+	    // newline / semicolon / comma separated
+	    String[] parts = s.split("[;\n\r,]+");
+	    for (String p : parts) {
+	        if (p == null) continue;
+	        String part = p.trim();
+	        if (part.isEmpty()) continue;
+
+	        int eq = part.indexOf('=');
+	        if (eq <= 0) continue;
+
+	        String key = part.substring(0, eq).trim();
+	        String val = part.substring(eq + 1).trim();
+
+	        if (!key.isEmpty() && !val.isEmpty())
+	            map.put(key, val);
+	    }
+	    return map;
+	}
+
+	
+	private static class AppMenuCtx {
+	    String programMasterUU;
+	    String programType;
+	}
+
+	private AppMenuCtx getAppMenuCtx(X_AD_Menu menu) {
+	    if (menu == null) return null;
+
+	    Map<String, String> ctx = parsePredefinedContext(menu.getPredefinedContextVariables());
+
+	    AppMenuCtx out = new AppMenuCtx();
+	    out.programMasterUU = ctx.get("ZZ_Program_Master_Data_UU");
+	    out.programType     = ctx.get("programType"); // <-- matches your example exactly
+
+	    if (out.programMasterUU == null || out.programMasterUU.trim().isEmpty())
+	        return null;
+
+	    return out;
+	}
+
+	
+	private boolean userHasApplicationsFor(int userId, AppMenuCtx ctx) {
+	    if (ctx == null) return false;
+
+	    X_ZZ_Program_Master_Data pmd = new Query(
+	            Env.getCtx(),
+	            X_ZZ_Program_Master_Data.Table_Name,
+	            "ZZ_Program_Master_Data_UU=?",
+	            null
+	    )
+	    .setParameters(ctx.programMasterUU)
+	    .setClient_ID()
+	    .first();
+
+	    if (pmd == null) return false;
+
+	    String where = "CreatedBy=? AND ZZ_Program_Master_Data_ID=?";
+	    java.util.List<Object> params = new java.util.ArrayList<>();
+	    params.add(userId);
+	    params.add(pmd.getZZ_Program_Master_Data_ID());
+
+	    // programType is optional, but in your case you DO have it
+	    if (ctx.programType != null && !ctx.programType.trim().isEmpty()) {
+	        where += " AND ZZProgramType=?";
+	        params.add(ctx.programType.trim());
+	    }
+
+	    int count = new Query(Env.getCtx(), X_ZZ_Application_Form.Table_Name, where, null)
+	            .setParameters(params.toArray())
+	            .setClient_ID()
+	            .setOnlyActiveRecords(true)
+	            .count();
+
+	    return count > 0;
+	}
+
+	
+
+	private boolean isMyApplicationsMenu(int menuId) {
+	    return menuId == MY_APPLICATIONS_MENU_ID;
+	}
+
+	public boolean beforeOpenMenu(int menuId) {
+	    if (isMyApplicationsMenu(menuId)) {
+	        return true; // ignore
+	    }
+
+	    int userId = Env.getAD_User_ID(Env.getCtx());
+
+	    X_AD_Menu menu = new Query(Env.getCtx(), X_AD_Menu.Table_Name, "AD_Menu_ID=?", null)
+	            .setParameters(menuId)
+	            .first();
+
+	    AppMenuCtx ctx = getAppMenuCtx(menu);
+	    if (ctx != null && userHasApplicationsFor(userId, ctx)) {
+	        Clients.showNotification(
+	            "Please open and edit your applications from 'My Applications'.",
+	            Clients.NOTIFICATION_TYPE_WARNING,
+	            null,
+	            "top_center",
+	            4000
+	        );
+	        return false;
+	       // throw new RuntimeException("Blocked: use My Applications"); // or just `return` from caller
+	    }
+	    return true;
+	}
+
+	
+
+
 	
 	
 
