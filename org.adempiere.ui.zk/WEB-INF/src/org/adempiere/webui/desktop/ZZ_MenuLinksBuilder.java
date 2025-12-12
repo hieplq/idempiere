@@ -64,8 +64,28 @@ public final class ZZ_MenuLinksBuilder {
 		fixed.appendChild(list);
 		fixed.setId("zzFixedMenu");
 
+	
 		Style css = new Style();
 		css.setContent(
+				
+				// remove any padding and border on the nested panel bodies
+				".desktop-home-tabpanel .z-panel-body, .desktop-home-tabpanel .z-panelchildren {" +
+				"  padding: 0 !important;" +
+				"  border: 0 !important;" +
+				"  margin: 0 !important;" +
+				"}" +
+				".desktop-home-tabpanel .z-tabpanel {" +
+				"  padding: 0 !important;" +
+				"  border: 0 !important;" +
+				"  margin: 0 !important;" +
+				"}" +
+
+				  "/* Remove the tabbox border under the Home tab */\n" +
+						    ".z-tabbox-top > .z-tabpanels{border-top:0!important;}\n" +
+						    ".desktop-home-tabpanel{border:0!important;}\n" +
+						    ".desktop-home-tabpanel .z-tabpanel{border:0!important;}\n" +
+						    ".desktop-home-tabpanel .z-tabpanel > .z-panel{border:0!important;box-shadow:none!important;}\n" +
+						    "\n" +
 		    // 🔹 remove the top white strip (padding/border of the home tab + panel)
 		    ".desktop-home-tabpanel{" +
 		        "padding:0 !important;" +
@@ -118,7 +138,14 @@ public final class ZZ_MenuLinksBuilder {
 		    "  padding:0!important;" +
 		    "  margin:0!important;" +
 		    "  border:0!important;" +
-		    "}"
+		    "}"  +
+		    ".desktop-home-tabpanel .dashboard-widget {" +
+		    "  margin-top: -37px !important;" +
+		    "}"  
+		  
+		   
+		    
+
 		);
 		fixed.appendChild(css);
 

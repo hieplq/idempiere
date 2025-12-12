@@ -395,6 +395,7 @@ public class DefaultDesktop extends TabbedDesktop implements MenuListener, Seria
         homeTab.getLinkedTab().setSclass("desktop-hometab");
         ((Tab)homeTab.getLinkedTab()).setDisableDraggDrop(true);
         homeTab.setSclass("desktop-home-tabpanel");
+
         BusyDialog busyDialog = new BusyDialog();
         busyDialog.setShadow(false);
         homeTab.appendChild(busyDialog);
@@ -476,7 +477,7 @@ public class DefaultDesktop extends TabbedDesktop implements MenuListener, Seria
 	        westBtn.setSclass("window-container-toolbar-btn");
 	        westBtn.setStyle("cursor: pointer; padding: 0px; margin: 0px;");
         }
-        
+
         return layout;
     }
 
