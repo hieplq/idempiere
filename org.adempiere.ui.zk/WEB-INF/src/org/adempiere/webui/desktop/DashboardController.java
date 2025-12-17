@@ -1246,9 +1246,9 @@ public class DashboardController implements EventListener<Event> {
 		        	int menuId = (Integer) btn.getAttribute("AD_Menu_ID");
 		            if (menuId > 0)
 		            {
-		            	if (!beforeOpenMenu(menuId)) {
-		            		return;
-		            	}
+		            //	if (!beforeOpenMenu(menuId)) {
+		            //		return;
+		            //	}
 		            	
 		                IDesktop desktop = SessionManager.getAppDesktop();
 		                if (desktop == null)
@@ -1266,6 +1266,7 @@ public class DashboardController implements EventListener<Event> {
 		                        org.zkoss.zk.ui.Component winComp = (org.zkoss.zk.ui.Component) winObj;
 
 		                        // If still attached to a desktop/page -> consider it OPEN
+		                        /*  Allow opening multiple for agents
 		                        if (winComp.getDesktop() != null && winComp.getPage() != null)
 		                        {
 		                            // Window is still open -> do NOT open another one
@@ -1278,6 +1279,7 @@ public class DashboardController implements EventListener<Event> {
 		                        	    );
 		                            return;
 		                        }
+		                        */
 
 		                        // Component is detached -> stale entry
 		                        menuWindowMap.remove(menuId);

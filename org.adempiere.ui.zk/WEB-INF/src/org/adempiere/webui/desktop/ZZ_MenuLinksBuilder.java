@@ -164,18 +164,6 @@ public final class ZZ_MenuLinksBuilder {
 		Div wrapper = new Div();
 		wrapper.setId("zzHeaderPanel");  
 		wrapper.setSclass("zz-headerwrap");  
-
-/*
-		wrapper.setStyle(
-				"background: transparent;" +          // was the dark gradient
-						"padding:24px 28px;" +                // keep your spacing
-						"border-radius:16px;" +               // harmless with transparent bg
-						"margin:0 0 16px 0;" +
-						"box-shadow:none;" +                  // remove dark bar look
-						"color:#fff;"
-				);
-
-		*/
 		
 		wrapper.setStyle(
 			    "background: transparent;" +
