@@ -115,7 +115,7 @@ public class GridTab implements DataStatusListener, Evaluatee, Serializable
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3682316929715061899L;
+	private static final long serialVersionUID = -3188266085145559782L;
 
 	public static final String DEFAULT_STATUS_MESSAGE = "NavigateOrUpdate";
 
@@ -2180,9 +2180,40 @@ public class GridTab implements DataStatusListener, Evaluatee, Serializable
 			return 0;
 		String recordUU = m_mTable.getKeyUUID(m_currentRow);
 		int recordID = m_mTable.getKeyID(m_currentRow);
-		return MAttachment.getID(m_vo.AD_Table_ID, recordID, recordUU);
+		return MAttachment.getID(getTableViewID(), recordID, recordUU);
 	}	//	getAttachmentID
 
+	/**
+	 * store
+	 */
+	private Integer tableViewId = null;
+	
+	/**
+	 * in case tab base on view, get table id of table on {@link I_AD_ViewComponent#COLUMNNAME_Referenced_Table_ID}
+	 * @return
+	 */
+	public int getTableViewID() {
+		if (tableViewId == null && m_vo.IsView) {
+			tableViewId = DB.getSQLValueEx(null,
+					String.format("""
+							SELECT %s FROM %s INNER JOIN %s ON (%s.%s = %s.%s) WHERE %s.%s = ?
+							""", I_AD_ViewComponent.COLUMNNAME_Referenced_Table_ID
+								, I_AD_ViewComponent.Table_Name
+								, I_AD_Table.Table_Name
+								, I_AD_ViewComponent.Table_Name
+								, I_AD_Table.COLUMNNAME_AD_Table_ID
+								, I_AD_Table.Table_Name
+								, I_AD_Table.COLUMNNAME_AD_Table_ID
+								, I_AD_ViewComponent.Table_Name
+								, I_AD_Table.COLUMNNAME_AD_Table_ID)
+					, m_vo.AD_Table_ID);
+		}
+		
+		if (tableViewId == null || tableViewId == 0)
+			tableViewId = m_vo.AD_Table_ID;
+		
+		return tableViewId;
+	}
 	/**
 	 *	Returns true, if current row has chat records.
 	 *  @return true if current row has chat records.
