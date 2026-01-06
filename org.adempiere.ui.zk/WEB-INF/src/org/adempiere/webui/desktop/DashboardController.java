@@ -1246,72 +1246,35 @@ public class DashboardController implements EventListener<Event> {
 		        	int menuId = (Integer) btn.getAttribute("AD_Menu_ID");
 		            if (menuId > 0)
 		            {
-		            //	if (!beforeOpenMenu(menuId)) {
-		            //		return;
-		            //	}
-		            	
-		                IDesktop desktop = SessionManager.getAppDesktop();
-		                if (desktop == null)
-		                    return;
+		            	DefaultDesktop desktop = (DefaultDesktop) SessionManager.getAppDesktop();
+		            	if (desktop == null) return;
 
-		                // 1) Check if we already have a window registered for this menu
-		                Integer winNoObj = menuWindowMap.get(menuId);
-		                if (winNoObj != null)
-		                {
-		                    int winNo = winNoObj.intValue();
-		                    Object winObj = desktop.findWindow(winNo);
+		            	// shared map (also populated by ApplicationsListVM)
+		            	Map<Integer, Integer> menuWindowMap = WindowRegistry.menuMap(desktop);
+            	
 
-		                    if (winObj instanceof org.zkoss.zk.ui.Component)
-		                    {
-		                        org.zkoss.zk.ui.Component winComp = (org.zkoss.zk.ui.Component) winObj;
+		            	Integer winNoObj = menuWindowMap.get(menuId);
+		            	if (WindowRegistry.isWindowAlive(desktop, winNoObj)) {
+		            	    Clients.showNotification("This form is already open in another tab.",
+		            	        Clients.NOTIFICATION_TYPE_WARNING, null, "top_center", 3000);
+		            	    return;
+		            	} else {
+		            	    // stale entry
+		            	    menuWindowMap.remove(menuId);
+		            	}
 
-		                        // If still attached to a desktop/page -> consider it OPEN
-		                        //  Allow opening multiple for agents, No disable this by code below
-		                        if (winComp.getDesktop() != null && winComp.getPage() != null)
-		                        {
-		                            // Window is still open -> do NOT open another one
-		                        	Clients.showNotification(
-		                        	        "This form is already open in another tab.",
-		                        	        Clients.NOTIFICATION_TYPE_WARNING,
-		                        	        null,   // owner (null = page)
-		                        	        "top_center", // position
-		                        	        3000 // duration in milliseconds
-		                        	    );
-		                            return;
-		                        }
-		                        
+		            	// open and register
+		            	desktop.onMenuSelected(menuId);
 
-		                        // Component is detached -> stale entry
-		                        menuWindowMap.remove(menuId);
-		                    }
-		                    else
-		                    {
-		                        // findWindow returned null or non-component -> stale entry
-		                        menuWindowMap.remove(menuId);
-		                    }
-		                }
+		            	Component activeWin = desktop.getActiveWindow();
+		            	if (activeWin != null) {
+		            	    Integer newWinNo = WindowRegistry.getWindowNo(activeWin);
+		            	    if (newWinNo != null) {
+		            	        menuWindowMap.put(menuId, newWinNo);
+		            	        activeWin.addEventListener("onDetach", evt -> menuWindowMap.remove(menuId));
+		            	    }
+		            	}
 
-		                // 2) No active window for this menu → open a new one
-		                desktop.onMenuSelected(menuId);
-
-		                // 3) After open, record the windowNo for this menu
-		                org.zkoss.zk.ui.Component activeWin = desktop.getActiveWindow();
-		                if (activeWin != null)
-		                {
-		                    Object winNoAttr = activeWin.getAttribute(IDesktop.WINDOWNO_ATTRIBUTE);
-		                    if (winNoAttr instanceof Integer)
-		                    {
-		                        int newWinNo = (Integer) winNoAttr;
-		                        menuWindowMap.put(menuId, newWinNo);
-
-		                        // OPTIONAL: clean up mapping automatically when the window is detached
-		                        activeWin.addEventListener("onDetach", evt -> {
-		                            menuWindowMap.remove(menuId);
-		                        });
-		                    }
-		                }
-
-		                return;
 		            }
 		        }
 		        // Existing process handling stays as-is
