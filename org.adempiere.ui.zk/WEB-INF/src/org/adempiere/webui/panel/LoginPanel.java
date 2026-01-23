@@ -51,6 +51,8 @@ import org.adempiere.webui.util.UserPreference;
 import org.adempiere.webui.window.Dialog;
 import org.adempiere.webui.window.LoginWindow;
 import org.compiere.Adempiere;
+import org.compiere.model.MAttachment;
+import org.compiere.model.MAttachmentEntry;
 import org.compiere.model.MClient;
 import org.compiere.model.MSession;
 import org.compiere.model.MSysConfig;
@@ -95,6 +97,8 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Vbox;
+
+import za.ntier.models.X_ZZ_Open_Application;
 
 /**
  * Login panel of {@link LoginWindow}
@@ -141,7 +145,8 @@ public class LoginPanel extends Window implements EventListener<Event>
     protected Checkbox chkAcceptTerms;
     protected Checkbox chkDeclineTerms;
     protected A lnkTerms;
-    
+    protected A lnkTrainingManual;
+
     
 
 
@@ -455,6 +460,35 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    tdAccept.appendChild(acceptLine);
 
 	    lnkTerms.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
+	    
+	    
+	    
+
+	 // ===== DG Application Training Manual (must be AFTER accept line) =====
+	    tr = new Tr();
+	    tr.setId("rowTrainingManual");
+	    table.appendChild(tr);
+
+	    // label spacer keeps two-column alignment
+	    td = new Td();
+	    td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	    td.appendChild(new Label(""));
+	    tr.appendChild(td);
+
+	    if (isLabelAboveInput()) {
+	        tr = new Tr();
+	        table.appendChild(tr);
+	    }
+
+	    // field cell (same column as "Forgot my password", left aligned)
+	    td = new Td();
+	    td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	    tr.appendChild(td);
+
+	    td.appendChild(lnkTrainingManual);
+	    lnkTrainingManual.addEventListener(Events.ON_CLICK, ev -> downloadTrainingManual());
+
+
 
 	    // ===== OK + Tagline in the same (right-aligned) field cell =====
 	    tr = new Tr();
@@ -673,14 +707,14 @@ public class LoginPanel extends Window implements EventListener<Event>
 
         txtUserId = new Textbox();
         txtUserId.setId("txtUserId");
-        txtUserId.setCols(25);
-        txtUserId.setMaxlength(40);
+        txtUserId.setCols(60);
+        txtUserId.setMaxlength(60);
         txtUserId.setClientAttribute("autocomplete", "username");
 
         txtPassword = new Textbox();
         txtPassword.setId("txtPassword");
         txtPassword.setType("password");
-        txtPassword.setCols(25);
+        txtPassword.setCols(60);
         if (MSysConfig.getBooleanValue(MSysConfig.ZK_LOGIN_ALLOW_CHROME_SAVE_PASSWORD, true))
         	txtPassword.setClientAttribute("autocomplete", "current-password");
 
@@ -756,6 +790,12 @@ public class LoginPanel extends Window implements EventListener<Event>
         lnkTerms = new A("Terms and Conditions");
         lnkTerms.setId("lnkTerms");
         lnkTerms.setStyle("text-decoration: underline; cursor: pointer; color: #2d2c72;");
+        
+        lnkTrainingManual = new A("DG Application Training Manual");
+
+        lnkTrainingManual.setId("lnkTrainingManual");
+        lnkTrainingManual.setStyle("text-decoration: underline; cursor: pointer; color: #2d2c72; font-weight:600;");
+
 
     }
 
@@ -1114,5 +1154,90 @@ public class LoginPanel extends Window implements EventListener<Event>
 		}
 		return arrstr;
 	}
+	
+	private static int getCurrentFundingPolicyId() {
+	    final String sql =
+	            "SELECT ZZ_Open_Application_ID " +
+	            "FROM adempiere.ZZ_Open_Application " +
+	            "WHERE IsActive='Y' " +
+	            "  AND now() BETWEEN StartDate AND EndDate " +
+	            "  AND ZZ_DocStatus='AP' " +
+	            "ORDER BY StartDate DESC, EndDate DESC, ZZ_Open_Application_ID DESC " +
+	            "LIMIT 1";
+	    return DB.getSQLValue(null, sql);
+	}
+
+	private static MAttachment getCurrentOpenAttachment() {
+	    int x_ZZ_Open_Application_ID = getCurrentFundingPolicyId();
+	    if (x_ZZ_Open_Application_ID <= 0) return null;
+
+	    X_ZZ_Open_Application x_ZZ_Open_Application = new X_ZZ_Open_Application(Env.getCtx(), x_ZZ_Open_Application_ID, null);
+	    return MAttachment.get(Env.getCtx(), x_ZZ_Open_Application.get_Table_ID(), x_ZZ_Open_Application.get_ID());
+	}
+
+	private static MAttachmentEntry pickTrainingEntry(MAttachment attachment) {
+	    if (attachment == null || attachment.getEntryCount() == 0) return null;
+
+	    for (int i = attachment.getEntryCount() - 1; i >= 0; i--) {
+	        MAttachmentEntry e = attachment.getEntry(i);
+	        if (e == null || e.getData() == null) continue;
+
+	        String name = e.getName();
+	        String safeName = name == null ? "" : name.trim();
+
+	        	        
+	        boolean isTraining = safeName.toLowerCase().contains("training");
+	        if (isTraining) return e;
+
+	    }
+	    return null;
+	}
+
+	private static void downloadEntry(MAttachmentEntry entry, String defaultFileName) {
+	    if (entry == null || entry.getData() == null) {
+	        Clients.showNotification("Document not found.", "warning", null, "top_center", 3500);
+	        return;
+	    }
+
+	    byte[] data = entry.getData();
+	    String fileName = entry.getName();
+	    if (fileName == null || fileName.isBlank()) fileName = defaultFileName;
+
+	    String ext = "pdf";
+	    int dot = fileName.lastIndexOf('.');
+	    if (dot >= 0 && dot < fileName.length() - 1)
+	        ext = fileName.substring(dot + 1).toLowerCase();
+
+	    String contentType;
+	    switch (ext) {
+	    case "pdf":  contentType = "application/pdf"; break;
+	    case "doc":  contentType = "application/msword"; break;
+	    case "docx": contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; break;
+	    default:     contentType = "application/octet-stream"; break;
+	    }
+
+	    Filedownload.save(new AMedia(fileName, ext, contentType, data));
+	}
+
+	private static void downloadTrainingManual() {
+	    MAttachment attachment = getCurrentOpenAttachment();
+	    if (attachment == null) {
+	        Clients.showNotification(
+	                "No active policy/window is defined for the current date.",
+	                "warning", null, "top_center", 3500);
+	        return;
+	    }
+
+	    MAttachmentEntry entry = pickTrainingEntry(attachment);
+	    if (entry == null) {
+	        Clients.showNotification(
+	                "No Training Manual found. Attach a file starting with 'Training'.",
+	                "warning", null, "top_center", 3500);
+	        return;
+	    }
+
+	    downloadEntry(entry, "TrainingManual.pdf");
+	}
+
 
 }
