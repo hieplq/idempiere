@@ -1223,7 +1223,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    MAttachment attachment = getCurrentOpenAttachment();
 	    if (attachment == null) {
 	        Clients.showNotification(
-	                "No active policy/window is defined for the current date.",
+	                "No Training Manual found..",
 	                "warning", null, "top_center", 3500);
 	        return;
 	    }
@@ -1231,7 +1231,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    MAttachmentEntry entry = pickTrainingEntry(attachment);
 	    if (entry == null) {
 	        Clients.showNotification(
-	                "No Training Manual found. Attach a file starting with 'Training'.",
+	                "No Training Manual found.",
 	                "warning", null, "top_center", 3500);
 	        return;
 	    }
