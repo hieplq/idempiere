@@ -465,7 +465,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    	
 	    
 	 // ===== DG Application Training Manual (only show if found) =====
-	    if (hasTrainingManual()) {
+	   // if (hasTrainingManual()) {
 
 	        tr = new Tr();
 	        tr.setId("rowTrainingManual");
@@ -489,7 +489,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 
 	        td.appendChild(lnkTrainingManual);
 	        lnkTrainingManual.addEventListener(Events.ON_CLICK, ev -> downloadTrainingManual());
-	    }
+	  //  }
 
 
 
