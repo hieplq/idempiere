@@ -462,31 +462,35 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    lnkTerms.addEventListener(Events.ON_CLICK, ev -> openTermsAndConditions());
 	    
 	    
+	    	
 	    
+	 // ===== DG Application Training Manual (only show if found) =====
+	    if (hasTrainingManual()) {
 
-	 // ===== DG Application Training Manual (must be AFTER accept line) =====
-	    tr = new Tr();
-	    tr.setId("rowTrainingManual");
-	    table.appendChild(tr);
-
-	    // label spacer keeps two-column alignment
-	    td = new Td();
-	    td.setSclass(ITheme.LOGIN_LABEL_CLASS);
-	    td.appendChild(new Label(""));
-	    tr.appendChild(td);
-
-	    if (isLabelAboveInput()) {
 	        tr = new Tr();
+	        tr.setId("rowTrainingManual");
 	        table.appendChild(tr);
+
+	        // label spacer keeps two-column alignment
+	        td = new Td();
+	        td.setSclass(ITheme.LOGIN_LABEL_CLASS);
+	        td.appendChild(new Label(""));
+	        tr.appendChild(td);
+
+	        if (isLabelAboveInput()) {
+	            tr = new Tr();
+	            table.appendChild(tr);
+	        }
+
+	        // field cell (same column as links, left aligned)
+	        td = new Td();
+	        td.setSclass(ITheme.LOGIN_FIELD_CLASS);
+	        tr.appendChild(td);
+
+	        td.appendChild(lnkTrainingManual);
+	        lnkTrainingManual.addEventListener(Events.ON_CLICK, ev -> downloadTrainingManual());
 	    }
 
-	    // field cell (same column as "Forgot my password", left aligned)
-	    td = new Td();
-	    td.setSclass(ITheme.LOGIN_FIELD_CLASS);
-	    tr.appendChild(td);
-
-	    td.appendChild(lnkTrainingManual);
-	    lnkTrainingManual.addEventListener(Events.ON_CLICK, ev -> downloadTrainingManual());
 
 
 
@@ -1186,7 +1190,7 @@ public class LoginPanel extends Window implements EventListener<Event>
 	        String safeName = name == null ? "" : name.trim();
 
 	        	        
-	        boolean isTraining = safeName.toLowerCase().contains("training");
+	        boolean isTraining = safeName.toLowerCase().contains("manual");
 	        if (isTraining) return e;
 
 	    }
@@ -1200,13 +1204,15 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    }
 
 	    byte[] data = entry.getData();
-	    String fileName = entry.getName();
-	    if (fileName == null || fileName.isBlank()) fileName = defaultFileName;
+	    
+	    String fileName = sanitizeFileName(entry.getName(), defaultFileName);
 
+	    // Extract extension (after sanitizing!)
 	    String ext = "pdf";
 	    int dot = fileName.lastIndexOf('.');
-	    if (dot >= 0 && dot < fileName.length() - 1)
+	    if (dot >= 0 && dot < fileName.length() - 1) {
 	        ext = fileName.substring(dot + 1).toLowerCase();
+	    }	  
 
 	    String contentType;
 	    switch (ext) {
@@ -1239,5 +1245,45 @@ public class LoginPanel extends Window implements EventListener<Event>
 	    downloadEntry(entry, "TrainingManual.pdf");
 	}
 
+	
+	private static boolean hasTrainingManual() {
+	    MAttachment att = getCurrentOpenAttachment();
+	    return pickTrainingEntry(att) != null;
+	}
+	
+	private static String sanitizeFileName(String name, String fallback) {
+	    if (name == null) return fallback;
+
+	    // Normalize common invisible junk
+	    String s = name
+	            .replace('\u00A0', ' ')      // NBSP -> space
+	            .replace("\u200B", "")       // zero-width space
+	            .replace("\uFEFF", "")       // BOM
+	            .trim();
+
+	    if (s.isEmpty()) return fallback;
+
+	    // Strip markdown-ish wrappers and other common wrappers at BOTH ends
+	    // (underscores, tildes, backticks, quotes)
+	    while (!s.isEmpty()) {
+	        char first = s.charAt(0);
+	        char last  = s.charAt(s.length() - 1);
+
+	        boolean stripFirst = first == '_' || first == '~' || first == '`' || first == '"' || first == '\'' || Character.isWhitespace(first);
+	        boolean stripLast  = last  == '_' || last  == '~' || last  == '`' || last  == '"' || last  == '\'' || Character.isWhitespace(last);
+
+	        if (!stripFirst && !stripLast) break;
+
+	        if (stripFirst) s = s.substring(1);
+	        if (!s.isEmpty() && stripLast) s = s.substring(0, s.length() - 1);
+	        s = s.trim();
+	    }
+
+	    return s.isEmpty() ? fallback : s;
+	}
+
+
+	
+	
 
 }
